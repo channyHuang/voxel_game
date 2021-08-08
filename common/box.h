@@ -6,9 +6,9 @@
 class Box
 {
 public:
-    Box();
+    Box() {};
     Box(const Vector3 &_vMin, const Vector3 &_vMax) : vMin(_vMin), vMax(_vMax) {}
-    ~Box();
+    ~Box() {};
 
 public:
     Vector3 vMin, vMax;
