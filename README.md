@@ -12,8 +12,16 @@ Using class VoxelBuffer in voxel tool to store data, a plugin of godot engine, b
 
 使用了godot引擎插件voxel tool中的VoxelBuffer类来存储数据，但做了简化。因为本项目主要研究sdf数据的生成和网格生成，不考虑内存相关逻辑。
 
+## Mesh Generation
+
+### Naive Surface Nets
+
+every voxel generate 
+
 ## Reference
 
 [godot engine](https://godotengine.org/)  (MIT license) 
 
 [voxel tool](https://voxel-tools.readthedocs.io/en/latest/) (GNU license) godot plugin, using its VoxelBuffer class
+
+[naive surface nets](https://github.com/Q-Minh/naive-surface-nets)

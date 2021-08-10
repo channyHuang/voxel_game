@@ -88,6 +88,11 @@ public:
         std::string str = "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
         return str;
     }
+
+    friend Vector3 operator*(const real k, const Vector3 &p)
+    {
+        return Vector3(k * p.x, k * p.y, k * p.z);
+    }
 };
 
 #endif // VECTOR3_H
