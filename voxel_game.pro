@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include($$PWD/common/common.pri)
 include($$PWD/voxels/voxels.pri)
 include($$PWD/meshGenerator/meshGenerator.pri)
+include($$PWD/voxelGenerator/voxelGenerator.pri)
 INCLUDEPATH += $$PWD/common
 
 SOURCES += \

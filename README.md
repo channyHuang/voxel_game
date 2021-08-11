@@ -25,3 +25,5 @@ every voxel generate
 [voxel tool](https://voxel-tools.readthedocs.io/en/latest/) (GNU license) godot plugin, using its VoxelBuffer class
 
 [naive surface nets](https://github.com/Q-Minh/naive-surface-nets)
+
+[fast noise lite](https://github.com/Auburn/FastNoiseLite/wiki/Documentation)
