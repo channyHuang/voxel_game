@@ -14,9 +14,19 @@ Using class VoxelBuffer in voxel tool to store data, a plugin of godot engine, b
 
 ## Mesh Generation
 
+### Marching Cube
+
+### Dual Marching Cube
+
+### Transvoxel
+
 ### Naive Surface Nets
 
-every voxel generate 
+every voxel generate less than or equal to one vertex
+
+### Dual Contouring
+
+need normals before generate surface
 
 ## Reference
 
@@ -25,5 +35,7 @@ every voxel generate
 [voxel tool](https://voxel-tools.readthedocs.io/en/latest/) (GNU license) godot plugin, using its VoxelBuffer class
 
 [naive surface nets](https://github.com/Q-Minh/naive-surface-nets)
+
+[dual contouring](https://github.com/emilk/Dual-Contouring)
 
 [fast noise lite](https://github.com/Auburn/FastNoiseLite/wiki/Documentation)

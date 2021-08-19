@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <vector>
 
 template <typename T, int N>
 class Vector
@@ -25,6 +26,14 @@ public:
     Vector(const std::vector<T> &v) {
         for (unsigned int i = 0; i < N; i++) {
             data[i] = v[i];
+        }
+    }
+    Vector(const T &a, const T& b) {
+        if (N >= 1) {
+            data[0] = a;
+        }
+        if (N >= 2) {
+            data[1] = b;
         }
     }
     ~Vector() {}

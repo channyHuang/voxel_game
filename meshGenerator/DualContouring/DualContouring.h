@@ -1,14 +1,16 @@
 #ifndef DUAL_CONTOURING_H
 #define DUAL_CONTOURING_H
 
-
+#include "vector.h"
 #include <iostream>
 #include "LeastSquareSolver.h"
-#include "VoxelBuffer.h"
+#include "voxel_buffer.h"
 //using MC Tables to calculate normals quickly
 #include "TransvoxelTables.cpp"
 
 namespace DualContouring {
+    typedef Vector<int, 2> Vector2i;
+
 	struct TriMesh {
 		std::vector<Vector3>  vecs;
 		std::vector<Vector3i>  triangles;
@@ -33,7 +35,7 @@ namespace DualContouring {
 		};
 
 		// Indices into Corners:
-		std::vector<LORD::Vector2i> vEdges = {
+        std::vector<Vector2i> vEdges = {
 			{0,1}, {0,2}, {0,4},
 			{1,3}, {1,5},
 			{2,3}, {2,6},
@@ -49,7 +51,7 @@ namespace DualContouring {
 		};
 
 		// The edges leading to our far corner:
-		const LORD::Vector2i FarEdges[3] = { {3,7}, {5,7}, {6,7} };
+        const Vector2i FarEdges[3] = { {3,7}, {5,7}, {6,7} };
 
 		inline Vector3i flip(Vector3i p) {
 			return { p[0], p[2], p[1] };
@@ -70,17 +72,17 @@ namespace DualContouring {
 		void constructVertices(const VoxelBuffer &buffer, TriMesh &mesh, VoxelBuffer &vertIdx, const int min_padding, const int blocksize_with_padding);
 
 		template<typename Fun>
-		void foreach2D(LORD::Vector2i min,
-			LORD::Vector2i max,
+        void foreach2D(Vector2i min,
+            Vector2i max,
 			const Fun& fun)
 		{
 			for (int y = min.y; y < max.y; ++y)
 				for (int x = min.x; x < max.x; ++x)
-					fun(LORD::Vector2i(x, y));
+                    fun(Vector2i(x, y));
 		}
 
 		template<typename Fun>
-		void foreach2D(LORD::Vector2i max, const Fun& fun) {
+        void foreach2D(Vector2i max, const Fun& fun) {
 			foreach2D({ 0,0 }, max, fun);
 		}
 
