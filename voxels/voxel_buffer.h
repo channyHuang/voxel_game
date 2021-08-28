@@ -1,8 +1,6 @@
-#ifndef VOXEL_BUFFER_H
-#define VOXEL_BUFFER_H
+#pragma once
 
 #include "vector3i.h"
-#include "vector3.h"
 
 #include "voxel_constants.h"
 #include "array_slice.h"
@@ -17,6 +15,7 @@ class VoxelTool;
 class Image;
 class FuncRef;
 */
+
 
 union MarshallFloat {
 
@@ -91,6 +90,12 @@ public:
 	void set_voxel(uint64_t value, int x, int y, int z, unsigned int channel_index = 0);
 
 	real_t get_voxel_f(int x, int y, int z, unsigned int channel_index = 0) const;
+    real_t get_voxel_f(const Vector3i &pos, unsigned int channel_index = 0) const {
+        return get_voxel_f(pos.x, pos.y, pos.z, channel_index);
+    }
+    real_t get_voxel_f(const Vector3 &pos, unsigned int channel_index = 0) const {
+        return get_voxel_f(pos.x, pos.y, pos.z, channel_index);
+    }
 	void set_voxel_f(real_t value, int x, int y, int z, unsigned int channel_index = 0);
 
     inline uint64_t get_voxel(const Vector3i pos, unsigned int channel_index = 0) const {
@@ -332,5 +337,3 @@ VARIANT_ENUM_CAST(VoxelBuffer::ChannelId)
 VARIANT_ENUM_CAST(VoxelBuffer::Depth)
 VARIANT_ENUM_CAST(VoxelBuffer::Compression)
 */
-#endif // VOXEL_BUFFER_H
-

@@ -1,7 +1,7 @@
 #ifndef LEAST_SQUARE_SOLVER_H
 #define LEAST_SQUARE_SOLVER_H
 
-#include "Vector3.h"
+#include "vector3.h"
 
 namespace LeastSquareSolver
 {
@@ -22,6 +22,10 @@ namespace LeastSquareSolver
 	N is the length of A and b.
 	*/
 	Vector3 leastSquares(size_t N, const Vector3* A, const real* b);
+
+    inline bool isFinite(const Vector3 &v) {
+        return (v.x != NAN && v.y != NAN && v.z != NAN);
+    }
 }
 
 #endif

@@ -1,11 +1,5 @@
 #include "surface_nets.h"
 
-#include <algorithm>
-#include <array>
-#include <numeric>
-#include <unordered_map>
-#include <vector>
-
 /*
 *
 * Visit every voxel in the regular vsize with the following configuration

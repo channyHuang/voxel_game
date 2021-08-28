@@ -25,16 +25,33 @@ public:
     Vector3(const real _x, const real _y, const real _z) : x(_x), y(_y), z(_z) {}
     ~Vector3() {}
 
+    const real &operator[](const int axis) const {
+        return data[axis];
+    }
+
     void operator=(const Vector3 &v) { x = v.x; y = v.y; z = v.z; }
 
     Vector3 operator+(const Vector3 &v) {
         return Vector3 (x + v.x, y + v.y, z + v.z);
     }
 
+    Vector3 &operator+=(const Vector3 &v) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+        return *this;
+    }
+
     Vector3 operator-(const Vector3 &v) {
         return Vector3 (x - v.x, y - v.y, z - v.z);
     }
 
+    Vector3 &operator -= (const Vector3 &v) {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+        return *this;
+    }
     Vector3 operator/(const Vector3 &v) {
         if (v.x == 0 || v.y == 0 || v.z == 0) return *this;
         return Vector3 (x / v.x, y / v.y, z / v.z);
@@ -60,7 +77,7 @@ public:
         return *this * Vector3(v);
     }
 
-    Vector3 dot(const Vector3 &v) {
+    real dot(const Vector3 &v) const {
         return (x * v.x + y * v.y + z * v.z);
     }
 
@@ -74,6 +91,14 @@ public:
 
     real len() {
         return std::sqrt(x * x + y * y + z * z);
+    }
+
+    real lenSqr() const {
+        return (x * x + y * y + z * z);
+    }
+
+    real distanceTo(const Vector3 &v) {
+        return (*this - v).len();
     }
 
     void normalize() {

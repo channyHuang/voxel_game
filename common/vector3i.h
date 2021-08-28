@@ -1,5 +1,4 @@
-#ifndef Vector3I_H
-#define Vector3I_H
+#pragma once
 
 #ifndef real
 #define real float
@@ -22,6 +21,10 @@ public:
         };
         int64_t data[3];
     };
+
+    const int64_t &operator[](const int axis) const {
+        return data[axis];
+    }
 
     Vector3i() : x(0), y(0), z(0) {}
     Vector3i(const int64_t v) : x(v), y(v), z(v) {}
@@ -49,7 +52,7 @@ public:
         return Vector3i (x / v.x, y / v.y, z / v.z);
     }
 
-    Vector3i operator*(const Vector3i &v) {
+    Vector3i operator*(const Vector3i &v) const {
         return Vector3i (x * v.x, y * v.y, z * v.z);
     }
 
@@ -136,29 +139,31 @@ public:
     }
 };
 
-bool operator==(const Vector3i &a, const Vector3i &b) {
+inline bool operator==(const Vector3i &a, const Vector3i &b) {
     return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
-bool operator!=(const Vector3i &a, const Vector3i &b) {
+inline bool operator!=(const Vector3i &a, const Vector3i &b) {
     return a.x != b.x || a.y != b.y || a.z != b.z;
 }
 
-Vector3i operator+(const Vector3i &a, const Vector3i &b) {
+inline Vector3i operator+(const Vector3i &a, const Vector3i &b) {
     return Vector3i(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-Vector3i operator-(const Vector3i &a, const Vector3i &b) {
+inline Vector3i operator-(const Vector3i &a, const Vector3i &b) {
     return Vector3i(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-Vector3i operator>>(const Vector3i &a, int b) {
+inline Vector3i operator>>(const Vector3i &a, int b) {
     return Vector3i(a.x >> b, a.y >> b, a.z >> b);
 }
 
-Vector3i operator<<(const Vector3i &a, int b) {
+inline Vector3i operator<<(const Vector3i &a, int b) {
     return Vector3i(a.x << b, a.y << b, a.z << b);
 }
 
+inline Vector3i operator*(const int64_t p_scalar, const Vector3i &p_vec) {
+    return p_vec * p_scalar;
+}
 
-#endif // Vector3iI_H

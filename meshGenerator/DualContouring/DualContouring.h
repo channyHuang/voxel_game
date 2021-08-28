@@ -1,16 +1,17 @@
-#ifndef DUAL_CONTOURING_H
-#define DUAL_CONTOURING_H
+#pragma once
 
-#include "vector.h"
+#include "vector2i.h"
+#include "vector3i.h"
+#include "triangle.h"
 #include <iostream>
+#include <vector>
+#include <array>
 #include "LeastSquareSolver.h"
 #include "voxel_buffer.h"
 //using MC Tables to calculate normals quickly
-#include "TransvoxelTables.cpp"
+#include "TransvoxelTables.hpp"
 
 namespace DualContouring {
-    typedef Vector<int, 2> Vector2i;
-
 	struct TriMesh {
 		std::vector<Vector3>  vecs;
 		std::vector<Vector3i>  triangles;
@@ -34,6 +35,7 @@ namespace DualContouring {
 			{1,0,0}, {1,0,1}, {1,1,0}, {1,1,1},
 		};
 
+        const Vector3i vAxes[3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 		// Indices into Corners:
         std::vector<Vector2i> vEdges = {
 			{0,1}, {0,2}, {0,4},
@@ -54,18 +56,9 @@ namespace DualContouring {
         const Vector2i FarEdges[3] = { {3,7}, {5,7}, {6,7} };
 
 		inline Vector3i flip(Vector3i p) {
-			return { p[0], p[2], p[1] };
+            return Vector3i(p[0], p[2], p[1]);
 		}
 
-		/*
-		Implementation of:
-			Dual Contouring on Hermite Data
-			Proceedings of ACM SIGGRAPH, 2002
-			Tao Ju, Frank Losasso, Scott Schaefer and Joe Warren
-			http://www.cs.wustl.edu/~taoju/research/dualContour.pdf
-		Will use the same resolution as the field for the dual contouring.
-		No simplification.
-		*/
 		std::vector<Vector3> getNormal(const VoxelBuffer &voxels, Vector3i pos);
 		TriMesh dualContouring(const VoxelBuffer &buffer, const int min_padding, const int max_padding, const int blocksize_with_padding);
 		void constructFaces(const VoxelBuffer &buffer, TriMesh &mesh, VoxelBuffer &vertIdx, const int blocksize_with_padding);
@@ -104,4 +97,3 @@ namespace DualContouring {
 	};
 }
 
-#endif // ! DUAL_CONTOURING_H

@@ -1,9 +1,12 @@
-#ifndef SURFACE_NETS_H
-#define SURFACE_NETS_H
+#pragma once
 
 #include <vector>
 #include <functional>
-#include "vector3.h"
+#include <algorithm>
+#include <array>
+#include <numeric>
+#include <unordered_map>
+
 #include "vector3i.h"
 
 class TriMesh {
@@ -45,5 +48,3 @@ private:
         { 3u, 7u }
     };
 };
-
-#endif
