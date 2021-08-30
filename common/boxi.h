@@ -1,5 +1,4 @@
-#ifndef BOXI_H
-#define BOXI_H
+#pragma once
 
 #include "vector3i.h"
 
@@ -19,5 +18,3 @@ public:
     Vector3i vMin, vMax;
 
 };
-
-#endif // BOXI_H

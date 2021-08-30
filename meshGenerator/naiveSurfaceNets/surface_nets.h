@@ -47,4 +47,17 @@ private:
         { 2u, 6u },
         { 3u, 7u }
     };
+
+    int const quad_neighbors[3][3] =
+    {
+        { 0, 1, 2 },
+        { 0, 5, 4 },
+        { 2, 3, 4 }
+    };
+
+    std::array<int, 3> const quad_neighbor_orders[2] =
+    {
+        { 0, 1, 2 },
+        { 2, 1, 0 }
+    };
 };

@@ -47,10 +47,17 @@
 // VERSION: 1.0.1
 // https://github.com/Auburn/FastNoise
 
+
+// add perlin noise
+
 #ifndef FASTNOISELITE_H
 #define FASTNOISELITE_H
 
 #include <cmath>
+#include <random>
+#include <functional>
+
+#include "math_funcs.h"
 
 class FastNoiseLite
 {
@@ -2441,6 +2448,279 @@ private:
         xr += vx * warpAmp;
         yr += vy * warpAmp;
         zr += vz * warpAmp;
+    }
+
+public:
+    //for perlin new
+        //f(u) = 3u^2 - 2u^3
+        float smoothstep(const float &t) const
+        {
+            return t * t * (3 - 2 * t);
+        }
+
+        //f(t) = 6t^5 - 15t^4 + 10t^3
+        float qunic(const float &t) const
+        {
+            return t * t * t * (t * (t * 6 - 15) + 10);
+        }
+
+        //derivative function
+        float smoothstepDeriv(const float &t) const
+        {
+            return t * (6 - 6 * t);
+        }
+
+        float quicDeriv(const float &t) const
+        {
+            return 30 * t * t * (t * (t - 2) + 1);
+        }
+
+
+        void set_seed(int seed) {
+            std::mt19937 generator(seed);
+            std::uniform_real_distribution<float> distribution;
+            auto dice = std::bind(distribution, generator);
+            for (uint32_t i = 0; i < tableSize; ++i) {
+    #if 0
+                // bad
+                float gradientLen2;
+                do {
+                    gradients[i] = Vector3(2 * dice() - 1, 2 * dice() - 1, 2 * dice() - 1);
+                    gradientLen2 = gradients[i].length2();
+                } while (gradientLen2 > 1);
+                gradients[i].normalize();
+    #else
+                // better
+                // random spherical coordinates to Cartesian coordinates
+                float theta = acos(2 * dice() - 1);
+                float phi = 2 * dice() * Math::PI;
+
+                float x = cos(phi) * sin(theta);
+                float y = sin(phi) * sin(theta);
+                float z = cos(theta);
+                gradients[i] = Vector3(x, y, z);
+    #endif
+                permutationTable[i] = i;
+            }
+
+            std::uniform_int_distribution<unsigned> distributionInt;
+            auto diceInt = std::bind(distributionInt, generator);
+            // create permutation table
+            for (unsigned i = 0; i < tableSize; ++i)
+                std::swap(permutationTable[i], permutationTable[diceInt() & tableSizeMask]);
+            // extend the permutation table in the index range [256:512]
+            for (unsigned i = 0; i < tableSize; ++i) {
+                permutationTable[tableSize + i] = permutationTable[i];
+            }
+        }
+
+        //[comment]
+        // Improved Noise implementation (2002)
+        // This version compute the derivative of the noise function as well
+        //[/comment]
+        float eval(const Vector3 &p, Vector3& derivs) const
+        {
+            int xi0 = ((int)std::floor(p.x)) & tableSizeMask;
+            int yi0 = ((int)std::floor(p.y)) & tableSizeMask;
+            int zi0 = ((int)std::floor(p.z)) & tableSizeMask;
+
+            int xi1 = (xi0 + 1) & tableSizeMask;
+            int yi1 = (yi0 + 1) & tableSizeMask;
+            int zi1 = (zi0 + 1) & tableSizeMask;
+
+            float tx = p.x - ((int)std::floor(p.x));
+            float ty = p.y - ((int)std::floor(p.y));
+            float tz = p.z - ((int)std::floor(p.z));
+
+            float u = qunic(tx);
+            float v = qunic(ty);
+            float w = qunic(tz);
+
+            // generate vectors going from the grid points to p
+            float x0 = tx, x1 = tx - 1;
+            float y0 = ty, y1 = ty - 1;
+            float z0 = tz, z1 = tz - 1;
+
+            //n(u,v,w) = k0 + k1·u + k2·v + k3·w + k4·uv + k5·vw + k6·wu + k7·uvw
+
+            float a = gradientDotV(hash(xi0, yi0, zi0), x0, y0, z0);
+            float b = gradientDotV(hash(xi1, yi0, zi0), x1, y0, z0);
+            float c = gradientDotV(hash(xi0, yi1, zi0), x0, y1, z0);
+            float d = gradientDotV(hash(xi1, yi1, zi0), x1, y1, z0);
+            float e = gradientDotV(hash(xi0, yi0, zi1), x0, y0, z1);
+            float f = gradientDotV(hash(xi1, yi0, zi1), x1, y0, z1);
+            float g = gradientDotV(hash(xi0, yi1, zi1), x0, y1, z1);
+            float h = gradientDotV(hash(xi1, yi1, zi1), x1, y1, z1);
+
+            float du = quicDeriv(tx);
+            float dv = quicDeriv(ty);
+            float dw = quicDeriv(tz);
+
+            float k0 = a;
+            float k1 = (b - a);
+            float k2 = (c - a);
+            float k3 = (e - a);
+            float k4 = (a + d - b - c);
+            float k5 = (a + f - b - e);
+            float k6 = (a + g - c - e);
+            float k7 = (b + c + e + h - a - d - f - g);
+
+            derivs.x = du * (k1 + k4 * v + k5 * w + k7 * v * w);
+            derivs.y = dv * (k2 + k4 * u + k6 * w + k7 * v * w);
+            derivs.z = dw * (k3 + k5 * u + k6 * v + k7 * v * w);
+
+            return k0 + k1 * u + k2 * v + k3 * w + k4 * u * v + k5 * u * w + k6 * v * w + k7 * u * v * w;
+        }
+
+
+        //[comment]
+        // classic/original Perlin noise implementation (1985)
+        //[/comment]
+        float eval(const Vector3 &p)
+        {
+            int xi0 = ((int)std::floor(p.x)) & tableSizeMask;
+            int yi0 = ((int)std::floor(p.y)) & tableSizeMask;
+            int zi0 = ((int)std::floor(p.z)) & tableSizeMask;
+
+            int xi1 = (xi0 + 1) & tableSizeMask;
+            int yi1 = (yi0 + 1) & tableSizeMask;
+            int zi1 = (zi0 + 1) & tableSizeMask;
+
+            float tx = p.x - ((int)std::floor(p.x));
+            float ty = p.y - ((int)std::floor(p.y));
+            float tz = p.z - ((int)std::floor(p.z));
+
+            float u = smoothstep(tx);
+            float v = smoothstep(ty);
+            float w = smoothstep(tz);
+
+            // gradients at the corner of the cell
+            const Vector3 &c000 = gradients[hash(xi0, yi0, zi0)];
+            const Vector3 &c100 = gradients[hash(xi1, yi0, zi0)];
+            const Vector3 &c010 = gradients[hash(xi0, yi1, zi0)];
+            const Vector3 &c110 = gradients[hash(xi1, yi1, zi0)];
+
+            const Vector3 &c001 = gradients[hash(xi0, yi0, zi1)];
+            const Vector3 &c101 = gradients[hash(xi1, yi0, zi1)];
+            const Vector3 &c011 = gradients[hash(xi0, yi1, zi1)];
+            const Vector3 &c111 = gradients[hash(xi1, yi1, zi1)];
+
+            // generate vectors going from the grid points to p
+            float x0 = tx, x1 = tx - 1;
+            float y0 = ty, y1 = ty - 1;
+            float z0 = tz, z1 = tz - 1;
+
+            Vector3 p000 = Vector3(x0, y0, z0);
+            Vector3 p100 = Vector3(x1, y0, z0);
+            Vector3 p010 = Vector3(x0, y1, z0);
+            Vector3 p110 = Vector3(x1, y1, z0);
+
+            Vector3 p001 = Vector3(x0, y0, z1);
+            Vector3 p101 = Vector3(x1, y0, z1);
+            Vector3 p011 = Vector3(x0, y1, z1);
+            Vector3 p111 = Vector3(x1, y1, z1);
+
+            // linear interpolation
+            float a = Math::Lerp(c000.dot(p000), c100.dot(p100), u);
+            float b = Math::Lerp(c010.dot(p010), c110.dot(p110), u);
+            float c = Math::Lerp(c001.dot(p001), c101.dot(p101), u);
+            float d = Math::Lerp(c011.dot(p011), c111.dot(p111), u);
+
+            float e = Math::Lerp(a, b, v);
+            float f = Math::Lerp(c, d, v);
+
+            return Math::Lerp(e, f, w); // g
+        }
+
+        /*
+         * amplitude: How much an octave contributes to overall shape
+         * lacunarity: the level of detail on each octave
+         * gain:
+         */
+        float fractal(const Vector3& p, int octaves = 7, float amplitude = 1.0, float frequency = 1.0, float gain = 0.5, float lacunarity = 2.0) {
+            Vector3 tmpP = p;
+            float accum = 0.0;
+            for (int i = 0; i < octaves; i++) {
+                accum += amplitude * eval(tmpP * frequency);
+                amplitude *= gain;
+                frequency *= lacunarity;
+            }
+            return accum;
+        }
+
+        /*
+         * octaves: loop times
+         * frequency:
+         */
+        float fractal(const Vector3& p, Vector3& derivs, int octaves = 7, float amplitude = 1.0, float frequency = 1.0, float gain = 0.5, float lacunarity = 2.0) {
+            Vector3 tmpP = p;
+            float accum = 0.0;
+            for (int i = 0; i < octaves; i++) {
+                accum += amplitude * eval(tmpP * frequency, derivs);
+                amplitude *= gain;
+                frequency *= lacunarity;
+            }
+            return accum;
+        }
+
+
+        float turbulence(const Vector3& p, int octaves = 7, float amplitude = 1.0, float frequency = 1.0, float gain = 0.5, float lacunarity = 2.0) {
+            Vector3 tmpP = p;
+            float accum = 0.0;
+            for (int i = 0; i < octaves; i++) {
+                accum += amplitude * fabs(eval(tmpP * frequency));
+                amplitude *= gain;
+                frequency *= lacunarity;
+            }
+            return accum;
+        }
+
+        float turbulence(const Vector3& p, Vector3& derivs, int octaves = 7, float amplitude = 1.0, float frequency = 1.0, float gain = 0.5, float lacunarity = 2.0) {
+            Vector3 tmpP = p;
+            float accum = 0.0;
+            for (int i = 0; i < octaves; i++) {
+                accum += amplitude * fabs(eval(tmpP * frequency, derivs));
+                amplitude *= gain;
+                frequency *= lacunarity;
+            }
+            return accum;
+        }
+
+private:
+    // for perlin new
+    static const unsigned tableSize = 256;
+    static const unsigned tableSizeMask = tableSize - 1;
+    Vector3 gradients[tableSize];
+    unsigned permutationTable[tableSize * 2];
+
+    float gradientDotV(
+            unsigned int perm, // a value between 0 and 255
+        float x, float y, float z) const
+    {
+        switch (perm & 15) {
+        case  0: return  x + y; // (1,1,0)
+        case  1: return -x + y; // (-1,1,0)
+        case  2: return  x - y; // (1,-1,0)
+        case  3: return -x - y; // (-1,-1,0)
+        case  4: return  x + z; // (1,0,1)
+        case  5: return -x + z; // (-1,0,1)
+        case  6: return  x - z; // (1,0,-1)
+        case  7: return -x - z; // (-1,0,-1)
+        case  8: return  y + z; // (0,1,1),
+        case  9: return -y + z; // (0,-1,1),
+        case 10: return  y - z; // (0,1,-1),
+        case 11: return -y - z; // (0,-1,-1)
+        case 12: return  y + x; // (1,1,0)
+        case 13: return -x + y; // (-1,1,0)
+        case 14: return -y + z; // (0,-1,1)
+        case 15: return -y - z; // (0,-1,-1)
+        }
+        return 0;
+    }
+
+    unsigned int hash(const int &x, const int &y, const int &z) const
+    {
+        return permutationTable[permutationTable[permutationTable[x] + y] + z];
     }
 };
 

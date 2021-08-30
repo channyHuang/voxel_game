@@ -1,9 +1,4 @@
-#ifndef VECTOR2_H
-#define VECTOR2_H
-
-#ifndef real
-#define real float
-#endif
+#pragma once
 
 #include <iostream>
 #include <algorithm>
@@ -15,17 +10,17 @@ class Vector2
 public:
     union {
         struct {
-            real x, y;
+            float x, y;
         };
-        real data[2];
+        float data[2];
     };
 
     Vector2() : x(0), y(0) {}
-    Vector2(const real v) : x(v), y(v) {}
-    Vector2(const real _x, const real _y) : x(_x), y(_y) {}
+    Vector2(const float v) : x(v), y(v) {}
+    Vector2(const float _x, const float _y) : x(_x), y(_y) {}
     ~Vector2() {}
 
-    const real &operator[](const int axis) const {
+    const float &operator[](const int axis) const {
         return data[axis];
     }
 
@@ -48,32 +43,32 @@ public:
         return Vector2 (x * v.x, y * v.y);
     }
 
-    Vector2 operator+(const real v) {
+    Vector2 operator+(const float v) {
         return *this + Vector2(v);
     }
 
-    Vector2 operator-(const real v) {
+    Vector2 operator-(const float v) {
         return *this - Vector2(v);
     }
 
-    Vector2 operator/(const real v) {
+    Vector2 operator/(const float v) {
         return *this / Vector2(v);
     }
 
-    Vector2 operator*(const real v) {
+    Vector2 operator*(const float v) {
         return *this * Vector2(v);
     }
 
-    real volumn() {
+    float volumn() {
         return x * y;
     }
 
-    real len() {
+    float len() {
         return std::sqrt(x * x + y * y);
     }
 
     void normalize() {
-        real length = this->len();
+        float length = this->len();
         if (length == 0) length = 1.0f;
         x /= length;
         y /= length;
@@ -84,10 +79,8 @@ public:
         return str;
     }
 
-    friend Vector2 operator*(const real k, const Vector2 &p)
+    friend Vector2 operator*(const float k, const Vector2 &p)
     {
         return Vector2(k * p.x, k * p.y);
     }
 };
-
-#endif // VECTOR2_H

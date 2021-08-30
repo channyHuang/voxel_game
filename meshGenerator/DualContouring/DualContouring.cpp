@@ -264,7 +264,7 @@ namespace DualContouring {
         // Reused for speed (no dynamic allocations in inner loop):
         std::vector<Plane>  planes;
         std::vector<Vector3>   A;
-        std::vector<real>   b;
+        std::vector<float>   b;
         foreach3D(Vector3i(vSize.x, vSize.y, vSize.z), [&](const Vector3i& p) {
             std::vector<bool> inside(vCorners.size(), false);
             int  numInside = 0;
@@ -303,7 +303,7 @@ namespace DualContouring {
 
                 Vector3i p_ni = p + vCorners[ci];
                 const Vector3 p_n = Vector3(p_ni.x, p_ni.y, p_ni.z);
-                real fValue = buffer.get_voxel_f(p_n, VoxelBuffer::CHANNEL_SDF);
+                float fValue = buffer.get_voxel_f(p_n, VoxelBuffer::CHANNEL_SDF);
                 Vector3 vNormal = vNormals[ci];
                 vNormal.normalize();
                 if (vNormal == Vector3(0, 0, 0)) {
@@ -338,7 +338,7 @@ namespace DualContouring {
             auto voxelCenter = p.to_vec3() + Vector3(0.5f, 0.5f, 0.5f);
             // leastSquares failed
             if (!LeastSquareSolver::isFinite(vertex)) {
-                real count = 1.0f;
+                float count = 1.0f;
                 Vector3 vVertexModify = voxelCenter;
                 for (unsigned int x = 0; x < vCorners.size(); x++) {
                     Vector3 p_n = (p + vCorners[x]).to_vec3();
@@ -358,7 +358,7 @@ namespace DualContouring {
                 }
             }
             else if (voxelCenter.distanceTo(vertex) > FarAway) {
-                real count = 1.0f;
+                float count = 1.0f;
                 Vector3 vVertexModify = voxelCenter;
                 for (unsigned int x = 0; x < vCorners.size(); x++) {
                     Vector3 p_n = (p + vCorners[x]).to_vec3();

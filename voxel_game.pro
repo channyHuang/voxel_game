@@ -21,6 +21,7 @@ include($$PWD/meshGenerator/meshGenerator.pri)
 include($$PWD/voxelGenerator/voxelGenerator.pri)
 INCLUDEPATH += $$PWD/common
 INCLUDEPATH += $$PWD/voxels
+INCLUDEPATH += $$PWD/voxelGenerator
 
 SOURCES += \
         main.cpp

@@ -1,5 +1,4 @@
-#ifndef TRIANGLE_H
-#define TRIANGLE_H
+#pragma once
 
 #include "vector3.h"
 
@@ -35,5 +34,3 @@ public:
         v2 = _v2;
     }
 };
-
-#endif // TRIANGLE_H

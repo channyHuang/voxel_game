@@ -22,11 +22,15 @@ Using class VoxelBuffer in voxel tool to store data, a plugin of godot engine, b
 
 ### Naive Surface Nets
 
-every voxel generate less than or equal to one vertex
+* every voxel generate less than or equal to one vertex
 
 ### Dual Contouring
 
-need normals before generate surface
+* need normals before generate surface
+
+## Mesh Simplify
+
+[Fast-Quadric-Mesh-Simplification](https://github.com/sp4cerat/Fast-Quadric-Mesh-Simplification)
 
 ## Reference
 

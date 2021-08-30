@@ -22,9 +22,9 @@ namespace DualContouring {
 	class DualContouring {
 	public:
 		const bool bClamp = false;
-		const real MaxCornerDist = 1.0;
-		const real FarAway = 1.0f; // 2.5;
-		const real CenterPush = 0.01;
+        const float MaxCornerDist = 1.0;
+        const float FarAway = 1.0f; // 2.5;
+        const float CenterPush = 0.01;
 
 		const int NumCorners = 8;
 		const int NumEdges = 12;
@@ -48,7 +48,7 @@ namespace DualContouring {
 		};
 
 		struct Plane {
-			real dist;
+            float dist;
 			Vector3 normal;
 		};
 

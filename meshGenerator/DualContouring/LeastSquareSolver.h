@@ -12,7 +12,7 @@ namespace LeastSquareSolver
 	 'A' contains the matrix row-wise.
 	 'b' and 'x' are column vectors.
 	 */
-	Vector3 solve3x3(const real* A, const real b[3]);
+    Vector3 solve3x3(const float* A, const float b[3]);
 
 
 	/*
@@ -21,7 +21,7 @@ namespace LeastSquareSolver
 	Note that each LORD::Vector3 in A is a row in the A-matrix.
 	N is the length of A and b.
 	*/
-	Vector3 leastSquares(size_t N, const Vector3* A, const real* b);
+    Vector3 leastSquares(size_t N, const Vector3* A, const float* b);
 
     inline bool isFinite(const Vector3 &v) {
         return (v.x != NAN && v.y != NAN && v.z != NAN);

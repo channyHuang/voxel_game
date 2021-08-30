@@ -1,9 +1,4 @@
-#ifndef VECTOR_H
-#define VECTOR_H
-
-#ifndef real
-#define real float
-#endif
+#pragma once
 
 #include <iostream>
 #include <algorithm>
@@ -109,8 +104,8 @@ public:
         return res;
     }
 
-    real len() {
-        real res;
+    float len() {
+        float res;
         for (unsigned int i = 0; i < N; i++) {
             res += data[i] * data[i];
         }
@@ -118,7 +113,7 @@ public:
     }
 
     void normalize() {
-        real length = this->len();
+        float length = this->len();
         if (length == 0) length = 1.0f;
         for (unsigned int i = 0; i < N; i++) {
             data[i] /= length;
@@ -136,5 +131,3 @@ public:
         return str;
     }
 };
-
-#endif // VECTOR_H

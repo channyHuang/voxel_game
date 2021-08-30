@@ -1,9 +1,4 @@
-#ifndef Vector2iI_H
-#define Vector2iI_H
-
-#ifndef real
-#define real float
-#endif
+#pragma once
 
 #include <iostream>
 #include <algorithm>
@@ -21,8 +16,8 @@ public:
     };
 
     Vector2i() : x(0), y(0) {}
-    Vector2i(const real v) : x(v), y(v) {}
-    Vector2i(const real _x, const real _y) : x(_x), y(_y) {}
+    Vector2i(const float v) : x(v), y(v) {}
+    Vector2i(const float _x, const float _y) : x(_x), y(_y) {}
     ~Vector2i() {}
 
     const int64_t &operator[](const int axis) const {
@@ -68,12 +63,12 @@ public:
         return x * y;
     }
 
-    real len() {
+    float len() {
         return std::sqrt(x * x + y * y);
     }
 
     void normalize() {
-        real length = this->len();
+        float length = this->len();
         if (length == 0) length = 1.0f;
         x /= length;
         y /= length;
@@ -84,10 +79,8 @@ public:
         return str;
     }
 
-    friend Vector2i operator*(const real k, const Vector2i &p)
+    friend Vector2i operator*(const float k, const Vector2i &p)
     {
         return Vector2i(k * p.x, k * p.y);
     }
 };
-
-#endif // Vector2iI_H

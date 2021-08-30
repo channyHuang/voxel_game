@@ -2,10 +2,10 @@
 
 namespace LeastSquareSolver
 {
-	real determinant(
-		real a, real b, real c,
-		real d, real e, real f,
-		real g, real h, real i)
+    float determinant(
+        float a, float b, float c,
+        float d, float e, float f,
+        float g, float h, float i)
 	{
 		return a * e * i
 			+ b * f * g
@@ -15,7 +15,7 @@ namespace LeastSquareSolver
 			- c * e * g;
 	}
 
-	Vector3 solve3x3(const real* A, const real b[3]) {
+    Vector3 solve3x3(const float* A, const float b[3]) {
 		auto det = determinant(
 			A[0 * 3 + 0], A[0 * 3 + 1], A[0 * 3 + 2],
 			A[1 * 3 + 0], A[1 * 3 + 1], A[1 * 3 + 2],
@@ -44,10 +44,10 @@ namespace LeastSquareSolver
 		} / det;
 	}
 
-	Vector3 leastSquares(size_t N, const Vector3* A, const real* b)
+    Vector3 leastSquares(size_t N, const Vector3* A, const float* b)
 	{
 		if (N == 3) {
-			const real A_mat[3 * 3] = {
+            const float A_mat[3 * 3] = {
 				A[0].x, A[0].y, A[0].z,
 				A[1].x, A[1].y, A[1].z,
 				A[2].x, A[2].y, A[2].z,
@@ -55,12 +55,12 @@ namespace LeastSquareSolver
 			return solve3x3(A_mat, b);
 		}
 
-		real At_A[3][3];
-		real At_b[3];
+        float At_A[3][3];
+        float At_b[3];
 
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
-				real sum = 0;
+                float sum = 0;
 				for (size_t k = 0; k < N; ++k) {
 					sum += A[k][i] * A[k][j];
 				}
@@ -69,7 +69,7 @@ namespace LeastSquareSolver
 		}
 
 		for (int i = 0; i < 3; ++i) {
-			real sum = 0;
+            float sum = 0;
 
 			for (size_t k = 0; k < N; ++k) {
 				sum += A[k][i] * b[k];
@@ -81,13 +81,13 @@ namespace LeastSquareSolver
 
 		/*
 		// Improve conditioning:
-		real offset = 0.0001;
+        float offset = 0.0001;
 		At_A[0][0] += offset;
 		At_A[1][1] += offset;
 		At_A[2][2] += offset;
 		 */
 
-		static_assert(sizeof(At_A) == 9 * sizeof(real), "pack");
+        static_assert(sizeof(At_A) == 9 * sizeof(float), "pack");
 
 		return solve3x3(&At_A[0][0], At_b);
 	}

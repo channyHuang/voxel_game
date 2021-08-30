@@ -1,15 +1,10 @@
 #pragma once
 
-#ifndef real
-#define real float
-#endif
-
 #include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 
-#include "vector3.h"
 #include "math_funcs.h"
 
 class Vector3i
@@ -84,12 +79,12 @@ public:
         return x * y * z;
     }
 
-    real len() {
+    float len() {
         return std::sqrt(x * x + y * y + z * z);
     }
 
     void normalize() {
-        real length = this->len();
+        float length = this->len();
         if (length == 0) length = 1.0f;
         x /= length;
         y /= length;

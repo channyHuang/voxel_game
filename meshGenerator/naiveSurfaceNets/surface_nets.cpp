@@ -1,5 +1,7 @@
 #include "surface_nets.h"
 
+#include <QDebug>
+
 /*
 *
 * Visit every voxel in the regular vsize with the following configuration
@@ -65,7 +67,6 @@
 
 
 
-
 TriMesh SurfaceNets::surfaceNets(const std::function<float (float, float, float)> &sdfFunction,
                      Vector3i vsize,
                      float const isovalue)
@@ -102,24 +103,13 @@ TriMesh SurfaceNets::surfaceNets(const std::function<float (float, float, float)
         return (i == 0 || j == 0 || k == 0);
     };
 
-    int const quad_neighbors[3][3] =
-    {
-        { 0, 1, 2 },
-        { 0, 5, 4 },
-        { 2, 3, 4 }
-    };
 
-    std::array<int, 3> const quad_neighbor_orders[2] =
-    {
-        { 0, 1, 2 },
-        { 2, 1, 0 }
-    };
     // mapping from active cube indices to vertex indices of the generated mesh
     std::unordered_map<std::size_t, std::uint64_t> active_cube_to_vertex_index_map{};
 
-    for (int k = 0; k < vsize.z; ++k) {
-        for (int j = 0; j < vsize.y; ++j) {
-            for (int i = 0; i < vsize.x; ++i) {
+    for (int k = 0; k < vsize.z - 1; ++k) {
+        for (int j = 0; j < vsize.y - 1; ++j) {
+            for (int i = 0; i < vsize.x - 1; ++i) {
                 Vector3 const voxel_corner_vsize_positions[8] =
                 {
                     { static_cast<float>(i)    , static_cast<float>(j)    , static_cast<float>(k)     },
@@ -133,8 +123,8 @@ TriMesh SurfaceNets::surfaceNets(const std::function<float (float, float, float)
                 };
 
                 Vector3 voxel_corner_positions[8];
-                for (int i = 0; i < 8; i++) {
-                    voxel_corner_positions[i] = voxel_corner_vsize_positions[i];
+                for (int x = 0; x < 8; x++) {
+                    voxel_corner_positions[x] = voxel_corner_vsize_positions[x];
                 }
 
                 float const voxel_corner_values[8] =
@@ -202,11 +192,11 @@ TriMesh SurfaceNets::surfaceNets(const std::function<float (float, float, float)
 
                     // perform linear interpolation using implicit function
                     // values at vertices
-                    real t = (isovalue - s1) / (s2 - s1);
+                    float t = (isovalue - s1) / (s2 - s1);
                     edge_intersection_points.emplace_back(p1 + t * (p2 - p1));
                 }
 
-                real number_of_intersection_points = static_cast<float>(edge_intersection_points.size());
+                float number_of_intersection_points = static_cast<float>(edge_intersection_points.size());
                 Vector3 sum_of_intersection_points = std::accumulate(
                     edge_intersection_points.cbegin(),
                     edge_intersection_points.cend(),
@@ -325,6 +315,7 @@ TriMesh SurfaceNets::surfaceNets(const std::function<float (float, float, float)
 			mesh.add_face({ v0, v2, v3 });
 		}
 	}
+
     return mesh;
 }
 
