@@ -8,6 +8,9 @@
 #include <QFileInfo>
 #include <fstream>
 
+#define DEFINE2STR(R) #R
+#define STR(R) R
+
 bool combineObjFilesInSingleDir(QString qdir) {
     QDir dir(qdir);
     if (!dir.exists()) return false;
@@ -64,7 +67,7 @@ bool readWholeDir(const QString &qDirPath) {
 
 bool readSpecialDir(const QString &qDirPath) {
     //read special dir
-    std::vector<std::string> dirs = {"lod0", "lod1", "lod2", "lod3", "lod0_brush", "lod1_brush", "lod2_brush", "lod3_brush"};
+    std::vector<std::string> dirs = {"objFiles"};
     for (unsigned int i = 0; i < dirs.size(); i++) {
         QString qdirpath = qDirPath + "/" + QString(dirs[i].c_str());
         if (!combineObjFilesInSingleDir(qdirpath)) {
@@ -78,11 +81,12 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    QString sProPath = PRO_PATH;
     //test1
-    //readSpecialDir(QDir::currentPath());
+    readSpecialDir(sProPath);
 
     //test2
-    readWholeDir("E:/ownProjects/lod-model");
+    //readWholeDir(sProPath + "/objFiles");
 
     qDebug() << "end";
     return a.exec();
