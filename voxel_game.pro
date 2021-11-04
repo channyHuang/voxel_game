@@ -1,6 +1,6 @@
-QT -= gui
+QT += core gui widgets
 
-CONFIG += c++11 console
+CONFIG += c++11
 CONFIG -= app_bundle
 CONFIG += sdk_no_version_check
 
@@ -15,20 +15,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+include($$PWD/render_control/render_control.pri)
+
 include($$PWD/common/common.pri)
 include($$PWD/voxels/voxels.pri)
 include($$PWD/meshGenerator/meshGenerator.pri)
 include($$PWD/voxelGenerator/voxelGenerator.pri)
+
 INCLUDEPATH += $$PWD/common
 INCLUDEPATH += $$PWD/voxels
 INCLUDEPATH += $$PWD/voxelGenerator
+INCLUDEPATH += $$PWD/render_control
 
-SOURCES += \
-        main.cpp
+HEADER_FILES = $$files($$PWD/*.h, false)
+SOURCE_FILES = $$files($$PWD/*.cpp, false)
+RESOURCE_FILES = $$files($$PWD/*qrc, false)
+
+HEADERS += $${HEADER_FILES}
+SOURCES += $${SOURCE_FILES}
+RESOURCES += $${RESOURCE_FILES}
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-HEADERS += \

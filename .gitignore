@@ -34,3 +34,4 @@
 /build/
 *DS_Store
 /voxel_game.pro.user
+**/*.user
