@@ -8,7 +8,9 @@ class wifilistitem : public QListWidgetItem
 {
     Q_OBJECT
 public:
-    explicit wifilistitem(QWidget *parent = nullptr);
+    explicit wifilistitem(QListWidget *parent = nullptr);
+
+protected:
 
 signals:
 

@@ -13,6 +13,8 @@ public:
 
     void testConfirmButton();
     void testPopupDialog();
+    void testSwitchButton();
+
 private:
     void initWidget();
 

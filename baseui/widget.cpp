@@ -1,6 +1,7 @@
 #include "widget.h"
 
 #include "popupdialog.h"
+#include "switchbutton.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -95,6 +96,16 @@ void Widget::testPopupDialog() {
     setLayout(mainLayout);
 }
 
+void Widget::testSwitchButton() {
+    SwitchButton *button = new SwitchButton(nullptr, "xxxxx", SwitchButton::BUTTON_RIGHT);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+
+    mainLayout->addWidget(button);
+
+    setLayout(mainLayout);
+}
+
 void Widget::initWidget() {
-    testPopupDialog();
+    testSwitchButton();
 }

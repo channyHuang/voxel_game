@@ -1,7 +1,7 @@
 #include "wifilistitem.h"
 
-wifilistitem::wifilistitem(QWidget *parent)
-    : QListWidgetItem()
+wifilistitem::wifilistitem(QListWidget *parent)
+    : QListWidgetItem(parent)
 {
 
 }

@@ -66,7 +66,7 @@ void PopupDialog::paintEvent(QPaintEvent *event) {
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setBrush(QBrush(palette.background().color()));
+    painter.setBrush(QBrush(palette.window().color()));
     painter.setPen(Qt::transparent);
 
     QRect rect = this->rect();
