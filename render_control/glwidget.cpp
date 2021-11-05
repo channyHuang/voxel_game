@@ -59,14 +59,16 @@ void GlWidget::mouseReleaseEvent(QMouseEvent *e) {
 }
 
 void GlWidget::wheelEvent(QWheelEvent *e) {
+    m_camera.setToIdentity();
+
     if (e->delta() > 0) {
-        zNear += 0.1f;
+        camera_pos_z += 1;
     } else {
-        zFar += 0.1f;
+        camera_pos_z -= 1;
     }
 
-    projection.setToIdentity();
-    projection.perspective(fov, aspect, zNear, zFar);
+    m_camera.translate(0, 0, camera_pos_z);
+    update();
 }
 
 void GlWidget::initShader() {
@@ -97,7 +99,7 @@ void GlWidget::initializeGL()
     f->initializeOpenGLFunctions();
     f->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    m_dataLoader.loadObjFile((sProPath + "/../resources/tree.obj").toStdString());
+    m_dataLoader.loadObjFile((sProPath + "/../resources/oilrig.obj").toStdString());
     initShader();
 
     m_vao = new QOpenGLVertexArrayObject();

@@ -2,6 +2,8 @@
 
 #include "popupdialog.h"
 #include "switchbutton.h"
+#include "listwidget.h"
+#include "imageviewer.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -106,6 +108,20 @@ void Widget::testSwitchButton() {
     setLayout(mainLayout);
 }
 
+void Widget::testListWidget() {
+    ListWidget *listWidget = new ListWidget(this);
+    listWidget->addItem("first item");
+    listWidget->addItem("second item");
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(listWidget);
+    setLayout(mainLayout);
+}
+
 void Widget::initWidget() {
-    testSwitchButton();
+    ImageViewer *imageViewer = new ImageViewer;
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(imageViewer);
+    setLayout(mainLayout);
 }

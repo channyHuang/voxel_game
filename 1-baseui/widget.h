@@ -14,7 +14,7 @@ public:
     void testConfirmButton();
     void testPopupDialog();
     void testSwitchButton();
-
+    void testListWidget();
 private:
     void initWidget();
 

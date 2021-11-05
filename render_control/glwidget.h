@@ -48,7 +48,7 @@ private:
     QVector2D mousePressPosition;
 
     qreal zNear = 0.01f, zFar = 100.f, fov = 45.f, aspect;
-
+    int camera_pos_z = -1;
     bool m_core = false;
 
     ObjFileLoader m_dataLoader;
