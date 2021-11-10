@@ -12,6 +12,14 @@ struct FileObject {
     std::vector<QVector3D> positions;
     std::vector<QVector3D> faces;
     std::vector<QVector3D> normals;
+    std::vector<QVector3D> face_normals;
+
+    void clear() {
+        positions.clear();
+        faces.clear();
+        face_normals.clear();
+        normals.clear();
+    }
 };
 
 class ObjFileLoader

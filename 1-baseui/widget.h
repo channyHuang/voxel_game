@@ -15,6 +15,7 @@ public:
     void testPopupDialog();
     void testSwitchButton();
     void testListWidget();
+    void testImageView();
 private:
     void initWidget();
 

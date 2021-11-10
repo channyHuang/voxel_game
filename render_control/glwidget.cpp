@@ -99,7 +99,7 @@ void GlWidget::initializeGL()
     f->initializeOpenGLFunctions();
     f->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    m_dataLoader.loadObjFile((sProPath + "/../resources/oilrig.obj").toStdString());
+    m_dataLoader.loadObjFile((sProPath + "/../resources/refinery.obj").toStdString());
     initShader();
 
     m_vao = new QOpenGLVertexArrayObject();

@@ -2,7 +2,7 @@
 
 #include "FastNoiseLite.h"
 #include "voxel_buffer.h"
-#include "box.h"
+#include "common_math/box.h"
 
 class TerrainGenerator
 {

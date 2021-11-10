@@ -3,7 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
-#include <cstring>
+#include <string>
 
 class Vector2i
 {

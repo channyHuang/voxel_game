@@ -4,5 +4,6 @@
         <file>resources/folder_small.png</file>
         <file>resources/upload.png</file>
         <file>resources/world_small.png</file>
+        <file>resources/500x500.png</file>
     </qresource>
 </RCC>

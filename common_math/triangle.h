@@ -4,9 +4,6 @@
 
 class Triangle {
 public:
-    Vector3 v0, v1, v2, vNormal;
-    bool bHasNormal;
-
     Triangle() : bHasNormal(false) {}
     Triangle(const Vector3 &_v0, const Vector3 &_v1, const Vector3 &_v2)
         : v0(_v0), v1(_v1), v2(_v2) {}
@@ -33,4 +30,8 @@ public:
         v1 = _v1;
         v2 = _v2;
     }
+
+public:
+    Vector3 v0, v1, v2, vNormal;
+    bool bHasNormal;
 };

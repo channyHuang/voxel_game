@@ -4,6 +4,7 @@
 #include "switchbutton.h"
 #include "listwidget.h"
 #include "imageviewer.h"
+#include "flipview.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -118,10 +119,17 @@ void Widget::testListWidget() {
     setLayout(mainLayout);
 }
 
-void Widget::initWidget() {
+void Widget::testImageView() {
     ImageViewer *imageViewer = new ImageViewer;
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(imageViewer);
+    setLayout(mainLayout);
+}
+
+void Widget::initWidget() {
+    FlipView *flipView = new FlipView;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(flipView);
     setLayout(mainLayout);
 }

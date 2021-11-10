@@ -3,6 +3,8 @@
 #include "vector3.h"
 #include "box.h"
 
+static const Vector3 vCubeVer[8] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 1, 0}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}};
+
 class Math {
 public:
 	Math() {} // useless to instance
@@ -49,4 +51,7 @@ public:
     }
 
     static constexpr float PI = 3.14159265;
+    static constexpr float LOWEPSILON = 1e-4;
+    static constexpr int MAX_LOD = 4;
+
 };

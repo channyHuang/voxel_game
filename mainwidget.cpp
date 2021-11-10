@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include <QHBoxLayout>
-
+#include <QPushButton>
 #include <iostream>
 #include <fstream>
 
@@ -10,14 +10,21 @@
 
 #include "voxel_buffer.h"
 #include "terraingenerator.h"
-#include "meshGenerator/naiveSurfaceNets/surface_nets.h"
+#include "voxelterrain.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
     m_pGlWidget = new GlWidget(parent);
     m_pGlWidget->setMinimumSize(QSize(640, 480));
 
+    QPushButton *createBtn = new QPushButton(this);
+    createBtn->setText("create");
+    connect(createBtn, &QPushButton::clicked, [&](){
+        VoxelToolTerrain *tool = static_cast<VoxelToolTerrain*>(VoxelTerrain::getInstance()->get_voxel_tool());
+        // generate terrain
+        tool->set_voxel_f(Vector3i(1, 1, 1), -1);
+    });
     QVBoxLayout *buttonLayout = new QVBoxLayout;
-    buttonLayout->addWidget(new QLabel("x"));
+    buttonLayout->addWidget(createBtn);
 
     QHBoxLayout *mainlayout = new QHBoxLayout;
     mainlayout->addLayout(buttonLayout);
@@ -27,7 +34,7 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
 }
 
 MainWidget::~MainWidget() {}
-
+/*
 void output2File(const TriMesh &mesh, std::string sOutputFile = "mesh.obj") {
     std::ofstream ofs(sOutputFile.c_str());
     char c[256];
@@ -48,7 +55,7 @@ void output2File(const TriMesh &mesh, std::string sOutputFile = "mesh.obj") {
     }
     ofs.close();
 }
-
+*/
 void test()
 {
     std::shared_ptr<VoxelBuffer> buffer = std::make_shared<VoxelBuffer>();
@@ -62,8 +69,8 @@ void test()
         return buffer->get_voxel_f(x, y, z, VoxelBuffer::CHANNEL_SDF);
     };
 
-    SurfaceNets surfaceNets;
-    TriMesh mesh = surfaceNets.surfaceNets(sdfFunction, vSize);
+//    SurfaceNets surfaceNets;
+//    TriMesh mesh = surfaceNets.surfaceNets(sdfFunction, vSize);
 
-    output2File(mesh);
+//    output2File(mesh);
 }

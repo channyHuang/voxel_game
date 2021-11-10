@@ -1,6 +1,6 @@
 QT += core gui widgets
 
-CONFIG += c++11
+CONFIG += c++2a
 CONFIG -= app_bundle
 CONFIG += sdk_no_version_check
 
@@ -17,10 +17,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include($$PWD/render_control/render_control.pri)
 
-include($$PWD/common/common.pri)
+include($$PWD/common_math/common_math.pri)
 include($$PWD/voxels/voxels.pri)
 include($$PWD/meshGenerator/meshGenerator.pri)
 include($$PWD/voxelGenerator/voxelGenerator.pri)
+include($$PWD/terrains/terrains.pri)
 
 INCLUDEPATH += $$PWD/common
 INCLUDEPATH += $$PWD/voxels
@@ -31,8 +32,17 @@ HEADER_FILES = $$files($$PWD/*.h, false)
 SOURCE_FILES = $$files($$PWD/*.cpp, false)
 RESOURCE_FILES = $$files($$PWD/*qrc, false)
 
-HEADERS += $${HEADER_FILES}
-SOURCES += $${SOURCE_FILES}
+HEADERS += $${HEADER_FILES} \
+    arraymesh.h \
+    common_enum.h \
+    voxeltool.h \
+    voxeltoolterrain.h
+
+SOURCES += $${SOURCE_FILES} \
+    arraymesh.cpp \
+    voxeltool.cpp \
+    voxeltoolterrain.cpp
+
 RESOURCES += $${RESOURCE_FILES}
 
 

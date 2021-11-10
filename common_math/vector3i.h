@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <string>
 
 #include "math_funcs.h"
 
@@ -21,25 +22,58 @@ public:
         return data[axis];
     }
 
+    inline int64_t &operator[](const int axis) {
+        return data[axis];
+    }
+
     Vector3i() : x(0), y(0), z(0) {}
     Vector3i(const int64_t v) : x(v), y(v), z(v) {}
     Vector3i(const int64_t _x, const int64_t _y, const int64_t _z) : x(_x), y(_y), z(_z) {}
-    Vector3i(const Vector3 &f) {
-        x = std::floor(f.x);
-        y = std::floor(f.y);
-        z = std::floor(f.z);
+    Vector3i(const Vector3i &v) : x(v.x), y(v.y), z(v.z) {}
+    Vector3i(const Vector3 &v) {
+        x = static_cast<int64_t>(std::floor(v.x));
+        y = static_cast<int64_t>(std::floor(v.y));
+        z = static_cast<int64_t>(std::floor(v.z));
     }
 
     ~Vector3i() {}
 
-    void operator=(const Vector3i &v) { x = v.x; y = v.y; z = v.z; }
+    //void operator=(const Vector3i &v) { x = v.x; y = v.y; z = v.z; }
+    Vector3i &operator=(const Vector3i &v) {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        return *this;
+    }
 
-    Vector3i operator+(const Vector3i &v) {
+    inline bool operator==(const Vector3i &v) const {
+        return x == v.x && y == v.y && z == v.z;
+    }
+
+    inline bool operator!=(const Vector3i &v) {
+        return x != v.x || y != v.y || z != v.z;
+    }
+
+    Vector3i operator+(const Vector3i &v) const {
         return Vector3i (x + v.x, y + v.y, z + v.z);
     }
 
-    Vector3i operator-(const Vector3i &v) {
+    Vector3i &operator += (const Vector3i &v) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+        return *this;
+    }
+
+    Vector3i operator-(const Vector3i &v) const {
         return Vector3i (x - v.x, y - v.y, z - v.z);
+    }
+
+    Vector3i &operator -= (const Vector3i &v) {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+        return *this;
     }
 
     Vector3i operator/(const Vector3i &v) {
@@ -80,9 +114,12 @@ public:
     }
 
     float len() {
-        return std::sqrt(x * x + y * y + z * z);
+        return static_cast<float>(std::sqrt(x * x + y * y + z * z));
     }
 
+    float distance(const Vector3i &v) {
+        return static_cast<float>(std::sqrt((x - v.x) * (x - v.x) + (y - v.y) * (y - v.y) + (z - v.z) * (z - v.z)));
+    }
     void normalize() {
         float length = this->len();
         if (length == 0) length = 1.0f;
@@ -96,7 +133,7 @@ public:
         return str;
     }
 
-    inline unsigned int get_zxy_index(const Vector3i area_size) const {
+    inline uint64_t get_zxy_index(const Vector3i area_size) const {
         return y + area_size.y * (x + area_size.x * z); // ZXY
     }
 
@@ -133,15 +170,7 @@ public:
         }
     }
 };
-
-inline bool operator==(const Vector3i &a, const Vector3i &b) {
-    return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-
-inline bool operator!=(const Vector3i &a, const Vector3i &b) {
-    return a.x != b.x || a.y != b.y || a.z != b.z;
-}
-
+/*
 inline Vector3i operator+(const Vector3i &a, const Vector3i &b) {
     return Vector3i(a.x + b.x, a.y + b.y, a.z + b.z);
 }
@@ -149,7 +178,7 @@ inline Vector3i operator+(const Vector3i &a, const Vector3i &b) {
 inline Vector3i operator-(const Vector3i &a, const Vector3i &b) {
     return Vector3i(a.x - b.x, a.y - b.y, a.z - b.z);
 }
-
+*/
 inline Vector3i operator>>(const Vector3i &a, int b) {
     return Vector3i(a.x >> b, a.y >> b, a.z >> b);
 }
@@ -162,3 +191,15 @@ inline Vector3i operator*(const int64_t p_scalar, const Vector3i &p_vec) {
     return p_vec * p_scalar;
 }
 
+static inline uint32_t hash_djb2_one_32(uint32_t in, uint32_t prev = 5381) {
+    return ((prev << 5) + prev) + in;
+}
+
+struct Vector3iHasher {
+    size_t operator()(const Vector3i &vk) const {
+        uint32_t h = hash_djb2_one_32(vk.x);
+        h = hash_djb2_one_32(vk.y, h);
+        h = hash_djb2_one_32(vk.z, h);
+        return h;
+    }
+};
