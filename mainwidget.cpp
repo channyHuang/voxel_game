@@ -8,12 +8,24 @@
 
 #include "glwidget.h"
 
-#include "voxel_buffer.h"
-#include "terraingenerator.h"
+#include "terraingenerator_roblox.h"
 #include "voxelterrain.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
-    m_pGlWidget = new GlWidget(parent);
+    init();
+
+    initWidgets();
+}
+
+MainWidget::~MainWidget() {
+    emit notice(Notification_Exit);
+    if (terrain_thread != nullptr) {
+        terrain_thread->exit();
+    }
+}
+
+void MainWidget::initWidgets() {
+    m_pGlWidget = new GlWidget(this);
     m_pGlWidget->setMinimumSize(QSize(640, 480));
 
     QPushButton *createBtn = new QPushButton(this);
@@ -21,7 +33,8 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
     connect(createBtn, &QPushButton::clicked, [&](){
         VoxelToolTerrain *tool = static_cast<VoxelToolTerrain*>(VoxelTerrain::getInstance()->get_voxel_tool());
         // generate terrain
-        tool->set_voxel_f(Vector3i(1, 1, 1), -1);
+
+        TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(tool, -1);
     });
     QVBoxLayout *buttonLayout = new QVBoxLayout;
     buttonLayout->addWidget(createBtn);
@@ -33,7 +46,22 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
     setLayout(mainlayout);
 }
 
-MainWidget::~MainWidget() {}
+bool MainWidget::init() {
+    auto terrain = VoxelTerrain::getInstance();
+    connect(this, &MainWidget::notice, terrain, &VoxelTerrain::_notification);
+    terrain_thread = new QThread(this);
+    terrain->moveToThread(terrain_thread);
+    terrain_thread->start(QThread::LowPriority);
+
+    emit notice(Notification_Enter);
+    timer.setInterval(5000);
+    connect(&timer, &QTimer::timeout, terrain, [&](){
+        terrain->_notification(Notification_Process);
+    });
+    timer.start();
+    return true;
+}
+
 /*
 void output2File(const TriMesh &mesh, std::string sOutputFile = "mesh.obj") {
     std::ofstream ofs(sOutputFile.c_str());
@@ -56,21 +84,4 @@ void output2File(const TriMesh &mesh, std::string sOutputFile = "mesh.obj") {
     ofs.close();
 }
 */
-void test()
-{
-    std::shared_ptr<VoxelBuffer> buffer = std::make_shared<VoxelBuffer>();
-    Vector3i vSize = Vector3i(100);
-    buffer->create(100, 100, 100);
 
-    TerrainGenerator generator;
-    generator.generateTerrain(*buffer.get());
-
-    auto const sdfFunction = [&](float x, float y, float z) -> float {
-        return buffer->get_voxel_f(x, y, z, VoxelBuffer::CHANNEL_SDF);
-    };
-
-//    SurfaceNets surfaceNets;
-//    TriMesh mesh = surfaceNets.surfaceNets(sdfFunction, vSize);
-
-//    output2File(mesh);
-}

@@ -1,6 +1,6 @@
 #include "voxeldataloader.h"
 
-VoxelDataLoader::VoxelDataLoader() {
+VoxelDataLoader::VoxelDataLoader(unsigned int thread_count, unsigned int block_size_pow2) {
     // TODO I'm not sure it's worth to configure more than one thread for voxel streams
 
     FixedArray<Mgr::BlockProcessingFunc, Mgr::MAX_JOBS> processors;
@@ -11,8 +11,8 @@ VoxelDataLoader::VoxelDataLoader() {
 
     int batch_count = 128;
     int sync_interval_ms = 500;
-
-    _mgr = new Mgr(1, sync_interval_ms, processors, true, batch_count);
+    _block_size_pow2 = block_size_pow2;
+    _mgr = new Mgr(thread_count, sync_interval_ms, processors, true, batch_count);
 }
 
 VoxelDataLoader::~VoxelDataLoader() {

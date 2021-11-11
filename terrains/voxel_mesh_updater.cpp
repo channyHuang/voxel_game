@@ -40,12 +40,12 @@ void VoxelMeshUpdater::process_blocks_thread_func(
         VoxelMesher* mesher) {
 
 	for (unsigned int i = 0; i < inputs.size(); ++i) {
-
 		const InputBlock &ib = inputs[i];
 		const InputBlockData &block = ib.data;
 		OutputBlockData &output = outputs[i].data;
 
         VoxelMesher::Input input = {*block.voxels, ib.lod };
+        input.position = ib.position;
 
         mesher->build(output.smooth_surfaces, input);
 	}

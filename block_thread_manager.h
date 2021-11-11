@@ -1,6 +1,8 @@
 #ifndef VOXEL_BLOCK_THREAD_MANAGER_H
 #define VOXEL_BLOCK_THREAD_MANAGER_H
 
+#include <QDebug>
+
 #include <algorithm>
 #include <functional>
 #include <vector>
@@ -17,46 +19,32 @@
 
 typedef Boxi Rect3i;
 
-// Base structure for an asynchronous block processing manager using threads.
-// It is the same for block loading and rendering, hence made a generic one.
-// - Push requests and pop requests in batch
-// - One or more threads can be used
-// - Minimizes sync points
-// - Orders blocks to process the closest ones first
-// - Merges duplicate requests
-// - Cancels requests that become out of range
-// - Takes some stats
 template <typename InputBlockData_T, typename OutputBlockData_T>
 class VoxelBlockThreadManager {
 public:
-    static const int MAX_JOBS = 8; // Arbitrary, should be enough
+    static const int MAX_JOBS = 8;
 
-    // Specialization must be copyable
     struct InputBlock {
         InputBlockData_T data;
-        Vector3i position; // In LOD-relative block coordinates
+        Vector3i position;
         uint8_t lod = 0;
-        bool can_be_discarded = true; // If false, will always be processed, even if the thread is told to exit
+        bool can_be_discarded = true;
         float sort_heuristic = 0;
     };
 
-    // Specialization must be copyable
     struct OutputBlock {
         OutputBlockData_T data;
-        Vector3i position; // In LOD-relative block coordinates
+        Vector3i position;
         uint8_t lod = 0;
-        // True if the block was actually dropped.
-        // Ideally the requester will agree that it doesn't need that block anymore,
-        // but in cases it still does (bad case), it will have to query it again.
         bool drop_hint = false;
     };
 
     struct Input {
         std::vector<InputBlock> blocks;
-        Vector3i priority_position; // In LOD0 block coordinates
-        Vector3 priority_direction; // Where the viewer is looking at
-        int exclusive_region_extent = 0; // Region beyond which the processor is allowed to discard requests
-        int exclusive_region_max_lod = Math::MAX_LOD; // LOD beyond which exclusive region won't be used
+        Vector3i priority_position;
+        Vector3 priority_direction;
+        int exclusive_region_extent = 0;
+        int exclusive_region_max_lod = Math::MAX_LOD;
         bool use_exclusive_region = false;
         int max_lod_index = 0;
 
@@ -71,7 +59,6 @@ public:
     };
 
     struct Stats {
-        // Generic stats
         bool first = true;
         uint64_t min_time = 0;
         uint64_t max_time = 0;
@@ -79,7 +66,6 @@ public:
         uint32_t remaining_blocks[MAX_JOBS];
         uint32_t thread_count = 0;
         uint32_t dropped_count = 0;
-        // Processor-specific
         ProcessorStats processor;
 
         Stats() {
@@ -96,11 +82,6 @@ public:
 
     typedef std::function<void(ArraySlice<InputBlock>, ArraySlice<OutputBlock>, ProcessorStats &)> BlockProcessingFunc;
 
-    // TODO Make job count dynamic, don't start threads in constructor
-
-    // Creates and starts jobs.
-    // Processors are given as array because you could decide to either re-use the same one,
-    // or have clones depending on them being stateless or not.
     VoxelBlockThreadManager(
             unsigned int job_count,
             unsigned int sync_interval_ms,
@@ -121,13 +102,10 @@ public:
         for (unsigned int i = 0; i < _job_count; ++i) {
             JobData &job = _jobs[i];
 
-//            job.input_mutex = Mutex::create();
-//            job.output_mutex = Mutex::create();
-//            job.semaphore = Semaphore::create();
-//            job.thread = Thread::create(_thread_func, &job);
+            //job.input_mutex.unlock();
+            //job.output_mutex.unlock();
             job.sema.release();
             job.thread = std::thread(_thread_func, &job);
-
             job.needs_sort = true;
             job.processor = processors[i];
         }
@@ -137,19 +115,17 @@ public:
         for (unsigned int i = 0; i < _job_count; ++i) {
             JobData &job = _jobs[i];
             job.thread_exit = true;
-            job.sema.acquire();
+            job.sema.release();
         }
 
         for (unsigned int i = 0; i < _job_count; ++i) {
             JobData &job = _jobs[i];
 
-//            Thread::wait_to_finish(job.thread);
             job.thread.join();
 
-//            delete(job.thread);
-//            delete(job.sema);
-//            delete(job.input_mutex);
-//            delete(job.output_mutex);
+            job.sema.release();
+            //job.input_mutex.unlock();
+            //job.output_mutex.unlock();
         }
     }
 
@@ -158,7 +134,6 @@ public:
         unsigned int highest_pending_count = 0;
         unsigned int lowest_pending_count = 0;
 
-        // Lock all inputs and gather their pending work counts
         for (unsigned int job_index = 0; job_index < _job_count; ++job_index) {
             JobData &job = _jobs[job_index];
 
@@ -170,11 +145,8 @@ public:
 
         unsigned int i = 0;
 
-        // We don't use a "weakest team gets it" dispatch for speed,
-        // So prioritize only jobs under median workload count and not just the highest.
         unsigned int median_pending_count = lowest_pending_count + (highest_pending_count - lowest_pending_count) / 2;
 
-        // Dispatch to jobs with least pending requests
         for (unsigned int job_index = 0; job_index < _job_count && i < input.blocks.size(); ++job_index) {
             JobData &job = _jobs[job_index];
             unsigned int pending_count = job.shared_input.blocks.size();
@@ -190,8 +162,6 @@ public:
             }
         }
 
-        // Dispatch equal count of remaining requests.
-        // Remainder is dispatched too until consumed through the first jobs.
         unsigned int base_count = (input.blocks.size() - i) / _job_count;
         unsigned int remainder = (input.blocks.size() - i) % _job_count;
         for (unsigned int job_index = 0; job_index < _job_count && i < input.blocks.size(); ++job_index) {
@@ -211,7 +181,6 @@ public:
             }
         }
 
-        // Set remaining data on all jobs, unlock inputs and resume
         for (unsigned int job_index = 0; job_index < _job_count; ++job_index) {
             JobData &job = _jobs[job_index];
 
@@ -232,7 +201,7 @@ public:
             job.input_mutex.unlock();
 
             if (should_run) {
-                job.sema.acquire();
+                 job.sema.release();
             }
         }
 
@@ -240,19 +209,18 @@ public:
             char str[1024];
             sprintf(str, "VoxelBlockProcessor: {1} blocks already in queue were replaced");
         }
+
     }
 
     void pop(Output &output) {
         output.stats = Stats();
         output.stats.thread_count = _job_count;
 
-        // Harvest results from all jobs
         for (unsigned int i = 0; i < _job_count; ++i) {
 
             JobData &job = _jobs[i];
             {
-                std::lock_guard<std::mutex> lock(job.output_mutex);
-                //MutexLock lock(job.output_mutex);
+                std::lock_guard<std::mutex>(job.output_mutex);
 
                 output.blocks.insert(output.blocks.end(), job.shared_output.blocks.begin(), job.shared_output.blocks.end());
                 merge_stats(output.stats, job.shared_output.stats, i);
@@ -261,46 +229,23 @@ public:
         }
     }
 
-//    static Dictionary to_dictionary(const Stats &stats) {
-//        Dictionary d;
-//        d["min_time"] = stats.min_time;
-//        d["max_time"] = stats.max_time;
-//        d["sorting_time"] = stats.sorting_time;
-//        d["dropped_count"] = stats.dropped_count;
-//        Array remaining_blocks;
-//        remaining_blocks.resize(stats.thread_count);
-//        for (unsigned int i = 0; i < stats.thread_count; ++i) {
-//            remaining_blocks[i] = stats.remaining_blocks[i];
-//        }
-//        d["remaining_blocks_per_thread"] = remaining_blocks;
-//        d["file_openings"] = stats.processor.file_openings;
-//        d["time_spent_opening_files"] = stats.processor.time_spent_opening_files;
-//        return d;
-//    }
-
 private:
     struct JobData {
-        // Data accessed from other threads, so they need mutexes
-        //------------------------
         Input shared_input;
         Output shared_output;
-//        Mutex *input_mutex = nullptr;
-//        Mutex *output_mutex = nullptr;
+
         std::mutex input_mutex;
         std::mutex output_mutex;
-        // Indexes which blocks are present in shared_input,
-        // so if we push a duplicate request with the same coordinates, we can discard it without a linear search
+
         FixedArray<std::unordered_map<Vector3i, int, Vector3iHasher>, Math::MAX_LOD> shared_input_block_indexes;
         bool needs_sort = false;
-        // Only read by the thread. Should not go back to `false` after being set to `true`.
+
         bool thread_exit = false;
         //------------------------
 
         Input input;
         Output output;
-//        Semaphore *semaphore = nullptr;
-//        Thread *thread = nullptr;
-//        semaphore *semaphore = nullptr;
+
         std::binary_semaphore sema = std::binary_semaphore(1);
         std::thread thread;
         uint32_t sync_interval_ms = 100;
@@ -323,8 +268,6 @@ private:
     }
 
     unsigned int push_block_requests(JobData &job, const std::vector<InputBlock> &input_blocks, int begin, int count) {
-        // The job's input mutex must have been locked first!
-
         unsigned int replaced_blocks = 0;
         unsigned int end = begin + count;
 
@@ -334,14 +277,11 @@ private:
             if (job.duplicate_rejection) {
                 int index = job.shared_input_block_indexes[block.lod][block.position];
 
-                // TODO When using more than one thread, duplicate rejection is less effective... is it relevant to keep it at all?
                 if (index) {
-                    // The block is already in the update queue, replace it
                     ++replaced_blocks;
                     job.shared_input.blocks[index] = block;
 
                 } else {
-                    // Append new block request
                     unsigned int j = job.shared_input.blocks.size();
                     job.shared_input.blocks.push_back(block);
                     job.shared_input_block_indexes[block.lod][block.position] = j;
@@ -369,24 +309,17 @@ private:
 
             bool should_exit = false;
             if (data.thread_exit) {
-                // This will be the last run, we must process all mandatory requests.
-                // We can't check `thread_exit` afterwards because it could have become `true` after we sync,
-                // hence we could miss some of the requests.
                 should_exit = true;
             }
 
             thread_sync(data, queue_index, stats, stats.sorting_time, stats.dropped_count);
 
-            // Continue to run as long as there are queries to process
             while (!data.input.blocks.empty()) {
                 if (!data.input.blocks.empty()) {
                     if (should_exit) {
-                        // Flush inputs we processed already
                         shift_up(data.input.blocks, queue_index);
                         queue_index = 0;
 
-                        // Remove all remaining queries except those that can't be discarded.
-                        // Since the thread is exiting, we don't care anymore about sorting.
                         unordered_remove_if(data.input.blocks,
                                 [](const InputBlock &b) {
                                     return b.can_be_discarded;
@@ -462,6 +395,8 @@ private:
             // Wait for future wake-up
             data.sema.acquire();
         }
+
+        qDebug() << "exit";
     }
 
     static inline float get_priority_heuristic(const InputBlock &a, const Vector3i &viewer_block_pos, const Vector3 &viewer_direction, int max_lod) {
@@ -469,8 +404,6 @@ private:
         Vector3i p = a.position * f;
         float d = std::sqrt(p.distance(viewer_block_pos) + 0.1f);
         float dp = viewer_direction.dot(viewer_block_pos.to_vec3() / d);
-        // Higher lod indexes come first to allow the octree to subdivide.
-        // Then comes distance, which is modified by how much in view the block is
         return (max_lod - a.lod) * 10000.f + d + (1.f - dp) * 4.f * f;
     }
 
@@ -482,14 +415,12 @@ private:
 
     static void thread_sync(JobData &data, unsigned int queue_index, Stats stats, uint64_t &out_sort_time, unsigned int &out_dropped_count) {
         if (!data.input.blocks.empty()) {
-            // Cleanup input vector
 
             if (queue_index >= data.input.blocks.size()) {
                 data.input.blocks.clear();
 
             } else if (queue_index > 0) {
 
-                // Shift up remaining items since we use a Vector
                 shift_up(data.input.blocks, queue_index);
             }
         }
@@ -497,12 +428,9 @@ private:
         stats.remaining_blocks[data.job_index] = data.input.blocks.size();
         bool needs_sort;
 
-        // Get input
         {
-//            MutexLock lock(data.input_mutex);
-            std::lock_guard<std::mutex> lock(data.input_mutex);
+            std::lock_guard<std::mutex>(data.input_mutex);
 
-            // Copy requests from shared to internal
             append_array(data.input.blocks, data.shared_input.blocks);
 
             data.input.priority_position = data.shared_input.priority_position;
@@ -516,7 +444,6 @@ private:
             data.shared_input.blocks.clear();
 
             if (data.duplicate_rejection) {
-                // We emptied shared input, empty shared_input_block_indexes then
                 for (unsigned int lod_index = 0; lod_index < data.shared_input_block_indexes.size(); ++lod_index) {
                     data.shared_input_block_indexes[lod_index].clear();
                 }
@@ -527,20 +454,13 @@ private:
         }
 
         if (!data.output.blocks.empty()) {
-            //		print_line(String("VoxelMeshUpdater: posting {0} blocks, {1} remaining ; cost [{2}..{3}] usec")
-            //				   .format(varray(_output.blocks.size(), _input.blocks.size(), stats.min_time, stats.max_time)));
+            std::lock_guard<std::mutex>(data.output_mutex);
 
-            // Copy output to shared
-//            MutexLock lock(data.output_mutex);
-            std::lock_guard<std::mutex> lock(data.output_mutex);
             data.shared_output.blocks.insert(data.shared_output.blocks.end(), data.output.blocks.begin(), data.output.blocks.end());
             data.shared_output.stats = stats;
             data.output.blocks.clear();
         }
 
-        // Cancel blocks outside exclusive region.
-        // We do this early because if the player keeps moving forward,
-        // we would keep accumulating requests forever, and that means slower sorting and memory waste
         int dropped_count = 0;
         if (data.input.use_exclusive_region) {
             for (unsigned int i = 0; i < data.input.blocks.size(); ++i) {
@@ -553,24 +473,17 @@ private:
                 Rect3i box = Rect3i::from_center_extents(data.input.priority_position >> ib.lod, Vector3i(data.input.exclusive_region_extent));
 
                 if (!box.contains(ib.position)) {
-
-                    // Indicate the caller that we dropped that block.
-                    // This can help troubleshoot bugs in some situations.
                     OutputBlock ob;
                     ob.position = ib.position;
                     ob.lod = ib.lod;
                     ob.drop_hint = true;
                     data.output.blocks.push_back(ob);
 
-                    // We'll put that block in replacement of the dropped one and pop the last cell,
-                    // so we don't need to shift every following blocks
                     const InputBlock &shifted_block = data.input.blocks.back();
 
-                    // Do this last because it invalidates `ib`
                     data.input.blocks[i] = shifted_block;
                     data.input.blocks.pop_back();
 
-                    // Move back to redo this index, since we replaced the current block
                     --i;
 
                     ++dropped_count;
@@ -589,18 +502,16 @@ private:
         if (!data.input.blocks.empty() && needs_sort) {
             for (auto it = data.input.blocks.begin(); it != data.input.blocks.end(); ++it) {
                 InputBlock &ib = *it;
-                // Set or override previous heuristic based on new infos
                 ib.sort_heuristic = get_priority_heuristic(ib,
                         data.input.priority_position,
                         data.input.priority_direction,
                         data.input.max_lod_index);
             }
 
-            // Re-sort priority
             auto BlockUpdateComparator = [](const InputBlock &a, const InputBlock &b) {
                 return a.sort_heuristic < b.sort_heuristic;
             };
-            //SortArray<InputBlock, BlockUpdateComparator> sorter;
+
             std::sort(data.input.blocks.begin(), data.input.blocks.end(), BlockUpdateComparator);
         }
 

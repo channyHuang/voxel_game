@@ -123,7 +123,7 @@ public:
         return x * y * z;
     }
 
-    float len() {
+    float len() const {
         return std::sqrt(x * x + y * y + z * z);
     }
 

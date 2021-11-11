@@ -5,6 +5,7 @@
 #include <functional>
 #include <unordered_map>
 #include <memory>
+#include <fstream>
 
 #include <QDebug>
 
@@ -103,6 +104,48 @@ namespace SURFACE_NETS {
 				|| mesh_type_[face_index.y] == MeshType::MESH_WATER
 				|| mesh_type_[face_index.z] == MeshType::MESH_WATER);
 		}
+
+        void outputToObjFile(std::string sFileName, Vector3i position, bool bseperate = false) {
+            if (vertices_.size() <= 0) return;
+            Vector3i offset = position * 16;
+            if (!bseperate) {
+                if (faces_.size() <= 0) return;
+
+                std::ofstream ofs(sFileName + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj");
+                for (size_t i = 0; i < vertices_.size(); i++) {
+                    ofs << "v " << vertices_[i][0] + offset.x << " " << vertices_[i][1] + offset.y << " " << vertices_[i][2] + offset.z << std::endl;
+                    ofs << "vn " << normals_[i].x << " " << normals_[i].y << " " << normals_[i].z << std::endl;
+                }
+                for (size_t i = 0; i < faces_.size(); ++i) {
+                    ofs << "f " << faces_[i].x + 1 << " " << faces_[i].y + 1 << " " << faces_[i].z + 1 << std::endl;
+                }
+                ofs.close();
+            } else {
+                if (water_faces_.size() <= 0 && solid_faces_.size() <= 0) return;
+                if (water_faces_.size() > 0) {
+                    std::ofstream ofs_water(sFileName + "_water_" + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj");
+                    for (size_t i = 0; i < vertices_.size(); i++) {
+                        ofs_water << "v " << vertices_[i][0] + offset.x << " " << vertices_[i][1] + offset.y << " " << vertices_[i][2] + offset.z << std::endl;
+                        ofs_water << "vn " << normals_[i].x << " " << normals_[i].y << " " << normals_[i].z << std::endl;
+                    }
+                    for (size_t i = 0; i < water_faces_.size(); ++i) {
+                        ofs_water << "f " << water_faces_[i].x + 1 << " " << water_faces_[i].y + 1 << " " << water_faces_[i].z + 1 << std::endl;
+                    }
+                    ofs_water.close();
+                }
+                if (solid_faces_.size() > 0) {
+                    std::ofstream ofs_water(sFileName + "_solid_" + std::to_string(offset.x) + "_" + std::to_string(offset.y) + "_" + std::to_string(offset.z) + ".obj");
+                    for (size_t i = 0; i < vertices_.size(); i++) {
+                        ofs_water << "v " << vertices_[i][0] + offset.x << " " << vertices_[i][1] + offset.y << " " << vertices_[i][2] + offset.z << std::endl;
+                        ofs_water << "vn " << normals_[i].x << " " << normals_[i].y << " " << normals_[i].z << std::endl;
+                    }
+                    for (size_t i = 0; i < solid_faces_.size(); ++i) {
+                        ofs_water << "f " << solid_faces_[i].x + 1 << " " << solid_faces_[i].y + 1 << " " << solid_faces_[i].z + 1 << std::endl;
+                    }
+                    ofs_water.close();
+                }
+            }
+        }
 	};
 
 	namespace {

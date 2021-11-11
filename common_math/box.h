@@ -9,6 +9,7 @@ public:
     Box(const Vector3 &_vMin, const Vector3 &_vMax) : vMin(_vMin), vMax(_vMax) {}
     ~Box() {};
 
+    Vector3 getCenter() const { return (vMin + vMax) * 0.5f; }
 public:
     Vector3 vMin, vMax;
 };

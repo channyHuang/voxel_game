@@ -42,3 +42,22 @@ void TerrainGenerator::generateTerrain(VoxelBuffer &buffer, TerrainType eTerrain
         break;
     }
 }
+
+void test()
+{
+    std::shared_ptr<VoxelBuffer> buffer = std::make_shared<VoxelBuffer>();
+    Vector3i vSize = Vector3i(100);
+    buffer->create(100, 100, 100);
+
+    TerrainGenerator generator;
+    generator.generateTerrain(*buffer.get());
+
+    auto const sdfFunction = [&](float x, float y, float z) -> float {
+        return buffer->get_voxel_f(x, y, z, VoxelBuffer::CHANNEL_SDF);
+    };
+
+//    SurfaceNets surfaceNets;
+//    TriMesh mesh = surfaceNets.surfaceNets(sdfFunction, vSize);
+
+//    output2File(mesh);
+}

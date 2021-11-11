@@ -33,6 +33,10 @@ VoxelTerrain::~VoxelTerrain() {
         delete _block_updater;
         _block_updater = nullptr;
     }
+    if (_stream_thread != nullptr) {
+        delete _stream_thread;
+        _stream_thread = nullptr;
+    }
 }
 
 void VoxelTerrain::_set_block_size_po2(int p_block_size_po2) {
@@ -45,7 +49,6 @@ unsigned int VoxelTerrain::get_block_size_pow2() const {
 
 void VoxelTerrain::make_block_dirty(Vector3i bpos) {
     VoxelBlock *block = _map->get_block(bpos);
-
     if (block == nullptr) {
         if (_loading_blocks.find(bpos) == _loading_blocks.end()) {
             _blocks_pending_load.push_back(bpos);
@@ -103,6 +106,19 @@ void VoxelTerrain::stop_updater() {
 
     ResetMeshStateAction a;
     _map->for_all_blocks(a);
+}
+
+void VoxelTerrain::start_streamer() {
+    _stream_thread = new VoxelDataLoader(1, get_block_size_pow2());
+}
+
+void VoxelTerrain::stop_streamer() {
+    if (_stream_thread) {
+        delete(_stream_thread);
+        _stream_thread = nullptr;
+    }
+    _loading_blocks.clear();
+    _blocks_pending_load.clear();
 }
 
 
@@ -359,22 +375,27 @@ VoxelTool* VoxelTerrain::get_voxel_tool() {
 
 void VoxelTerrain::_notification(int p_what) {
     switch (p_what) {
-        case Notification_Enter:
-            if (_block_updater == nullptr) {
-                start_updater();
-            }
-            break;
-        case Notification_Process:
-            _process();
-            break;
+    case Notification_Enter:
+        if (_block_updater == nullptr) {
+            start_updater();
+        }
+        if (_stream_thread == nullptr) {
+            start_streamer();
+        }
+        break;
+    case Notification_Process:
+        _process();
+        break;
     case Notification_Exit:
         stop_updater();
+        stop_streamer();
         default:
             break;
     }
 }
 
 void VoxelTerrain::_process() {
+    qDebug() << "VoxelTerrain::_process ";
     ProfilingClock profiling_clock;
 
     _stats.dropped_block_loads = 0;
@@ -452,6 +473,7 @@ void VoxelTerrain::_process() {
         }
 
         _block_updater->push(input);
+
         _blocks_pending_update.clear();
     }
 

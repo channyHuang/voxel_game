@@ -35,7 +35,7 @@ public:
     typedef Mgr::Output Output;
     typedef Mgr::Stats Stats;
 
-    VoxelDataLoader();
+    VoxelDataLoader(unsigned int thread_count, unsigned int block_size_pow2);
     ~VoxelDataLoader();
 
     void push(const Input &input) { _mgr->push(input); }

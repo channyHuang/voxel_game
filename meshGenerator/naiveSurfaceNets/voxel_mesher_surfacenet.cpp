@@ -1,6 +1,6 @@
 #include "voxel_mesher_surfacenet.h"
 
-//#define DEBUG_SINGLE_BUILD_MESH
+#define DEBUG_SINGLE_BUILD_MESH
 //#define DEBUG_SINGLE_BUILD_TIME
 
     namespace {
@@ -69,8 +69,7 @@
     {
         //corresponding to VoxelDataMap._block_size_pow2, which is 4 currently, if input.lod == 4, return all level
         if (input.lod > _lod_count || input.lod < 0) {
-            char str[1024];
-            sprintf(str, "VoxelMesherSurfaceNets::build input.lod (= %d) not support", input.lod);
+            qDebug() << "VoxelMesherSurfaceNets::build input.lod (= " << input.lod << ") not support";
             return;
         }
 #ifdef DEBUG_SINGLE_BUILD_TIME
@@ -84,7 +83,8 @@
         clear_output();
 
         const VoxelBuffer &voxels = input.voxels;
-        if (voxels.get_channel_depth(channel) != VoxelBuffer::DEPTH_8_BIT) return;
+
+        if (voxels.get_channel_depth(channel) != VoxelBuffer::DEPTH_16_BIT) return;
 #ifdef DEBUG_SINGLE_BUILD_MESH
         if (BMESH_SUPPORT_WATER) {
             build_internal_with_water(output, voxels, channel, input.lod, input.position);
@@ -159,12 +159,9 @@
         const Vector3i &position) {
         const Vector3i block_size_with_padding = voxels.get_size();
         if (block_size_with_padding.x <= 2 || block_size_with_padding.y <= 2 || block_size_with_padding.z <= 2) {
-            char str[1024];
-            sprintf(str, "VoxelMesherSurfaceNets::build_internal_with_water block_size (= (%d, %d, %d)) too small, not support.",
-                block_size_with_padding.x, block_size_with_padding.y, block_size_with_padding.z);
+            qDebug() << "VoxelMesherSurfaceNets::build_internal_with_water block_size (= " <<  block_size_with_padding.to_vec3().toString().c_str() <<  ") too small, not support.";
             return;
         }
-
         const Vector3i block_size = block_size_with_padding - Vector3i(MIN_PADDING + MAX_PADDING);
         const Vector3i block_size_scaled = block_size << lod_index;
         uint8_t cell_border_mask = 0;
@@ -199,31 +196,9 @@
         separateSolidAndWaterFaces(pmesh);
 #ifdef DEBUG_SINGLE_BUILD_MESH
         VertexMesh &meshWithWater = *pmesh;
-        Vector3 offset = vector3i2Vector3(position) * 16.f;
-        if (meshWithWater.vertices_.size() > 0) {
-            if (meshWithWater.solid_faces_.size() > 0) {
-                std::ofstream ofs_solid("1solid_mesh_" + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj");
-                for (size_t i = 0; i < meshWithWater.vertices_.size(); i++) {
-                    ofs_solid << "v " << meshWithWater.vertices_[i][0] + offset.x << " " << meshWithWater.vertices_[i][1] + offset.y << " " << meshWithWater.vertices_[i][2] + offset.z << std::endl;
-                    ofs_solid << "vn " << meshWithWater.normals_[i].x << " " << meshWithWater.normals_[i].y << " " << meshWithWater.normals_[i].z << std::endl;
-                }
-                for (size_t i = 0; i < meshWithWater.solid_faces_.size(); ++i) {
-                    ofs_solid << "f " << meshWithWater.solid_faces_[i].x + 1 << " " << meshWithWater.solid_faces_[i].y + 1 << " " << meshWithWater.solid_faces_[i].z + 1 << std::endl;
-                }
-                ofs_solid.close();
-            }
-            if (meshWithWater.water_faces_.size() > 0) {
-                std::ofstream ofs_water("1water_mesh_" + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj");
-                for (size_t i = 0; i < meshWithWater.vertices_.size(); i++) {
-                    ofs_water << "v " << meshWithWater.vertices_[i][0] + offset.x << " " << meshWithWater.vertices_[i][1] + offset.y << " " << meshWithWater.vertices_[i][2] + offset.z << std::endl;
-                    ofs_water << "vn " << meshWithWater.normals_[i].x << " " << meshWithWater.normals_[i].y << " " << meshWithWater.normals_[i].z << std::endl;
-                }
-                for (size_t i = 0; i < meshWithWater.water_faces_.size(); ++i) {
-                    ofs_water << "f " << meshWithWater.water_faces_[i].x + 1 << " " << meshWithWater.water_faces_[i].y + 1 << " " << meshWithWater.water_faces_[i].z + 1 << std::endl;
-                }
-                ofs_water.close();
-            }
-        }
+        Vector3 offset = vector3i2Vector3(position);
+        meshWithWater.outputToObjFile("mesh_", position, false);
+        meshWithWater.outputToObjFile("mesh_", position, true);
 #endif
         clear_output();
         vertexMesh2OutputArrays_with_water(pmesh, output, block_size_scaled, cell_border_mask, position);

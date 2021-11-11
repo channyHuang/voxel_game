@@ -22,6 +22,7 @@ public:
 	struct Input {
 		const VoxelBuffer &voxels;
         int lod;
+        Vector3i position;
 	};
 
 	struct Output {
@@ -41,8 +42,8 @@ protected:
 	void set_padding(int minimum, int maximum);
 
 private:
-	int _minimum_padding = 0;
-	int _maximum_padding = 0;
+    int _minimum_padding = 2;
+    int _maximum_padding = 2;
 };
 
 #endif // VOXEL_MESHER_H

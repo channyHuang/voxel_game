@@ -50,8 +50,8 @@ public:
         return vDist[dim];
     }
 
-    static constexpr float PI = 3.14159265;
-    static constexpr float LOWEPSILON = 1e-4;
+    static constexpr float PI = 3.14159265f;
+    static constexpr float LOWEPSILON = 1e-4f;
     static constexpr int MAX_LOD = 4;
 
 };

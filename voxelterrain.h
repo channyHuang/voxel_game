@@ -138,6 +138,7 @@ private:
 
     std::vector<VoxelDataLoader::InputBlock> _blocks_to_save;
 
+    VoxelDataLoader *_stream_thread;
     VoxelMeshUpdater *_block_updater;
 
     Vector3i _last_viewer_block_pos;

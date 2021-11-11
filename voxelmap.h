@@ -2,6 +2,7 @@
 #define VOXELMAP_H
 
 #include <unordered_map>
+#include <QDebug>
 
 #include "common_math/boxi.h"
 #include "voxelblock.h"
