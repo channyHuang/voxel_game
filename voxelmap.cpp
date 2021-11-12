@@ -11,7 +11,7 @@ VoxelMap::VoxelMap() :
     set_block_size_pow2(4);
 
     _default_voxel.fill(0);
-    _default_voxel[VoxelBuffer::CHANNEL_SDF] = 255;
+    _default_voxel[VoxelBuffer::CHANNEL_SDF] = 0xfffe;
 }
 
 VoxelMap::~VoxelMap() {

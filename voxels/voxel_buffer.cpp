@@ -128,7 +128,7 @@ VoxelBuffer::VoxelBuffer() {
 
 	// 16-bit is better on average to handle large worlds
 	_channels[CHANNEL_SDF].depth = VoxelBuffer::DEFAULT_SDF_CHANNEL_DEPTH;
-	_channels[CHANNEL_SDF].defval = 0xffff;
+    _channels[CHANNEL_SDF].defval = 0xfffe;
 }
 
 VoxelBuffer::~VoxelBuffer() {
@@ -274,6 +274,7 @@ real_t VoxelBuffer::get_voxel_f(int x, int y, int z, unsigned int channel_index)
 
 void VoxelBuffer::set_voxel_f(real_t value, int x, int y, int z, unsigned int channel_index) {
     //ERR_FAIL_INDEX(channel_index, MAX_CHANNELS);
+    if (value > 0 && value <= (1.f / 0xfffe)) value = 1.f / 0xfffe;
 	set_voxel(real_to_raw_voxel(value, _channels[channel_index].depth), x, y, z, channel_index);
 }
 

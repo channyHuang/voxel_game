@@ -51,8 +51,16 @@ uint64_t VoxelTool::get_voxel(Vector3i pos) {
     return _get_voxel(pos);
 }
 
+uint64_t VoxelTool::get_voxel(Vector3i pos, int channel) {
+    return _get_voxel(pos, channel);
+}
+
 float VoxelTool::get_voxel_f(Vector3i pos) {
     return _get_voxel_f(pos);
+}
+
+float VoxelTool::get_voxel_f(Vector3i pos, int channel) {
+    return _get_voxel_f(pos, channel);
 }
 
 void VoxelTool::set_voxel(Vector3i pos, uint64_t v) {
@@ -64,12 +72,30 @@ void VoxelTool::set_voxel(Vector3i pos, uint64_t v) {
     _post_edit(box);
 }
 
+void VoxelTool::set_voxel(Vector3i pos, uint64_t v, int channel) {
+    Rect3i box(pos, Vector3i(1));
+    if (!is_area_editable(box)) {
+        return;
+    }
+    _set_voxel(pos, v, channel);
+    _post_edit(box);
+}
+
 void VoxelTool::set_voxel_f(Vector3i pos, float v) {
     Rect3i box(pos, Vector3i(1));
     if (!is_area_editable(box)) {
         return;
     }
     _set_voxel_f(pos, v);
+    _post_edit(box);
+}
+
+void VoxelTool::set_voxel_f(Vector3i pos, float v, int channel) {
+    Rect3i box(pos, Vector3i(1));
+    if (!is_area_editable(box)) {
+        return;
+    }
+    _set_voxel_f(pos, v, channel);
     _post_edit(box);
 }
 
@@ -96,14 +122,29 @@ uint64_t VoxelTool::_get_voxel(Vector3i pos) {
     return 0;
 }
 
+uint64_t VoxelTool::_get_voxel(Vector3i pos, int channel) {
+    return 0;
+}
+
 float VoxelTool::_get_voxel_f(Vector3i pos) {
+    return 0;
+}
+
+float VoxelTool::_get_voxel_f(Vector3i pos, int channel) {
     return 0;
 }
 
 void VoxelTool::_set_voxel(Vector3i pos, uint64_t v) {
 }
 
+void VoxelTool::_set_voxel(Vector3i pos, uint64_t v, int channel) {
+}
+
+
 void VoxelTool::_set_voxel_f(Vector3i pos, float v) {
+}
+
+void VoxelTool::_set_voxel_f(Vector3i pos, float v, int channel) {
 }
 
 namespace {

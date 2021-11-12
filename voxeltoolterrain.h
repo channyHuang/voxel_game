@@ -21,6 +21,10 @@ protected:
     void _set_voxel_f(Vector3i pos, float v) override;
     void _post_edit(const Rect3i &box) override;
 
+    uint64_t _get_voxel(Vector3i pos, int channel) override;
+    float _get_voxel_f(Vector3i pos, int channel) override;
+    void _set_voxel(Vector3i pos, uint64_t v, int channel) override;
+    void _set_voxel_f(Vector3i pos, float v, int channel) override;
 private:
     VoxelTerrain *_terrain = nullptr;
     VoxelMap* _map;

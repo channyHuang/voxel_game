@@ -1,6 +1,6 @@
 #include "voxel_mesher_surfacenet.h"
 
-#define DEBUG_SINGLE_BUILD_MESH
+//#define DEBUG_SINGLE_BUILD_MESH
 //#define DEBUG_SINGLE_BUILD_TIME
 
     namespace {
@@ -174,18 +174,18 @@
         };
         auto const funVoxelOccupancy = [&](const Vector3i &posi) -> Real {
             Real sdf = voxels.get_voxel_f(posi, VoxelBuffer::CHANNEL_SDF);
-            return (sdf > 0 ? 0 : -sdf * 254);
+            return (sdf > 0 ? 0 : -sdf * 0xfffe);
         };
         //get voxel tag, 0: air; 1: water; 2: others
         auto const funVoxelTag = [&](const Vector3i &posi) -> int {
-            MaterialType material = (MaterialType)voxels.get_voxel(Vector3i(posi));
+            MaterialType material = (MaterialType)voxels.get_voxel(Vector3i(posi), VoxelBuffer::CHANNEL_TYPE);
             return (material == MaterialType::AIR ? 0 : (material == MaterialType::WATER ? 1 : 2));
         };
 
         auto const funVoxelOccupancyAndTag = [&](const Vector3i &posi) -> std::pair<int, int> {
             Real sdf = voxels.get_voxel_f(posi, VoxelBuffer::CHANNEL_SDF);
-            MaterialType material = (MaterialType)voxels.get_voxel(Vector3i(posi));
-            int occupancy = static_cast<int>(sdf > 0 ? 0 : -sdf * 254);
+            MaterialType material = (MaterialType)voxels.get_voxel(Vector3i(posi), VoxelBuffer::CHANNEL_TYPE);
+            int occupancy = static_cast<int>(sdf > 0 ? 0 : -sdf * 0xfffe);
             int tag = (sdf > 0 ? 0 : (material == MaterialType::WATER ? 1 : 2));
             return std::pair<int, int>(occupancy, tag);
         };
@@ -196,7 +196,6 @@
         separateSolidAndWaterFaces(pmesh);
 #ifdef DEBUG_SINGLE_BUILD_MESH
         VertexMesh &meshWithWater = *pmesh;
-        Vector3 offset = vector3i2Vector3(position);
         meshWithWater.outputToObjFile("mesh_", position, false);
         meshWithWater.outputToObjFile("mesh_", position, true);
 #endif

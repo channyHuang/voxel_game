@@ -86,22 +86,22 @@ public:
 
 	void set_default_values(FixedArray<uint64_t, VoxelBuffer::MAX_CHANNELS> values);
 
-	uint64_t get_voxel(int x, int y, int z, unsigned int channel_index = 0) const;
-	void set_voxel(uint64_t value, int x, int y, int z, unsigned int channel_index = 0);
+    uint64_t get_voxel(int x, int y, int z, unsigned int channel_index = VoxelBuffer::CHANNEL_SDF) const;
+    void set_voxel(uint64_t value, int x, int y, int z, unsigned int channel_index = VoxelBuffer::CHANNEL_SDF);
 
-	real_t get_voxel_f(int x, int y, int z, unsigned int channel_index = 0) const;
-    real_t get_voxel_f(const Vector3i &pos, unsigned int channel_index = 0) const {
+    real_t get_voxel_f(int x, int y, int z, unsigned int channel_index = VoxelBuffer::CHANNEL_SDF) const;
+    real_t get_voxel_f(const Vector3i &pos, unsigned int channel_index = VoxelBuffer::CHANNEL_SDF) const {
         return get_voxel_f(pos.x, pos.y, pos.z, channel_index);
     }
-    real_t get_voxel_f(const Vector3 &pos, unsigned int channel_index = 0) const {
+    real_t get_voxel_f(const Vector3 &pos, unsigned int channel_index = VoxelBuffer::CHANNEL_SDF) const {
         return get_voxel_f(pos.x, pos.y, pos.z, channel_index);
     }
-	void set_voxel_f(real_t value, int x, int y, int z, unsigned int channel_index = 0);
+    void set_voxel_f(real_t value, int x, int y, int z, unsigned int channel_index = VoxelBuffer::CHANNEL_SDF);
 
-    inline uint64_t get_voxel(const Vector3i pos, unsigned int channel_index = 0) const {
+    inline uint64_t get_voxel(const Vector3i pos, unsigned int channel_index = VoxelBuffer::CHANNEL_SDF) const {
 		return get_voxel(pos.x, pos.y, pos.z, channel_index);
 	}
-    inline void set_voxel(int value, const Vector3i pos, unsigned int channel_index = 0) {
+    inline void set_voxel(int value, const Vector3i pos, unsigned int channel_index = VoxelBuffer::CHANNEL_SDF) {
 		set_voxel(value, pos.x, pos.y, pos.z, channel_index);
 	}
 
@@ -234,7 +234,7 @@ public:
 	}
 
 	static inline uint16_t norm_to_u16(float v) {
-        return Math::clamp(static_cast<int>(0x8000 * v + 0x8000), 0, 0xffff);
+        return Math::clamp(static_cast<int>(0x8000 * v + 0x8000), 0, 0xfffe);
 	}
 
 	/*static inline float quantized_u8_to_real(uint8_t v) {

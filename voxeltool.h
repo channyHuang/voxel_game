@@ -45,6 +45,9 @@ public:
     uint64_t get_voxel(Vector3i pos);
     float get_voxel_f(Vector3i pos);
 
+    uint64_t get_voxel(Vector3i pos, int channel);
+    float get_voxel_f(Vector3i pos, int channel);
+
     // The following methods represent one edit each. Pick the correct one for the job.
     // For example, using `do_box` will be more efficient than calling `do_point` many times.
     virtual void set_voxel(Vector3i pos, uint64_t v);
@@ -53,6 +56,8 @@ public:
     virtual void do_line(Vector3i begin, Vector3i end);
     virtual void do_circle(Vector3i pos, int radius, Vector3i direction);
 
+    virtual void set_voxel(Vector3i pos, uint64_t v, int channel);
+    virtual void set_voxel_f(Vector3i pos, float v, int channel);
 
     virtual VoxelRaycastResult* raycast(Vector3 pos, Vector3 dir, float max_distance, uint32_t collision_mask);
 
@@ -71,6 +76,10 @@ protected:
     virtual void _set_voxel_f(Vector3i pos, float v);
     virtual void _post_edit(const Rect3i &box);
 
+    virtual uint64_t _get_voxel(Vector3i pos, int channel);
+    virtual float _get_voxel_f(Vector3i pos, int channel);
+    virtual void _set_voxel(Vector3i pos, uint64_t v, int channel);
+    virtual void _set_voxel_f(Vector3i pos, float v, int channel);
 private:
     // Bindings to convert to more specialized C++ types and handle virtuality cuz I don't know if it works by binding straight
     uint64_t _b_get_voxel(Vector3 pos) { return get_voxel(Vector3i(pos)); }
@@ -88,7 +97,7 @@ private:
 protected:
     uint64_t _value = 0;
     uint64_t _eraser_value = 0; // air
-    int _channel = 0;
+    int _channel = VoxelBuffer::CHANNEL_SDF;
     Mode _mode = MODE_ADD;
 };
 
