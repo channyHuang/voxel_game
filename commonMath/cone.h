@@ -12,6 +12,8 @@ public:
 
     float getSdf(Vector3 vPos);
     Boxi getBox();
+    Vector3 getCenter() { return m_vCenter; }
+    Vector3 getTop() { return m_vCenter + Vector3(0, m_fHeight, 0); }
 
     static Vector3i vector3FloorOrCeil(const Vector3 &pos, bool bfloor = true) {
         if (bfloor) {

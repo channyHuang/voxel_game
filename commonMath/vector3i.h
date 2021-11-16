@@ -101,7 +101,7 @@ public:
         return Vector3i(x * v, y * v, z * v);
     }
 
-    Vector3i dot(const Vector3i &v) {
+    float dot(const Vector3i &v) const{
         return (x * v.x + y * v.y + z * v.z);
     }
 
@@ -129,7 +129,7 @@ public:
     }
 
     std::string toString() {
-        std::string str = "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
+        std::string str = "(" + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ")";
         return str;
     }
 

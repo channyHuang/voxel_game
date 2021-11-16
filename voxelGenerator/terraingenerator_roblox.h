@@ -123,6 +123,15 @@ private:
 class TerrainGenerator_Roblox
 {
 public:
+    struct BiomesParam
+    {
+        int biomes_be_checked = 0; // checked types of biomes
+        bool use_biomes = false; // if use auto biomes or just generate flat
+        int biome_size = 50; // area of each biome
+        bool generate_caves = false;
+        std::string seed = "618033988"; // biome seed
+    };
+
     enum TerrainBiomes {
         Water = 0,
         Marsh,
@@ -141,6 +150,11 @@ public:
 
     static std::shared_ptr<TerrainGenerator_Roblox> getInstance();
 
+    void setRange(Vector3 vStart, Vector3 vSize) {
+        _range.vStart = vStart - vSize * 0.5f;
+        _range.vSize = vSize;
+        _range.vBox = Box(_range.vStart, _range.vStart + _range.vSize);
+    }
     //biomes be checked, nbiomes_be_checked recode Biomes[i] be checked if the bit in i of nbiomes_be_checked is 1
     void setBiomesBeChecked(int nbiomes_be_checked) {
         if (nbiomes_be_checked_ == nbiomes_be_checked) return;
@@ -162,7 +176,7 @@ public:
     void setTerrainGeneratorSeed(std::string seedNumberStr);
     //generate terrain with biomes
     void genTotallyFlat(VoxelToolTerrain* pVoxelTool, int max_lod = 0);
-    void generateTerrainByBiomes(VoxelToolTerrain* pVoxelTool, const int nbiomes_be_checked = -1, int max_lod = 0);
+    void generateTerrainByBiomes(VoxelToolTerrain* pVoxelTool, BiomesParam& biomeParams, int max_lod = 0);
 
     struct PointDistNoiseInfo {
         float fdist_, fbiome_noise_;
@@ -217,6 +231,8 @@ private:
     float translateSdfAndOccupancy(float value, bool bSdf2Occupancy) {
         return (bSdf2Occupancy ? (value > 0 ? 0 : -value) : (value <= 0 ? 1 : -value));
     }
+
+    void generateTrees(VoxelToolTerrain* pVoxelTool);
 private:
     struct {
         Vector3 vSize;
@@ -241,6 +257,8 @@ private:
     float fbiome_blend_percent_inverse_ = 1.f - fbiome_blend_percent_;
     TerrainSimplePerlin cperlin_;
     const float foccupancy_step_ = 1.f / 254.f;
+
+    std::queue<Vector3> m_quTreeRoot;
 };
 
 

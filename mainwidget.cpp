@@ -7,8 +7,6 @@
 #include <fstream>
 
 #include "renderControl/glwidget.h"
-
-#include "terraingenerator_roblox.h"
 #include "terrains/voxelterrain.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
@@ -33,8 +31,9 @@ void MainWidget::initWidgets() {
     connect(createBtn, &QPushButton::clicked, [&](){
         VoxelToolTerrain *tool = static_cast<VoxelToolTerrain*>(VoxelTerrain::getInstance()->get_voxel_tool());
         // generate terrain
-
-        TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(tool, -1);
+        TerrainGenerator_Roblox::getInstance()->setRange(Vector3(0), Vector3(30, 30, 30));
+        m_stBiomeParams.use_biomes = true;
+        TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(tool, m_stBiomeParams);
     });
     QVBoxLayout *buttonLayout = new QVBoxLayout;
     buttonLayout->addWidget(createBtn);

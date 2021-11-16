@@ -28,9 +28,6 @@ void TerrainGenerator_Roblox::initData() {
 }
 
 void TerrainGenerator_Roblox::genTotallyFlat(VoxelToolTerrain* pVoxelTool, int max_lod) {
-    _range.vStart = Vector3(3, 3, 3), _range.vSize = Vector3(10, 10, 10);
-    _range.vBox = Box(_range.vStart, _range.vStart + _range.vSize);
-
    float h = std::max(1.0f, _range.vSize.y * 0.5f);
    Box cBox(_range.vStart, _range.vStart + Vector3(_range.vSize.x, h, _range.vSize.z));
 
@@ -41,8 +38,6 @@ void TerrainGenerator_Roblox::genTotallyFlat(VoxelToolTerrain* pVoxelTool, int m
    MaterialType ematerial_origin = MaterialType::AIR;
    Vector3 pos = Vector3(0), selectionSize = cBox.vMax - cBox.vMin, vOutSize, cellVector;
    Vector3 vhalf_selection_size = selectionSize * .5f;
-
-   std::queue<Vector3> qu;
 
    for (pos.x = vmin_pos.x; pos.x <= vmax_pos.x; ++pos.x) {
        for (pos.z = vmin_pos.z; pos.z <= vmax_pos.z; ++pos.z) {
@@ -59,18 +54,14 @@ void TerrainGenerator_Roblox::genTotallyFlat(VoxelToolTerrain* pVoxelTool, int m
                pVoxelTool->set_voxel_f(pos, fnew_sdf, VoxelBuffer::CHANNEL_SDF);
                if (fnew_sdf <= 0) pVoxelTool->set_voxel(pos, 1, VoxelBuffer::CHANNEL_TYPE);
 
-               if ((rand() % 10 == 0) && (fnew_sdf > 0) && (pVoxelTool->get_voxel_f(pos - Vector3(0, 1, 0), VoxelBuffer::CHANNEL_SDF) <= 0)) {
-                    qu.push(pos - Vector3(0, 1, 0));
+               if ((rand() % 100 == 0) && (fnew_sdf > 0) && (pVoxelTool->get_voxel_f(pos - Vector3(0, 1, 0), VoxelBuffer::CHANNEL_SDF) <= 0)) {
+                    m_quTreeRoot.push(pos - Vector3(0, 1, 0));
                }
            }
        }
    }
 
-   while (!qu.empty()) {
-        Vector3 pos = qu.front();
-        qu.pop();
-        TreeVoxel::setTree(pVoxelTool, pos, 3, 3);
-   }
+   generateTrees(pVoxelTool);
 }
 
 void TerrainGenerator_Roblox::setTerrainGeneratorSeed(std::string seedNumberStr) {
@@ -157,7 +148,7 @@ TerrainGenerator_Roblox::PointVoxelInfo TerrainGenerator_Roblox::findBiomeInfo(T
        cCurVoxelInfo.eSurfaceMaterial_ =
            rockMap > 0 ? MaterialType::ROCK :
            (!thinSurface ? MaterialType::MUD
-               : (thinSurface && rivuletThreshold <= 0 ? MaterialType::GRASSLAND //MaterialType::WATER
+               : (thinSurface && rivuletThreshold <= 0 ? MaterialType::WATER
                    : (1 - verticalGradientTurbulence < fwater_level_ - .01f ? MaterialType::SAND : MaterialType::GRASSLAND)));
        cCurVoxelInfo.eFillMaterial_ =
            (rockMap > 0 ? MaterialType::ROCK : MaterialType::SANDSTONE);
@@ -310,16 +301,20 @@ float TerrainGenerator_Roblox::findBiomeTransitionValue(TerrainBiomes biome, flo
    return averageValue * (1 - weight) + value * weight;
 }
 
-void TerrainGenerator_Roblox::generateTerrainByBiomes(VoxelToolTerrain* pVoxelTool, const int nbiomes_be_checked, int max_lod) {
-   if (nbiomes_be_checked < 0) {
+void TerrainGenerator_Roblox::generateTerrainByBiomes(VoxelToolTerrain* pVoxelTool, BiomesParam& biomeParams, int max_lod) {
+   if (!biomeParams.use_biomes) {
        //terrain version 1.0
        genTotallyFlat(pVoxelTool);
        return;
    }
    //terrain version 2.0, maybe 3.0
-   if (nbiomes_be_checked != nbiomes_be_checked_) {
-       setBiomesBeChecked(nbiomes_be_checked);
+   if (biomeParams.biomes_be_checked != nbiomes_be_checked_) {
+       setBiomesBeChecked(biomeParams.biomes_be_checked);
    }
+   setIncludeCaves(biomeParams.generate_caves);
+   setBiomeSize(biomeParams.biome_size);
+   setTerrainGeneratorSeed(biomeParams.seed);
+
    float foccupancy_scale = .5f / _range.vSize.y;
 
    //init data
@@ -456,8 +451,8 @@ void TerrainGenerator_Roblox::generateTerrainByBiomes(VoxelToolTerrain* pVoxelTo
                // below water level and above surface, has no terrain
                if (1.f - verticalGradient < fwater_level_ && preCaveComp <= .5f && fnew_occupancy <= 0) {
                    fnew_occupancy = 1.f;
-                   cCurVoxelInfo.eSurfaceMaterial_ = MaterialType::GRASSLAND; //MaterialType::WATER;
-                   cCurVoxelInfo.eFillMaterial_ = MaterialType::GRASSLAND; //MaterialType::WATER;
+                   cCurVoxelInfo.eSurfaceMaterial_ = MaterialType::WATER;
+                   cCurVoxelInfo.eFillMaterial_ = MaterialType::WATER;
                    bis_biome_surface = true;
                }
 
@@ -468,10 +463,15 @@ void TerrainGenerator_Roblox::generateTerrainByBiomes(VoxelToolTerrain* pVoxelTo
                else {
                    fnew_material = MaterialType::AIR;
                }
-               pVoxelTool->set_voxel_f(Vector3i(posi - Vector3(1)).to_vec3() + _range.vStart, fnew_sdf);
+               pVoxelTool->set_voxel_info(Vector3i(posi - Vector3(1)).to_vec3() + _range.vStart, fnew_sdf, fnew_material);
+
+               if ((rand() % 10 == 0) && (fnew_sdf > 0) && (pVoxelTool->get_voxel_f(Vector3i(posi - Vector3(1)) - Vector3(0, 1, 0), VoxelBuffer::CHANNEL_SDF) <= 0)) {
+                    m_quTreeRoot.push(Vector3i(posi - Vector3(1)).to_vec3() - Vector3(0, 1, 0));
+               }
            }
        }
    }
+   //generateTrees(pVoxelTool);
 }
 
 void TerrainGenerator_Roblox::readDataFromFiles(std::string sDataFileName, VoxelToolTerrain* pVoxelTool) {
@@ -489,4 +489,12 @@ void TerrainGenerator_Roblox::readDataFromFiles(std::string sDataFileName, Voxel
        pVoxelTool->set_voxel_f(pos, sdf);
    }
    ifs.close();
+}
+
+void TerrainGenerator_Roblox::generateTrees(VoxelToolTerrain* pVoxelTool) {
+    while (!m_quTreeRoot.empty()) {
+         Vector3 pos = m_quTreeRoot.front();
+         m_quTreeRoot.pop();
+         TreeVoxel::setTree(pVoxelTool, pos, 3, 6);
+    }
 }
