@@ -2,7 +2,7 @@
 #define VOXEL_MESHER_H
 
 #include "../voxels/voxel_buffer.h"
-#include "../common_math/vector3.h"
+#include "../commonMath/vector3.h"
 
 #include <array>
 

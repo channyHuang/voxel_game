@@ -10,8 +10,8 @@
 #include <thread>
 #include <semaphore>
 
-#include "common_math/boxi.h"
-#include "common_math/vector3i.h"
+#include "commonMath/boxi.h"
+#include "commonMath/vector3i.h"
 #include "utility.h"
 #include "array_slice.h"
 #include "fixed_array.h"

@@ -7,9 +7,9 @@
 #include <fstream>
 #include <queue>
 
-#include "common_math/vector3.h"
-#include "common_math/vector3i.h"
-#include "voxeltoolterrain.h"
+#include "commonMath/vector3.h"
+#include "commonMath/vector3i.h"
+#include "terrains/voxeltoolterrain.h"
 #include "common_enum.h"
 
 namespace TerrainMath {

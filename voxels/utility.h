@@ -1,7 +1,7 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include "common_math/vector3.h"
+#include "commonMath/vector3.h"
 #include <vector>
 
 struct SubMeshArrays {

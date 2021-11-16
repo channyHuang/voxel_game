@@ -10,7 +10,7 @@
 #include <QMouseEvent>
 #include <QMatrix4x4>
 
-#include "objfileloader.h"
+#include "renderCommon/objfileloader.h"
 
 class GlWidget : public QOpenGLWidget
 {

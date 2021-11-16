@@ -1,6 +1,6 @@
 #include "treevoxel.h"
 
-#include "common_math/cone.h"
+#include "commonMath/cone.h"
 
 TreeVoxel::TreeVoxel()
 {

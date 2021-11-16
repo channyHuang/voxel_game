@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QThread>
 
-#include "glwidget.h"
+#include "renderControl/glwidget.h"
 
 class MainWidget : public QWidget {
     Q_OBJECT

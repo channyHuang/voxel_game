@@ -15,13 +15,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-include($$PWD/render_control/render_control.pri)
-
-include($$PWD/common_math/common_math.pri)
+include($$PWD/commonMath/commonMath.pri)
 include($$PWD/voxels/voxels.pri)
 include($$PWD/meshGenerator/meshGenerator.pri)
 include($$PWD/voxelGenerator/voxelGenerator.pri)
 include($$PWD/terrains/terrains.pri)
+include($$PWD/biomes/biomes.pri)
+
+include($$PWD/renderControl/renderControl.pri)
 
 INCLUDEPATH += $$PWD/common
 INCLUDEPATH += $$PWD/voxels
@@ -32,17 +33,8 @@ HEADER_FILES = $$files($$PWD/*.h, false)
 SOURCE_FILES = $$files($$PWD/*.cpp, false)
 RESOURCE_FILES = $$files($$PWD/*qrc, false)
 
-HEADERS += $${HEADER_FILES} \
-    arraymesh.h \
-    common_enum.h \
-    voxeltool.h \
-    voxeltoolterrain.h
-
-SOURCES += $${SOURCE_FILES} \
-    arraymesh.cpp \
-    voxeltool.cpp \
-    voxeltoolterrain.cpp
-
+HEADERS += $${HEADER_FILES}
+SOURCES += $${SOURCE_FILES}
 RESOURCES += $${RESOURCE_FILES}
 
 

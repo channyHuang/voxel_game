@@ -13,10 +13,10 @@
 #define Real float
 #endif
 
-#include "../common_math/vector3.h"
-#include "../common_math/vector3i.h"
+#include "../commonMath/vector3.h"
+#include "../commonMath/vector3i.h"
 #include "../voxels/voxel_buffer.h"
-#include "common_math/triangle.h"
+#include "commonMath/triangle.h"
 
 using namespace std;
 

@@ -1,7 +1,7 @@
 #ifndef TREEVOXEL_H
 #define TREEVOXEL_H
 
-#include "voxeltoolterrain.h"
+#include "terrains/voxeltoolterrain.h"
 
 class TreeVoxel
 {

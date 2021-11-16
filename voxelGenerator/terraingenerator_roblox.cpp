@@ -1,6 +1,6 @@
 #include "terraingenerator_roblox.h"
 
-#include "voxels/treevoxel.h"
+#include "biomes/treevoxel.h"
 
 std::shared_ptr<TerrainGenerator_Roblox> TerrainGenerator_Roblox::pInstance_ = nullptr;
 

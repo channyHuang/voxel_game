@@ -6,10 +6,10 @@
 #include <iostream>
 #include <fstream>
 
-#include "glwidget.h"
+#include "renderControl/glwidget.h"
 
 #include "terraingenerator_roblox.h"
-#include "voxelterrain.h"
+#include "terrains/voxelterrain.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
     init();

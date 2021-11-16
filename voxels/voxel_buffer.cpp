@@ -14,7 +14,7 @@
 //#include <core/func_ref.h>
 //#include <core/image.h>
 //#include <core/io/marshalls.h>
-#include "../common_math/math_funcs.h"
+#include "../commonMath/math_funcs.h"
 #include <string.h>
 
 namespace {

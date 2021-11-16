@@ -6,9 +6,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include "common_math/vector3i.h"
-#include "common_math/vector3.h"
-#include "common_math/boxi.h"
+#include "commonMath/vector3i.h"
+#include "commonMath/vector3.h"
+#include "commonMath/boxi.h"
 
 #include "voxeldataloader.h"
 #include "voxelblock.h"
@@ -16,7 +16,7 @@
 #include "voxeltoolterrain.h"
 #include "voxelmap.h"
 #include "counting_time.h"
-#include "terrains/voxel_mesh_updater.h"
+#include "meshGenerator/voxel_mesh_updater.h"
 
 typedef Boxi Rect3i;
 

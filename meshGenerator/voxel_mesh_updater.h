@@ -4,7 +4,7 @@
 #include "../voxels/voxel_buffer.h"
 #include "../meshGenerator/voxel_mesher.h"
 
-#include "block_thread_manager.h"
+#include "terrains/block_thread_manager.h"
 #include "meshGenerator/voxel_mesher.h"
 #include "meshGenerator/naiveSurfaceNets/voxel_mesher_surfacenet.h"
 

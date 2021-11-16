@@ -10,8 +10,8 @@ CONFIG += c++11
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-include($$PWD/../render_common/render_common.pri)
-INCLUDEPATH += $$PWD/../render_common
+include($$PWD/../renderCommon/renderCommon.pri)
+INCLUDEPATH += $$PWD/../renderCommon
 
 
 SOURCE_FILES = $$files($${PWD}/*.cpp, false)
