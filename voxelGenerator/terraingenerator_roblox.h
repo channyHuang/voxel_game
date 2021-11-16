@@ -5,6 +5,7 @@
 #include <functional>
 #include <chrono>
 #include <fstream>
+#include <queue>
 
 #include "common_math/vector3.h"
 #include "common_math/vector3i.h"

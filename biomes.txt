@@ -1,0 +1,40 @@
+[
+{
+	"type": "Sea",
+	"temperature": 0.5
+}
+{
+	"type": "Plant",
+	"temperature": 0.8,
+},
+{
+	"type": "Marsh",
+	"temperature": 0.8,
+},
+{
+	"type": "Forest",
+	"temperature": 0.7
+}
+{
+	"type": "Hill",
+	"temperature": 0.8
+}
+{
+	"type": "River",
+	"temperature": 0.5
+}
+{
+	"type": "Dune",
+	"temperature": 2.0
+}
+{
+	"type": "Mountains",
+	"temperature": 1.0
+}
+{
+	"type": "Animal",
+	"name": "cow",
+	"mintemperature": 0.5,
+	"maxtemperature": 0.7,
+	"mesh": "cow.obj"
+}

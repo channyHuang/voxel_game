@@ -197,7 +197,7 @@
 #ifdef DEBUG_SINGLE_BUILD_MESH
         VertexMesh &meshWithWater = *pmesh;
         meshWithWater.outputToObjFile("mesh_", position, false);
-        meshWithWater.outputToObjFile("mesh_", position, true);
+        //meshWithWater.outputToObjFile("mesh_", position, true);
 #endif
         clear_output();
         vertexMesh2OutputArrays_with_water(pmesh, output, block_size_scaled, cell_border_mask, position);
@@ -305,7 +305,7 @@
             }
         }
 
-#ifdef DEBUG_SINGLE_BUILD_MESH
+#ifdef DEBUG_SINGLE_BUILD_MESHS
         Vector3 offset = vector3i2Vector3(position) * 16.f;
         std::ofstream ofs("mesh_" + std::to_string(output.surfaces.size()) + " " + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj");
         int total_vertices = 0;
@@ -420,7 +420,7 @@
             output.surfaces.push_back(water_arrays);
         }
 
-#ifdef DEBUG_SINGLE_BUILD_MESH
+#ifdef DEBUG_SINGLE_BUILD_MESHS
         Vector3 offset = vector3i2Vector3(position) * 16.f;
         if (output.surfaces.size() == 1) {
             outputToObjFile(output.surfaces[0], position, output.surfaces[0].isWater);

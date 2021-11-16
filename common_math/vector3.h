@@ -81,8 +81,8 @@ public:
         return *this;
     }
 
-    Vector3 operator+(const float v) {
-        return *this + Vector3(v);
+    Vector3 operator+(const float v) const {
+        return Vector3(x + v, y + v, z + v);
     }
 
     Vector3 operator-(const float v) const {
@@ -143,7 +143,7 @@ public:
         z /= length;
     }
 
-    std::string toString() {
+    std::string toString() const {
         std::string str = "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
         return str;
     }

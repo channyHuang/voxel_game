@@ -1,5 +1,7 @@
 #include "terraingenerator_roblox.h"
 
+#include "voxels/treevoxel.h"
+
 std::shared_ptr<TerrainGenerator_Roblox> TerrainGenerator_Roblox::pInstance_ = nullptr;
 
 std::shared_ptr<TerrainGenerator_Roblox> TerrainGenerator_Roblox::getInstance() {
@@ -40,6 +42,8 @@ void TerrainGenerator_Roblox::genTotallyFlat(VoxelToolTerrain* pVoxelTool, int m
    Vector3 pos = Vector3(0), selectionSize = cBox.vMax - cBox.vMin, vOutSize, cellVector;
    Vector3 vhalf_selection_size = selectionSize * .5f;
 
+   std::queue<Vector3> qu;
+
    for (pos.x = vmin_pos.x; pos.x <= vmax_pos.x; ++pos.x) {
        for (pos.z = vmin_pos.z; pos.z <= vmax_pos.z; ++pos.z) {
            for (pos.y = vmin_pos.y; pos.y <= vmax_pos.y; ++pos.y) {
@@ -54,8 +58,18 @@ void TerrainGenerator_Roblox::genTotallyFlat(VoxelToolTerrain* pVoxelTool, int m
                fnew_sdf = translateSdfAndOccupancy(brushOccupancy, false);
                pVoxelTool->set_voxel_f(pos, fnew_sdf, VoxelBuffer::CHANNEL_SDF);
                if (fnew_sdf <= 0) pVoxelTool->set_voxel(pos, 1, VoxelBuffer::CHANNEL_TYPE);
+
+               if ((rand() % 10 == 0) && (fnew_sdf > 0) && (pVoxelTool->get_voxel_f(pos - Vector3(0, 1, 0), VoxelBuffer::CHANNEL_SDF) <= 0)) {
+                    qu.push(pos - Vector3(0, 1, 0));
+               }
            }
        }
+   }
+
+   while (!qu.empty()) {
+        Vector3 pos = qu.front();
+        qu.pop();
+        TreeVoxel::setTree(pVoxelTool, pos, 3, 3);
    }
 }
 

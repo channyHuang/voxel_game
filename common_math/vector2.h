@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <string>
 
 class Vector2
 {
@@ -65,6 +66,10 @@ public:
 
     float len() {
         return std::sqrt(x * x + y * y);
+    }
+
+    float dot(const Vector2 &v) {
+        return (x * v.y + y * v.x);
     }
 
     void normalize() {

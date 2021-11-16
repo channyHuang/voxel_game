@@ -97,8 +97,8 @@ public:
         return *this / Vector3i(v);
     }
 
-    Vector3i operator*(const int64_t v) {
-        return *this * Vector3i(v);
+    Vector3i operator*(const int64_t v) const {
+        return Vector3i(x * v, y * v, z * v);
     }
 
     Vector3i dot(const Vector3i &v) {

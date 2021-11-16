@@ -99,6 +99,16 @@ void VoxelTool::set_voxel_f(Vector3i pos, float v, int channel) {
     _post_edit(box);
 }
 
+void VoxelTool::set_voxel_info(Vector3i pos, float v, int material) {
+    Rect3i box(pos, Vector3i(1));
+    if (!is_area_editable(box)) {
+        return;
+    }
+    _set_voxel_f(pos, v, VoxelBuffer::CHANNEL_SDF);
+    _set_voxel(pos, material, VoxelBuffer::CHANNEL_TYPE);
+    _post_edit(box);
+}
+
 void VoxelTool::do_point(Vector3i pos) {
     Rect3i box(pos, Vector3i(1));
     if (!is_area_editable(box)) {

@@ -171,8 +171,10 @@ void VoxelMap::get_buffer_copy(Vector3i min_pos, VoxelBuffer &dst_buffer, unsign
                         // Note: copy_from takes care of clamping the area if it's on an edge
                         dst_buffer.copy_from(src_buffer,
                                 min_pos - offset,
-                                max_pos - offset,
-                                offset - min_pos,
+                                //max_pos - offset,
+                                src_buffer.get_size(),
+                                //offset - min_pos,
+                                Vector3i(),
                                 channel);
 
                     } else {

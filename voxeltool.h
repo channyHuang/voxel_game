@@ -59,6 +59,8 @@ public:
     virtual void set_voxel(Vector3i pos, uint64_t v, int channel);
     virtual void set_voxel_f(Vector3i pos, float v, int channel);
 
+    virtual void set_voxel_info(Vector3i pos, float v, int material);
+
     virtual VoxelRaycastResult* raycast(Vector3 pos, Vector3 dir, float max_distance, uint32_t collision_mask);
 
     // Checks if an edit affecting the given box can be applied, fully or partially

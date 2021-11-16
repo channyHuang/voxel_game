@@ -50,6 +50,12 @@ public:
         return vDist[dim];
     }
 
+    static float sign(float v) {
+        if (v == 0) return 0;
+        return v > 0 ? 1.f : -1.f;
+    }
+
+
     static constexpr float PI = 3.14159265f;
     static constexpr float LOWEPSILON = 1e-4f;
     static constexpr int MAX_LOD = 4;

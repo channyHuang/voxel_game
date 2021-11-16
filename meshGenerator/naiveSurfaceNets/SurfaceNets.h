@@ -23,7 +23,7 @@ using namespace std;
 namespace SURFACE_NETS {
 
     enum MaterialType {
-        AIR,
+        AIR = 0,
         ROAD,
         STONE,
         GRASSLAND,
@@ -107,7 +107,7 @@ namespace SURFACE_NETS {
 
         void outputToObjFile(std::string sFileName, Vector3i position, bool bseperate = false) {
             if (vertices_.size() <= 0) return;
-            Vector3i offset = position * 16;
+            Vector3i offset = position * 16 - Vector3i(2);
             if (!bseperate) {
                 if (faces_.size() <= 0) return;
 
