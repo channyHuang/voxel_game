@@ -10,6 +10,8 @@
 #include <QMouseEvent>
 #include <QMatrix4x4>
 
+#include <QTimer>
+
 #include "renderCommon/objfileloader.h"
 
 class GlWidget : public QOpenGLWidget
@@ -38,6 +40,7 @@ private:
     QString sProPath;
     QOpenGLShaderProgram *m_shader;
     QOpenGLVertexArrayObject *m_vao;
+    QOpenGLFunctions *f = nullptr;
 
     int m_projMatrixLoc;
     int m_mvMatrixLoc;
@@ -57,6 +60,8 @@ private:
     int m_Rot[3] = {0, 0, 0};
     QMatrix4x4 m_camera;
     QMatrix4x4 m_world;
+
+    QTimer timer;
 };
 
 #endif

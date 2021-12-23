@@ -51,10 +51,11 @@ void TerrainGenerator_Roblox::genTotallyFlat(VoxelToolTerrain* pVoxelTool, int m
                brushOccupancy = vOutSize.x * vOutSize.y * vOutSize.z;
 
                fnew_sdf = translateSdfAndOccupancy(brushOccupancy, false);
-               pVoxelTool->set_voxel_f(pos, fnew_sdf, VoxelBuffer::CHANNEL_SDF);
-               if (fnew_sdf <= 0) pVoxelTool->set_voxel(pos, 1, VoxelBuffer::CHANNEL_TYPE);
+               //pVoxelTool->set_voxel_f(pos, fnew_sdf, VoxelBuffer::CHANNEL_SDF);
+               //if (fnew_sdf <= 0) pVoxelTool->set_voxel(pos, 1, VoxelBuffer::CHANNEL_TYPE);
 
-               if ((rand() % 100 == 0) && (fnew_sdf > 0) && (pVoxelTool->get_voxel_f(pos - Vector3(0, 1, 0), VoxelBuffer::CHANNEL_SDF) <= 0)) {
+               //if ((rand() % 100 == 0) && (fnew_sdf > 0) && (pVoxelTool->get_voxel_f(pos - Vector3(0, 1, 0), VoxelBuffer::CHANNEL_SDF) <= 0)) {
+               if (rand() % 100 == 0) {
                     m_quTreeRoot.push(pos - Vector3(0, 1, 0));
                }
            }
@@ -496,5 +497,6 @@ void TerrainGenerator_Roblox::generateTrees(VoxelToolTerrain* pVoxelTool) {
          Vector3 pos = m_quTreeRoot.front();
          m_quTreeRoot.pop();
          TreeVoxel::setTree(pVoxelTool, pos, 3, 6);
+         break;
     }
 }

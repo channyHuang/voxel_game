@@ -52,6 +52,25 @@ void GlWidget::mouseMoveEvent(QMouseEvent *e) {
     update();
 
     QOpenGLWidget::mouseMoveEvent(e);
+
+    timer.setInterval(10000);
+    connect(&timer, &QTimer::timeout, this, [&]{
+        m_vao->bind();
+        m_vbo->bind();
+        m_shader->bind();
+        m_dataLoader.loadObjFile((sProPath + "/../resources/cow.obj").toStdString());
+        m_vbo->allocate(m_dataLoader.constData(), m_dataLoader.count() * sizeof(GLfloat));
+
+        f->glEnableVertexAttribArray(0);
+        f->glEnableVertexAttribArray(1);
+        f->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), 0);
+        f->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void *>(3 * sizeof(GLfloat)));
+
+        m_shader->release();
+        m_vbo->release();
+        m_vao->release();
+    });
+    timer.start();
 }
 
 void GlWidget::mouseReleaseEvent(QMouseEvent *e) {
@@ -95,11 +114,10 @@ void GlWidget::initShader() {
 void GlWidget::initializeGL()
 {
     //init gl environment
-    QOpenGLFunctions *f = this->context()->functions();
+    f = this->context()->functions();
     f->initializeOpenGLFunctions();
     f->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    m_dataLoader.loadObjFile((sProPath + "/../resources/refinery.obj").toStdString());
     initShader();
 
     m_vao = new QOpenGLVertexArrayObject();
@@ -109,6 +127,7 @@ void GlWidget::initializeGL()
 
     m_vao->bind();
     m_vbo->bind();
+    m_dataLoader.loadObjFile((sProPath + "/../resources/refinery.obj").toStdString());
     m_vbo->allocate(m_dataLoader.constData(), m_dataLoader.count() * sizeof(GLfloat));
 
     f->glEnableVertexAttribArray(0);

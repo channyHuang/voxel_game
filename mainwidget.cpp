@@ -32,7 +32,7 @@ void MainWidget::initWidgets() {
         VoxelToolTerrain *tool = static_cast<VoxelToolTerrain*>(VoxelTerrain::getInstance()->get_voxel_tool());
         // generate terrain
         TerrainGenerator_Roblox::getInstance()->setRange(Vector3(0), Vector3(30, 30, 30));
-        m_stBiomeParams.use_biomes = true;
+        m_stBiomeParams.use_biomes = false;
         TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(tool, m_stBiomeParams);
     });
     QVBoxLayout *buttonLayout = new QVBoxLayout;
