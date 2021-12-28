@@ -1,9 +1,9 @@
 #ifndef VOXELTOOL_H
 #define VOXELTOOL_H
 
-#include "commonMath/vector3i.h"
+#include "vector3i.h"
 #include "voxel_buffer.h"
-#include "commonMath/boxi.h"
+#include "boxi.h"
 
 typedef Boxi Rect3i;
 

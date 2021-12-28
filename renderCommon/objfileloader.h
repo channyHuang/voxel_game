@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QOpenGLFunctions>
 
-#include "commonMath/Vector3i.h"
+#include "Vector3i.h"
 
 struct FileObject {
     std::vector<QVector3D> positions;

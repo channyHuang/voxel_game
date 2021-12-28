@@ -57,7 +57,7 @@
 #include <random>
 #include <functional>
 
-#include "commonMath/math_funcs.h"
+#include "math_funcs.h"
 
 class FastNoiseLite
 {

@@ -6,6 +6,9 @@ input: sdf value stored by VoxelBuffer
 
 output: .obj mesh file
 
+dependency: commonClass in another project.  
+[commonClass: git@github.com:channyHuang/commonClass.git]
+
 ## Overview
 
 Using class VoxelBuffer in voxel tool to store data, a plugin of godot engine, but simplify it because this project is mainly about sdf data generation and mesh generation. So this project do NOT consider memory cases.

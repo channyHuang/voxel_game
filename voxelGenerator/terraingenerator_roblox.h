@@ -7,8 +7,8 @@
 #include <fstream>
 #include <queue>
 
-#include "commonMath/vector3.h"
-#include "commonMath/vector3i.h"
+#include "vector3.h"
+#include "vector3i.h"
 #include "terrains/voxeltoolterrain.h"
 #include "common_enum.h"
 

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../commonMath/vector3i.h"
+#include "vector3i.h"
+#include "boxi.h"
 
 #include "voxel_constants.h"
 #include "array_slice.h"
 #include "fixed_array.h"
-#include "../commonMath/boxi.h"
 /*
 #include <core/map.h>
 #include <core/reference.h>

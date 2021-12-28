@@ -6,9 +6,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include "commonMath/vector3i.h"
-#include "commonMath/vector3.h"
-#include "commonMath/boxi.h"
+#include "vector3i.h"
+#include "vector3.h"
+#include "boxi.h"
 
 #include "voxeldataloader.h"
 #include "voxelblock.h"

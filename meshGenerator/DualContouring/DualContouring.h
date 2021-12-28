@@ -1,8 +1,8 @@
 #pragma once
 
-#include "commonMath/vector2i.h"
-#include "commonMath/vector3i.h"
-#include "commonMath/triangle.h"
+#include "vector2i.h"
+#include "vector3i.h"
+#include "triangle.h"
 #include <iostream>
 #include <vector>
 #include <array>
