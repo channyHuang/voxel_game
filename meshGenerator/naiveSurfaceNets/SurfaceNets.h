@@ -17,6 +17,7 @@
 #include "vector3i.h"
 #include "../voxels/voxel_buffer.h"
 #include "triangle.h"
+#include "geometrymath.h"
 
 using namespace std;
 

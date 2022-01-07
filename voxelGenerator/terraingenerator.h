@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TERRAINGENERATOR_H
+#define TERRAINGENERATOR_H
 
 #include "FastNoiseLite.h"
 #include "voxel_buffer.h"
@@ -22,3 +23,5 @@ private:
     Box bRange;
     FastNoiseLite noise_lite;
 };
+
+#endif

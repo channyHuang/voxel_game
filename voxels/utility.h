@@ -134,7 +134,7 @@ template <typename T>
 inline T squared(const T x) {
     return x * x;
 }
-
+/*
 template <typename T>
 inline void sort_min_max(T &a, T &b) {
     if (a > b) {
@@ -142,8 +142,7 @@ inline void sort_min_max(T &a, T &b) {
         a = b;
         b = temp;
     }
-}
-
+}*/
 // bool is_surface_triangulated(Array surface);
 // bool is_mesh_empty(Ref<Mesh> mesh_ref);
 
