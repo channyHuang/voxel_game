@@ -509,30 +509,31 @@ namespace SURFACE_NETS {
 				mesh.normals_[v2] += face_normal_2;
 				mesh.normals_[v3] += face_normal_2;
 
-				if (!isVoxelLowerBoundary(vPos1) && !isVoxelLowerBoundary(vPos2) 
-					&& !isVoxelUpperBoundary(pos, vVoxelSize.y - 2) 
-					&& !isVoxelUpperBoundary(vPos1, vVoxelSize.y - 2) 
-					&& !isVoxelUpperBoundary(vPos2, vVoxelSize.y - 2)
-					&& !isRepeatFace(pos, vPos1, vPos2, 1)) {
-					mesh.faces_.emplace_back(Vector3i(v0, v2, v1));
 
-					mesh.face_normals_.emplace_back(face_normal_1);
-				}
-				else {
-					mesh.edge_faces_.emplace_back(Vector3i(v0, v2, v1));
-				}
-				if (!isVoxelLowerBoundary(vPos2) && !isVoxelLowerBoundary(vPos3)
-					&& !isVoxelUpperBoundary(pos, vVoxelSize.y - 2)
-					&& !isVoxelUpperBoundary(vPos2, vVoxelSize.y - 2)
-					&& !isVoxelUpperBoundary(vPos3, vVoxelSize.y - 2)
-					&& !isRepeatFace(pos, vPos2, vPos3, 1)) {
-					mesh.faces_.emplace_back(Vector3i(v0, v3, v2));
+                if (!isVoxelLowerBoundary(vPos1) && !isVoxelLowerBoundary(vPos2)
+                    && !isVoxelUpperBoundary(pos, vVoxelSize.y - 2)
+                    && !isVoxelUpperBoundary(vPos1, vVoxelSize.y - 2)
+                    && !isVoxelUpperBoundary(vPos2, vVoxelSize.y - 2)
+                    && !isRepeatFace(pos, vPos1, vPos2, 1)) {
+                    mesh.faces_[0].emplace_back(Vector3i(v0, v2, v1));
 
-					mesh.face_normals_.emplace_back(face_normal_2);
-				}
-				else {
-					mesh.edge_faces_.emplace_back(Vector3i(v0, v3, v2));
-				}
+                    mesh.face_normals_.emplace_back(face_normal_1);
+                }
+                else {
+                    mesh.edge_faces_.emplace_back(Vector3i(v0, v2, v1));
+                }
+                if (!isVoxelLowerBoundary(vPos2) && !isVoxelLowerBoundary(vPos3)
+                    && !isVoxelUpperBoundary(pos, vVoxelSize.y - 2)
+                    && !isVoxelUpperBoundary(vPos2, vVoxelSize.y - 2)
+                    && !isVoxelUpperBoundary(vPos3, vVoxelSize.y - 2)
+                    && !isRepeatFace(pos, vPos2, vPos3, 1)) {
+                    mesh.faces_[0].emplace_back(Vector3i(v0, v3, v2));
+
+                    mesh.face_normals_.emplace_back(face_normal_2);
+                }
+                else {
+                    mesh.edge_faces_.emplace_back(Vector3i(v0, v3, v2));
+                }
 			}
 		}
 		return pmesh;
@@ -586,8 +587,8 @@ namespace SURFACE_NETS {
 		int min_pos = nMinPadding, max_pos = vVoxelSize.y - nMaxPadding - (1 << downscale_lod);
 		new_voxelIndex2MeshIndex.clear();
 
-		for (unsigned int idx = 0; idx < mesh.faces_.size(); ++idx) {
-			Vector3i face_idx = mesh.faces_[idx];
+        for (unsigned int idx = 0; idx < mesh.faces_[0].size(); ++idx) {
+                    Vector3i face_idx = mesh.faces_[0][idx];
 
 			Vector3i new_face_idx;
 			for (int axis = 0; axis < 3; ++axis) {
@@ -645,7 +646,7 @@ namespace SURFACE_NETS {
 			//reduce invalid face
 			if (new_face_idx[0] == new_face_idx[1] || new_face_idx[0] == new_face_idx[2] || new_face_idx[1] == new_face_idx[2]) continue;
 
-			new_mesh.faces_.emplace_back(new_face_idx);
+            new_mesh.faces_[0].emplace_back(new_face_idx);
 			//calc normals
             Vector3 face_normal = Triangle(new_mesh.vertices_[new_face_idx.x], new_mesh.vertices_[new_face_idx.z], new_mesh.vertices_[new_face_idx.y]).getNormal();
 			new_mesh.normals_[new_face_idx.x] += face_normal;
@@ -720,7 +721,7 @@ namespace SURFACE_NETS {
 		}
 		case MeshType::MESH_WATER:
             return (vsmooth.y >= 0.5f ? vsmooth : vsmooth + Vector3(0, 1, 0) * 0.5f);
-		case MeshType::MESH_QUANTIZE:
+        case MeshType::MESH_NOTSMOOTH:
             return round((vsmooth - vcenter) / 0.5f) * 0.5f + vcenter;
 		default:
 			break;
@@ -736,7 +737,7 @@ namespace SURFACE_NETS {
 		const int lod,
         const Vector3i &vposi,
 		const int edgemask) {
-        Real cellSize = (1 << lod) * 1.0f;
+        Real cellSize = /*(1 << lod) **/ 1.0f;
 		Vector3 &&corner = Vector3(vposi.x * cellSize, vposi.y * cellSize, vposi.z * cellSize);
         Real nMCPointCount = 0;
         Vector3 vMCPointSum = Vector3(0);
@@ -759,7 +760,7 @@ namespace SURFACE_NETS {
                 vMCPointSum += Math::Lerp(p0 * cellSize, p1 * cellSize, t);
 				nMCPointCount += 1.0f;
 			}
-		}
+        }
 
 		// get materials in 8 corners of one voxel
 		bool bvertex_is_cube = false, bvertex_is_water = false;
@@ -818,45 +819,103 @@ namespace SURFACE_NETS {
 
 	static void gen_faces(VertexMesh &mesh,
         const Vector3i &vvoxel_size,
+        const int lod,
         std::function<std::pair<int, int>(const Vector3i&)> const& funVoxelOccupancyAndTag,
 		std::unordered_map<std::size_t, std::size_t> &mvoxelIndex2MeshIndex) {
-        Vector3i posi;
-		for (posi.y = 1; posi.y + 1 < vvoxel_size.y; ++posi.y) {
-			for (posi.z = 1; posi.z + 1 < vvoxel_size.z; ++posi.z) {
-				for (posi.x = 1; posi.x + 1 < vvoxel_size.x; ++posi.x) {
-					const std::pair<int, int> &v000 = funVoxelOccupancyAndTag(posi);
-                    const std::pair<int, int> &v100 = funVoxelOccupancyAndTag(posi + Vector3i(1, 0, 0));
-                    const std::pair<int, int> &v010 = funVoxelOccupancyAndTag(posi + Vector3i(0, 1, 0));
-                    const std::pair<int, int> &v001 = funVoxelOccupancyAndTag(posi + Vector3i(0, 0, 1));
+        auto const getVertexIndexByLod = [&mesh, &mvoxelIndex2MeshIndex](const Vector3i& posi, const Vector3i &vvoxel_size, const int getLod) -> int {
+            int nstep = (1 << getLod);
+            int voxelIdx = position2Index(posi, vvoxel_size);
+            if (mvoxelIndex2MeshIndex.find(voxelIdx) == mvoxelIndex2MeshIndex.end()) return 0;
+            if (getLod == 0) return mvoxelIndex2MeshIndex[voxelIdx];
 
-					// add quad faces
-					if (v000.second != v100.second) {
-						pushQuad(mesh, mvoxelIndex2MeshIndex[position2Index(posi, vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(0, 1, 0), vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(0, 1, 1), vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(0, 0, 1), vvoxel_size)],
-							v000.second > v100.second);
-					}
+            if (mesh.mesh_type_[mvoxelIndex2MeshIndex[voxelIdx]] == MeshType::MESH_CUBE) return mvoxelIndex2MeshIndex[voxelIdx];
+#ifdef LOD_OPTION_SECOND
+            Vector3i vposi = (posi - 1) / nstep * nstep + 1;
+#else //LOD_OPTION_FIRST
+            // do not reduce vertex in edge since there is no lod info of neighbors
+            if (posi.x <= 1 || posi.x >= vvoxel_size.x - 3 || posi.y <= 1 || posi.y >= vvoxel_size.y - 3 || posi.z <= 1 || posi.z >= vvoxel_size.z - 3) return mvoxelIndex2MeshIndex[voxelIdx];
+            Vector3i vposi = (posi - 2) / nstep * nstep + 2;
+#endif
+            Vector3i vpos_cur;
+            for (vpos_cur.x = vposi.x; vpos_cur.x <= posi.x; ++vpos_cur.x) {
+                for (vpos_cur.y = vposi.y; vpos_cur.y <= posi.y; ++vpos_cur.y) {
+                    for (vpos_cur.z = vposi.z; vpos_cur.z <= posi.z; ++vpos_cur.z) {
+                        int nvoxelIdx = position2Index(vpos_cur, vvoxel_size);
+                        if (mvoxelIndex2MeshIndex.find(nvoxelIdx) != mvoxelIndex2MeshIndex.end()) {
+                            return mvoxelIndex2MeshIndex[nvoxelIdx];
+                        }
+                    }
+                }
+            }
+            return mvoxelIndex2MeshIndex[voxelIdx];
+        };
 
-					if (v000.second != v010.second) {
-						pushQuad(mesh, mvoxelIndex2MeshIndex[position2Index(posi, vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(1, 0, 0), vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(1, 0, 1), vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(0, 0, 1), vvoxel_size)],
-							v000.second < v010.second);
-					}
+        int mesh_index_lod[8] = { 0 }, mesh_index_upper_lod[8] = { 0 };
+        int nstep = (1 << lod);
+        Vector3i posi, vposi;
+        for (posi.y = 1; posi.y + 1 < vvoxel_size.y; ++posi.y) {
+            for (posi.z = 1; posi.z + 1 < vvoxel_size.z; ++posi.z) {
+                for (posi.x = 1; posi.x + 1 < vvoxel_size.x; ++posi.x) {
+                    const std::pair<Real, int> &v000 = funVoxelOccupancyAndTag(posi);
+                    const std::pair<Real, int> &v100 = funVoxelOccupancyAndTag(posi + Vector3i(1, 0, 0));
+                    const std::pair<Real, int> &v010 = funVoxelOccupancyAndTag(posi + Vector3i(0, 1, 0));
+                    const std::pair<Real, int> &v001 = funVoxelOccupancyAndTag(posi + Vector3i(0, 0, 1));
 
-					if (v000.second != v001.second) {
-						pushQuad(mesh, mvoxelIndex2MeshIndex[position2Index(posi, vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(1, 0, 0), vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(1, 1, 0), vvoxel_size)],
-                            mvoxelIndex2MeshIndex[position2Index(posi - Vector3i(0, 1, 0), vvoxel_size)],
-							v000.second > v001.second);
-					}
-				}
-			}
-		}
-	}
+                    for (int i = 0; i < 8; ++i) {
+                        vposi = posi - vCubeVer[i];
+                        mesh_index_lod[i] = getVertexIndexByLod(vposi, vvoxel_size, lod);
+                        mesh_index_upper_lod[i] = getVertexIndexByLod(vposi, vvoxel_size, lod - 1);
+                    }
+                    vposi = (posi - 1) / nstep * nstep + 1;
+                    // add quad faces
+                    if (v000.second != v100.second) {
+                        pushQuad(mesh, mesh_index_lod[0], mesh_index_lod[3], mesh_index_lod[7], mesh_index_lod[4], v000.second > v100.second, lod);
+                        // add transition index, axis x
+                        if (lod > 0 && isVoxelUpperBoundary(vposi, 1) || isVoxelUpperBoundary(posi, vvoxel_size.y - 3)) {
+                            if (vposi.y == 1) {
+                                pushTransition(mesh, mesh_index_lod[0], mesh_index_upper_lod[0], mesh_index_upper_lod[4], mesh_index_lod[4],
+                                    lod, Cube_Y_Neg, v000.second > v100.second);
+                            }
+                            if (posi.z == vvoxel_size.y - 3) {
+                                pushTransition(mesh, mesh_index_lod[3], mesh_index_upper_lod[3], mesh_index_upper_lod[0], mesh_index_lod[0],
+                                    lod, Cube_Z_Pos, v000.second > v100.second);
+                            }
+                        }
+                    }
+
+                    if (v000.second != v010.second) {
+                        pushQuad(mesh, mesh_index_lod[0], mesh_index_lod[1], mesh_index_lod[5], mesh_index_lod[4], v000.second < v010.second, lod);
+                        // add transition index, axis y
+                        if (lod > 0 && isVoxelUpperBoundary(vposi, 1) || isVoxelUpperBoundary(posi, vvoxel_size.y - 3)) {
+                            if (vposi.z == 1) {
+                                pushTransition(mesh, mesh_index_lod[1], mesh_index_upper_lod[1], mesh_index_upper_lod[0], mesh_index_lod[0],
+                                    lod, Cube_Z_Neg, v000.second < v010.second);
+                            }
+                            if (posi.x == vvoxel_size.y - 3) {
+                                pushTransition(mesh, mesh_index_lod[0], mesh_index_upper_lod[0], mesh_index_upper_lod[4], mesh_index_lod[4],
+                                    lod, Cube_X_Pos, v000.second < v010.second);
+                            }
+                        }
+                    }
+
+                    if (v000.second != v001.second) {
+                        pushQuad(mesh, mesh_index_lod[0], mesh_index_lod[1], mesh_index_lod[2], mesh_index_lod[3], v000.second > v001.second, lod);
+                        // add transition index, axis z
+                        if (lod > 0 && isVoxelUpperBoundary(vposi, 1) || isVoxelUpperBoundary(posi, vvoxel_size.y - 3)) {
+                            if (vposi.x == 1) {
+                                pushTransition(mesh, mesh_index_lod[0], mesh_index_upper_lod[0], mesh_index_upper_lod[1], mesh_index_lod[1],
+                                    lod, Cube_X_Neg, v000.second > v001.second);
+                            }
+                            if (posi.y == vvoxel_size.y - 3) {
+                                pushTransition(mesh, mesh_index_lod[0], mesh_index_upper_lod[0], mesh_index_upper_lod[3], mesh_index_lod[3],
+                                    lod, Cube_Y_Pos, v000.second > v001.second);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     std::shared_ptr<VertexMesh> surface_nets_with_water(
 		std::function<Real(const Vector3&)> const& sdfFunction,
@@ -908,25 +967,25 @@ namespace SURFACE_NETS {
 				}
 			}
 		}
-		gen_faces(mesh, vVoxelSize, funVoxelOccupancyAndTag, voxelIndex2MeshIndex);
+        gen_faces(mesh, vVoxelSize, lod, funVoxelOccupancyAndTag, voxelIndex2MeshIndex);
 		return pmesh;
 	}
 
-    void separateSolidAndWaterFaces(std::shared_ptr<VertexMesh> pmesh) {
+    void separateSolidAndWaterFaces(std::shared_ptr<VertexMesh> pmesh, const int lod_index) {
         VertexMesh &meshWithWater = *pmesh;
-		if (meshWithWater.faces_.empty()) {
+        if (meshWithWater.faces_[lod_index].empty()) {
 			return;
 		}
 
 		size_t nvertex_size = meshWithWater.vertices_.size();
-		size_t nface_size = meshWithWater.faces_.size();
+        size_t nface_size = meshWithWater.faces_[lod_index].size();
 		std::vector<uint8_t> bIsWater(nface_size);
 		meshWithWater.normals_.resize(nvertex_size);
 		meshWithWater.face_normals_.resize(nface_size);
 		Vector3i face_index;
 		//calculate normals
 		for (size_t i = 0; i < nface_size; ++i) {
-			face_index = meshWithWater.faces_[i];
+            face_index = meshWithWater.faces_[lod_index][i];
 			meshWithWater.face_normals_[i] = (meshWithWater.vertices_[face_index.y] - meshWithWater.vertices_[face_index.x]).cross(meshWithWater.vertices_[face_index.z] - meshWithWater.vertices_[face_index.x]);
 			meshWithWater.face_normals_[i].normalize();
 			for (int j = 0; j < 3; ++j) {
@@ -939,7 +998,7 @@ namespace SURFACE_NETS {
 		}
 		//separate solid and water faces
 		for (size_t i = 0; i < nface_size; ++i) {
-			face_index = meshWithWater.faces_[i];
+            face_index = meshWithWater.faces_[lod_index][i];
 			if (meshWithWater.vertexValid_[face_index.x] && meshWithWater.vertexValid_[face_index.y] && meshWithWater.vertexValid_[face_index.z]) {
 				if (isRepeatFace(vector3FloorOrCeil(meshWithWater.vertices_[face_index.x], true),
 					vector3FloorOrCeil(meshWithWater.vertices_[face_index.y], true),

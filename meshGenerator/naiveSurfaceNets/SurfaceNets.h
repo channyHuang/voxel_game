@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include <QDebug>
+#include <array>
 
 #ifndef Real
 #define Real float
@@ -40,13 +41,23 @@ namespace SURFACE_NETS {
 		MESH_UNKNOWN = -1,
 		MESH_SMOOTH = 0,
 		MESH_HALFSMOOTH,
+        MESH_NOTSMOOTH,
 		MESH_CUBE,
-		MESH_WATER,
-		MESH_QUANTIZE
+        MESH_WATER
 	};
+    const uint8_t _lod_count = 4;
+    enum CubeFace {
+        Cube_X_Pos = 0,
+        Cube_X_Neg,
+        Cube_Y_Pos,
+        Cube_Y_Neg,
+        Cube_Z_Pos,
+        Cube_Z_Neg,
+        Cube_Count = 6
+    };
 	struct VertexMesh {
 		vector<Vector3> vertices_;
-		vector<Vector3i> faces_; //vertices index
+        vector<Vector3i> faces_[_lod_count]; //vertices index
 		vector<Vector3> normals_;
 		vector<uint8_t> vertexValid_; //vertices in border are not valid
 		vector<Vector3> face_normals_;
@@ -56,49 +67,69 @@ namespace SURFACE_NETS {
 		vector<MeshType> mesh_type_;
 		vector<Vector3i> solid_faces_; //non-water faces
 		vector<Vector3i> water_faces_; //water faces
+        //lod transition
+        std::array<std::vector<Vector3i>, CubeFace::Cube_Count> transition_faces_[_lod_count];
 
-		void clear() {
-			vertices_.clear();
-			faces_.clear();
-			normals_.clear();
-			vertexValid_.clear();
-			face_normals_.clear();
-			share_point_.clear();
-			edge_faces_.clear();
+        void clear() {
+            vertices_.clear();
+            for (int i = 0; i < 4; ++i)
+                faces_[i].clear();
+            normals_.clear();
+            vertexValid_.clear();
+            face_normals_.clear();
+            share_point_.clear();
+            edge_faces_.clear();
 
-			mesh_type_.clear();
-			solid_faces_.clear();
-			water_faces_.clear();
-		}
+            mesh_type_.clear();
+            solid_faces_.clear();
+            water_faces_.clear();
 
-		void swap(VertexMesh& mesh) {
-			this->clear();
-			vertices_.swap(mesh.vertices_);
-			faces_.swap(mesh.faces_);
-			normals_.swap(mesh.normals_);
-			vertexValid_.swap(mesh.vertexValid_);
-			face_normals_.swap(mesh.face_normals_);
-			share_point_.swap(mesh.share_point_);
-			edge_faces_.swap(mesh.edge_faces_);
+            for (int i = 0; i < _lod_count; ++i) {
+                for (int j = 0; j < Cube_Count; ++j)
+                    transition_faces_[i][j].clear();
+            }
+        }
 
-			mesh_type_.swap(mesh.mesh_type_);
-			solid_faces_.swap(mesh.solid_faces_);
-			water_faces_.swap(mesh.water_faces_);
-		}
+        void swap(VertexMesh& mesh) {
+            this->clear();
+            vertices_.swap(mesh.vertices_);
+            for (int i = 0; i < 4; ++i)
+                faces_[i].swap(mesh.faces_[i]);
+            normals_.swap(mesh.normals_);
+            vertexValid_.swap(mesh.vertexValid_);
+            face_normals_.swap(mesh.face_normals_);
+            share_point_.swap(mesh.share_point_);
+            edge_faces_.swap(mesh.edge_faces_);
 
-		void reserve(const size_t capacity) {
-			vertices_.reserve(capacity);
-			faces_.reserve(capacity);
-			normals_.reserve(capacity);
-			vertexValid_.reserve(capacity);
-			face_normals_.reserve(capacity);
-			share_point_.reserve(capacity);
-			edge_faces_.reserve(capacity);
+            mesh_type_.swap(mesh.mesh_type_);
+            solid_faces_.swap(mesh.solid_faces_);
+            water_faces_.swap(mesh.water_faces_);
 
-			mesh_type_.reserve(capacity);
-			solid_faces_.reserve(capacity);
-			water_faces_.reserve(capacity);
-		}
+            for (int i = 0; i < _lod_count; ++i) {
+                for (int j = 0; j < Cube_Count; ++j)
+                    transition_faces_[i][j].swap(mesh.transition_faces_[i][j]);
+            }
+        }
+
+        void reserve(const size_t capacity) {
+            vertices_.reserve(capacity);
+            for (int i = 0; i < 4; ++i)
+                faces_[i].reserve(capacity);
+            normals_.reserve(capacity);
+            vertexValid_.reserve(capacity);
+            face_normals_.reserve(capacity);
+            share_point_.reserve(capacity);
+            edge_faces_.reserve(capacity);
+
+            mesh_type_.reserve(capacity);
+            solid_faces_.reserve(capacity);
+            water_faces_.reserve(capacity);
+
+            for (int i = 0; i < _lod_count; ++i) {
+                for (int j = 0; j < Cube_Count; ++j)
+                    transition_faces_[i][j].reserve(capacity);
+            }
+        }
 
 		bool isWater(Vector3i face_index) {
 			return (mesh_type_[face_index.x] == MeshType::MESH_WATER
@@ -110,15 +141,15 @@ namespace SURFACE_NETS {
             if (vertices_.size() <= 0) return;
             Vector3i offset = position * 16 - Vector3i(2);
             if (!bseperate) {
-                if (faces_.size() <= 0) return;
+                if (faces_[0].size() <= 0) return;
 
                 std::ofstream ofs(sFileName + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj");
                 for (size_t i = 0; i < vertices_.size(); i++) {
                     ofs << "v " << vertices_[i][0] + offset.x << " " << vertices_[i][1] + offset.y << " " << vertices_[i][2] + offset.z << std::endl;
                     ofs << "vn " << normals_[i].x << " " << normals_[i].y << " " << normals_[i].z << std::endl;
                 }
-                for (size_t i = 0; i < faces_.size(); ++i) {
-                    ofs << "f " << faces_[i].x + 1 << " " << faces_[i].y + 1 << " " << faces_[i].z + 1 << std::endl;
+                for (size_t i = 0; i < faces_[0].size(); ++i) {
+                    ofs << "f " << faces_[0][i].x + 1 << " " << faces_[0][i].y + 1 << " " << faces_[0][i].z + 1 << std::endl;
                 }
                 ofs.close();
             } else {
@@ -305,24 +336,45 @@ namespace SURFACE_NETS {
 			return m0.second < m1.second ? m0 : m1;
 	}
 
-	static void pushQuad(VertexMesh &mesh,
-		size_t v0, size_t v1, size_t v2, size_t v3,
-		bool flip) {
-		size_t v[] = { v1, v2, v3, v0 };
-		MeshType m[4];
-		for (int i = 0; i < 4; ++i) {
-			m[i] = mesh.mesh_type_[v[i]];
-		}
-		bool bflip = (m[1] == m[3]) && (m[1] == m[2] || m[1] == m[0]);
-		const unsigned int* offset = kOffsetTable[bflip][flip];
+    static int pushQuad(VertexMesh& mesh,
+        int v0, int v1, int v2, int v3,
+        bool flip, int lod = 0) {
+        int v[] = { v1, v2, v3, v0 };
+        MeshType m[4];
+        for (int i = 0; i < 4; ++i) {
+            m[i] = mesh.mesh_type_[v[i]];
+        }
+        bool bflip = (m[1] == m[3]) && (m[1] == m[2] || m[1] == m[0]);
+        const unsigned int* offset = kOffsetTable[bflip][flip];
+        int res = 0;
+        Vector3i vface_index = Vector3i(v[offset[0]], v[offset[1]], v[offset[2]]);
+        if (vface_index.x != vface_index.y && vface_index.x != vface_index.z && vface_index.y != vface_index.z) {
+            mesh.faces_[lod].push_back(vface_index);
+            res |= 1;
+        }
+        vface_index = Vector3i(v[offset[3]], v[offset[4]], v[offset[5]]);
+        if (vface_index.x != vface_index.y && vface_index.x != vface_index.z && vface_index.y != vface_index.z) {
+            mesh.faces_[lod].push_back(vface_index);
+            res |= 2;
+        }
+        return res;
+    }
 
-		Vector3i vface_index = Vector3i(v[offset[0]], v[offset[1]], v[offset[2]]);
-		mesh.faces_.push_back(vface_index);
-		vface_index = Vector3i(v[offset[3]], v[offset[4]], v[offset[5]]);
-		mesh.faces_.push_back(vface_index);
-	}
+    static void pushTransition(VertexMesh& mesh, int v0, int v1, int v2, int v3,
+        int lod = 0, int eside = CubeFace::Cube_X_Pos, bool order = true) {
+        Vector3i vface_index;
+        if (v0 == v3) return;
+        if (v0 != v1) {
+            vface_index = (order ? Vector3i(v0, v3, v1) : Vector3i(v0, v1, v3));
+            mesh.transition_faces_[lod][eside].push_back(vface_index);
+        }
+        if (v3 != v2) {
+            vface_index = (order ? Vector3i(v1, v3, v2) : Vector3i(v1, v2, v3));
+            mesh.transition_faces_[lod][eside].push_back(vface_index);
+        }
+    }
 
-    void separateSolidAndWaterFaces(std::shared_ptr<VertexMesh> pmesh);
+    void separateSolidAndWaterFaces(std::shared_ptr<VertexMesh> pmesh, const int lod_index);
     std::shared_ptr<VertexMesh> surface_nets_with_water(
 		std::function<Real(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
@@ -341,6 +393,7 @@ namespace SURFACE_NETS {
 		const int edgemask);
 	static void gen_faces(VertexMesh &mesh, 
         const Vector3i &vvoxel_size,
+        const int lod,
         std::function<std::pair<int, int>(const Vector3i&)> const& funVoxelOccupancyAndTag,
 		std::unordered_map<std::size_t, std::size_t> &mvoxelIndex2MeshIndex);
 }

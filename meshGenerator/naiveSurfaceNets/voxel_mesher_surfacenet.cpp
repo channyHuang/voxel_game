@@ -193,7 +193,7 @@
         Vector3i vVoxelSize(block_size_with_padding.x, block_size_with_padding.y, block_size_with_padding.z);
 
         std::shared_ptr<VertexMesh> &&pmesh = surface_nets_with_water(funVoxelSdf, funVoxelMaterial, funVoxelOccupancyAndTag, funVoxelTag, vVoxelSize, 0);
-        separateSolidAndWaterFaces(pmesh);
+        separateSolidAndWaterFaces(pmesh, lod_index);
 #ifdef DEBUG_SINGLE_BUILD_MESH
         VertexMesh &meshWithWater = *pmesh;
         meshWithWater.outputToObjFile("mesh_", position, false);
@@ -259,7 +259,7 @@
         uint8_t cell_border_mask,
         const Vector3i &position) {
         VertexMesh &mesh = *pmesh;
-        if (mesh.vertices_.size() <= 0 || mesh.faces_.size() <= 0) {
+        if (mesh.vertices_.size() <= 0 || mesh.faces_[0].size() <= 0) {
             return;
         }
 
@@ -275,15 +275,15 @@
             cell_vertex_indices[i] = emit_vertex(primary, mesh.normals_[i], cell_border_mask, secondary);
         }
 
-        for (unsigned int t = 0; t < mesh.faces_.size(); ++t)
+        for (unsigned int t = 0; t < mesh.faces_[0].size(); ++t)
         {
             for (int i = 0; i < 3; i++) {
-                uint32_t index = (uint32_t)(cell_vertex_indices[(int)mesh.faces_[t][i]]);
+                uint32_t index = (uint32_t)(cell_vertex_indices[(int)mesh.faces_[0][t][i]]);
 
                 if (MESH_SHARE_POINTS) {
                     //if normal is ZERO or material belongs to regular materials, do not share face vertex
-                    if (_output_normals[index] == Vector3(0) || !mesh.share_point_[(int)mesh.faces_[t][i]]) {
-                        Vector3 primary = mesh.vertices_[(int)mesh.faces_[t][i]];
+                    if (_output_normals[index] == Vector3(0) || !mesh.share_point_[(int)mesh.faces_[0][t][i]]) {
+                        Vector3 primary = mesh.vertices_[(int)mesh.faces_[0][t][i]];
                         secondary = get_secondary_position(primary, mesh.face_normals_[t], 0, block_size_scaled);
                         index = emit_vertex(primary, mesh.face_normals_[t], cell_border_mask, secondary);
                     }
@@ -293,9 +293,9 @@
                 else {
                     //if the angle of vertex normal and face normal > threshold, do not share face vertex
                     Real normal_angle = get_normal_angle(_output_normals[index], mesh.face_normals_[t]);
-                    if (_output_normals[index] == Vector3(0) || !mesh.share_point_[(int)mesh.faces_[t][i]]
+                    if (_output_normals[index] == Vector3(0) || !mesh.share_point_[(int)mesh.faces_[0][t][i]]
                         || normal_angle > Math::PI / 4.f) {
-                        Vector3 primary = mesh.vertices_[(int)mesh.faces_[t][i]];
+                        Vector3 primary = mesh.vertices_[(int)mesh.faces_[0][t][i]];
                         secondary = get_secondary_position(primary, mesh.face_normals_[t], 0, block_size_scaled);
                         index = emit_vertex(primary, mesh.face_normals_[t], cell_border_mask, secondary);
                     }
@@ -428,6 +428,29 @@
         else if (output.surfaces.size() == 2) {
             outputToObjFile(output.surfaces[0], position, false);
             outputToObjFile(output.surfaces[1], position, true);
+        }
+
+        std::string sFileName = ("side_mesh_") + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj";
+        bool bhasface = false;
+        for (int e = 0; e < Cube_Count; ++e) {
+            if (mesh.transition_faces_[1][e].size() > 0) {
+                bhasface = true;
+                break;
+            }
+        }
+        if (bhasface) {
+            std::ofstream ofs(sFileName);
+            for (size_t i = 0; i < mesh.vertices_.size(); i++) {
+                ofs << "v " << mesh.vertices_[i][0] + offset.x << " " << mesh.vertices_[i][1] + offset.y << " " << mesh.vertices_[i][2] + offset.z << std::endl;
+            }
+            for (int e = 0; e < Cube_Count; ++e) {
+                if (mesh.transition_faces_[1][e].size() > 0) {
+                    for (size_t i = 0; i < mesh.transition_faces_[1][e].size(); ++i) {
+                        ofs << "f " << mesh.transition_faces_[1][e][i].x + 1 << " " << mesh.transition_faces_[1][e][i].y + 1 << " " << mesh.transition_faces_[1][e][i].z + 1 << std::endl;
+                    }
+                }
+            }
+            ofs.close();
         }
 #endif
     }
