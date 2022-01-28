@@ -21,6 +21,8 @@ INCLUDEPATH += $$PWD/../commonClass/commonMath/
 include($$PWD/../commonClass/commonGeometry/commonGeometry.pri)
 INCLUDEPATH += $$PWD/../commonClass/commonGeometry/
 
+include($$PWD/commonSdf/commonSdf.pri)
+
 include($$PWD/voxels/voxels.pri)
 include($$PWD/meshGenerator/meshGenerator.pri)
 include($$PWD/voxelGenerator/voxelGenerator.pri)
