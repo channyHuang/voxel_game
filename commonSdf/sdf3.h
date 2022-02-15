@@ -13,6 +13,29 @@ using namespace std;
 class Sdf3
 {
 public:
+    enum class SdfType : uint8_t {
+            Sdf_Sphere,
+            Sdf_Slab,
+            Sdf_Box,
+            Sdf_RoundBox,
+            Sdf_WireframeBox,
+            Sdf_Torus,
+
+            Sdf_Capsule,
+            Sdf_Cylinder,
+            Sdf_CappedCone,
+            Sdf_RoundedCone,
+            Sdf_Ellipsoid,
+
+            Sdf_Pyramid,
+            Sdf_Tetrahedron,
+            Sdf_Octahedron,
+            Sdf_Dodecahedron,
+            Sdf_TriPrism,
+            Sdf_Count
+        };
+        static std::vector<std::string> vSdfTypeString;
+
     Sdf3();
 
     void reset();

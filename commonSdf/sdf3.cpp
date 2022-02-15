@@ -1,5 +1,10 @@
 #include "sdf3.h"
 
+std::vector<std::string> Sdf3::vSdfTypeString = { "Sphere", "Slab", "Box", "RoundBox", "WireframeBox", "Torus",
+                                       "Capsule", "Cylinder", "CappedCone", "RoundedCone", "Ellipsoid",
+                                       "Pyramid", "Tetrahedron", "Octahedron", "Dodecahedron", "TriPrism" };
+
+
 Sdf3::Sdf3()
 {
     fun = nullptr;
@@ -50,14 +55,14 @@ std::function<real(const Vector3& vpos)> Sdf3::Box(const Vector3& vsize, const V
 std::function<real(const Vector3& vpos)> Sdf3::RoundBox(const Vector3& vsize, real fradius) {
     fun = [vsize, fradius](const Vector3 vpos) -> real {
         Vector3 vdist = vpos.getAbs() - vsize * 0.5f + fradius;
-        return (vdist.getMax(0)).len() + std::fmin(vdist.getMaxNum(), 0) - fradius;
+        return (vdist.getMax(0.0f)).len() + std::fmin(vdist.getMaxNum(), 0.0f) - fradius;
     };
     return fun;
 }
 
 std::function<real(const Vector3& vpos)> Sdf3::WireframeBox(const Vector3& vsize, real fthickness) {
     std::function<real(const Vector3 v)> funG = [&](Vector3 v) -> real {
-        return Vector3(std::fmax(v.x, 0), std::fmax(v.y, 0), std::fmax(v.z, 0)).len() + std::fmin(std::fmax(v.x, std::fmax(v.y, v.z)), 0);
+        return Vector3(std::fmax(v.x, 0.0f), std::fmax(v.y, 0.0f), std::fmax(v.z, 0.0f)).len() + std::fmin(std::fmax(v.x, std::fmax(v.y, v.z)), 0.0f);
     };
 
     fun = [funG, vsize, fthickness](const Vector3 vpos) -> real {
@@ -110,7 +115,7 @@ std::function<real(const Vector3& vpos)> Sdf3::CappedCylinder(const Vector3& vpo
 std::function<real(const Vector3& vpos)> Sdf3::RoundedCylinder(real fradiusa, real fradiusb, real height) {
     fun = [fradiusa, fradiusb, height](const Vector3& vpos) -> real {
         Vector2 vd = Vector2(Vector2(vpos.x, vpos.y).len() - fradiusa + fradiusb, std::fabs(vpos.z) - height / 2.f + fradiusb);
-        return std::fmin(std::fmax(vd.x, vd.y), 0) + (Vector2(std::fmax(vd.x, 0), std::fmax(vd.y, 0)).len() - fradiusb);
+        return std::fmin(std::fmax(vd.x, vd.y), 0.0f) + (Vector2(std::fmax(vd.x, 0.0f), std::fmax(vd.y, 0.0f)).len() - fradiusb);
     };
     return fun;
 }
@@ -122,13 +127,13 @@ std::function<real(const Vector3& vpos)> Sdf3::CappedCone(const Vector3& vposa, 
         real fpapa = (vpos - vposa).dot(vpos - vposa);
         real fpaba = (vpos - vposa).dot(vposb - vposa) / fbaba;
         real fx = std::sqrt(fpapa - fpaba * fpaba * fbaba);
-        real fcax = std::fmax(0, fx - (fpaba < 0.5f ? fradiusa : fradiusb));
+        real fcax = std::fmax(0.0f, fx - (fpaba < 0.5f ? fradiusa : fradiusb));
         real fk = frba * frba + fbaba;
         real ff = Math::Clamp((frba * (fx - fradiusa) + fpaba * fbaba) / fk, 0.f, 1.f);
-        real fcay = std::fabs(fpaba - 0.5) - 0.5f;
+        real fcay = std::fabs(fpaba - 0.5f) - 0.5f;
         real fcbx = fx - fradiusa - ff * frba;
         real fcby = fpaba - ff;
-        real fs = ((fcbx < 0 && fcay < 0) ? -1 : 1);
+        real fs = ((fcbx < 0.0f && fcay < 0.0f) ? -1.f : 1.f);
         return fs * std::sqrt(std::fmin(fcax * fcax + fcay * fcay * fbaba, fcbx * fcbx + fcby * fcby * fbaba));
     };
     return fun;
@@ -163,12 +168,12 @@ std::function<real(const Vector3& vpos)> Sdf3::Pyramid(real height) {
         int w = (va.y > va.x);
         va[w] = Vector2(va[1], va[0])[w];
         Vector3 vp = Vector3(va.x, vpos.z, va.y);
-        real m2 = height * height + 0.25;
+        real m2 = height * height + 0.25f;
         Vector3 vq = Vector3(vp.z, height * vp.y - 0.5f * vp.x, height * vp.x + 0.5f * vp.y);
-        real fs = std::fmax(-vq.x, 0);
+        real fs = std::fmax(-vq.x, 0.f);
         real ft = Math::Clamp((vq.y - 0.5f * vp.z) / (m2 + 0.25f), 0.f, 1.f);
-        real fa = m2 * std::pow((vq.x + fs), 2) + vq.y * vq.y;
-        real fb = m2 * std::pow(vq.x + 0.5f * ft, 2) + std::pow(vq.y - m2 * ft, 2);
+        real fa = m2 * std::powf((vq.x + fs), 2.f) + vq.y * vq.y;
+        real fb = m2 * std::powf(vq.x + 0.5f * ft, 2.f) + std::powf(vq.y - m2 * ft, 2.f);
         real d2 = (std::fmin(vq.y, -vq.x * m2 - vq.y * 0.5f) > 0 ? 0 : std::fmin(fa, fb));
         return std::sqrt((d2 + vq.z * vq.z) / m2) * std::signbit(std::fmax(vq.z, -vp.y));
     };
@@ -177,7 +182,7 @@ std::function<real(const Vector3& vpos)> Sdf3::Pyramid(real height) {
 
 std::function<real(const Vector3& vpos)> Sdf3::Tetrahedron(real fradius) {
     fun = [fradius](const Vector3& vpos) -> real {
-        return (std::max(std::fabs(vpos.x + vpos.y) - vpos.z, std::fabs(vpos.x - vpos.y) + vpos.z) - 1) / std::sqrt(3);
+        return (std::fmax(std::fabs(vpos.x + vpos.y) - vpos.z, std::fabs(vpos.x - vpos.y) + vpos.z) - 1.f) / std::sqrt(3.f);
     };
     return fun;
 }
@@ -190,7 +195,7 @@ std::function<real(const Vector3& vpos)> Sdf3::Octahedron(real fradius) {
 }
 
 std::function<real(const Vector3& vpos)> Sdf3::Dodecahedron(real fradius) {
-    Vector3 v = Vector3((std::sqrt(5) + 1) / 2.f, 1.f, 0.f);
+    Vector3 v = Vector3((std::sqrt(5.f) + 1.f) / 2.f, 1.f, 0.f);
     fun = [v, fradius](const Vector3& vpos) -> real {
         Vector3 vp = (vpos / fradius).getAbs();
         real a = vp.dot(v);
@@ -203,14 +208,14 @@ std::function<real(const Vector3& vpos)> Sdf3::Dodecahedron(real fradius) {
 }
 
 std::function<real(const Vector3& vpos)> Sdf3::Icosahedron(real fradius) {
-    Vector3 v = Vector3((std::sqrt(5) + 3) / 2.f, 1.f, 0.f);
-    real w = std::sqrt(3) / 3;
+    Vector3 v = Vector3((std::sqrt(5.f) + 3.f) / 2.f, 1.f, 0.f);
+    real w = std::sqrt(3.f) / 3.f;
     fun = [v, w, fradius](const Vector3& vpos) -> real {
         Vector3 vp = (vpos / fradius).getAbs();
         real a = vp.dot(v);
         real b = vp.dot(Vector3(v.z, v.x, v.y));
         real c = vp.dot(Vector3(v.y, v.z, v.x));
-        real d = vp.dot(Vector3(w));
+        real d = vp.dot(Vector3(w, w, w));
         return std::fmax(std::fmax(std::fmax(a, b), c) - v.x, d) * fradius;
     };
     return fun;
@@ -219,7 +224,7 @@ std::function<real(const Vector3& vpos)> Sdf3::Icosahedron(real fradius) {
 std::function<real(const Vector3& vpos)> Sdf3::TriPrism(Vector2 height) {
     fun = [height](const Vector3& vpos) -> real {
         Vector3 vq = vpos.getAbs();
-        return std::fmax(vq.z - height.y, std::fmax(vq.x * 0.866025 + vpos.y * 0.5, -vpos.y) - height.x * 0.5f);
+        return std::fmax(vq.z - height.y, std::fmax(vq.x * 0.866025f + vpos.y * 0.5f, -vpos.y) - height.x * 0.5f);
     };
     return fun;
 }
@@ -273,7 +278,7 @@ std::function<real(const Vector3& vpos)> Sdf3::orient(std::function<real(const V
 }
 
 std::function<real(const Vector3& vpos)> Sdf3::circular_array(std::function<real(const Vector3& vpos)> funSdf, int count) {
-    int da = 2 * Math::PI / count;
+    real da = 2.f * Math::PI / count;
     fun = [&](const Vector3 vpos) -> real {
         real d = Vector2(vpos.x, vpos.y).len();
         real a = std::atan(vpos.y / vpos.x);
