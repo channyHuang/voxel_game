@@ -8,6 +8,7 @@
 
 #include "renderControl/glwidget.h"
 #include "terrains/voxelterrain.h"
+#include "commonSdf/sdf3.h"
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
     init();
@@ -33,8 +34,33 @@ void MainWidget::initWidgets() {
         // generate terrain
         TerrainGenerator_Roblox::getInstance()->setRange(Vector3(0), Vector3(30, 30, 30));
         m_stBiomeParams.use_biomes = false;
-        TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(tool, m_stBiomeParams);
+        //TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(tool, m_stBiomeParams);
     });
+
+    QPushButton *testBtn = new QPushButton(this);
+    testBtn->setText("only for test sub functions");
+    connect(testBtn, &QPushButton::clicked, [&](){
+        Sdf3 sdf3;
+        sdf3.Sphere(10, Vector3(0, 0, 0));
+
+        VoxelToolTerrain *tool = static_cast<VoxelToolTerrain*>(VoxelTerrain::getInstance()->get_voxel_tool());
+        for (int i = -15; i <= 15; ++i) {
+            for (int  j = -15; j <= 15; ++j) {
+                for (int k = -15; k <= 15; ++k) {
+                    tool->set_voxel_f(Vector3i(i, j, k), sdf3.getFun()(Vector3(i, j, k)));
+                }
+            }
+        }
+
+        VoxelMesherSurfaceNets surfaceNet;
+        VoxelMesher::Output output;
+
+        qDebug() << "testBtn end";
+        //VoxelMesher::Input input({, 0, Vector3i(0, 0, 0)});
+        //inpput.voxels;
+        //surfaceNet.build(output, input);
+    });
+
     QVBoxLayout *buttonLayout = new QVBoxLayout;
     buttonLayout->addWidget(createBtn);
 
