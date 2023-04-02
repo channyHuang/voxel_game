@@ -67,7 +67,6 @@ void TreeVoxel::setTree(VoxelToolTerrain* pVoxelTool, const Vector3& vroot, floa
                         sdf = torus(vpos - vroot, 80, 10);
                         //sdf = capsule(bend_linear(vpos - vroot, Vector3::NEG_UNIT_Y, Vector3::UNIT_Y, Vector3::UNIT_X), Vector3::NEG_UNIT_Y * 2.f, Vector3::UNIT_Y * 2.f, 3);
                         pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
-                        qDebug() << vpos.toString().c_str() << " " << sdf;
                     }
                 }
             }

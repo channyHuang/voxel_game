@@ -12,6 +12,8 @@
 #include "terrains/voxeltoolterrain.h"
 #include "common_enum.h"
 
+#include "terrains/voxelBrush.h"
+
 namespace TerrainMath {
     static Vector3i vector3FloorOrCeil(const Vector3 &pos, bool bfloor = true) {
         if (bfloor) {
@@ -177,6 +179,8 @@ public:
     //generate terrain with biomes
     void genTotallyFlat(VoxelToolTerrain* pVoxelTool, int max_lod = 0);
     void generateTerrainByBiomes(VoxelToolTerrain* pVoxelTool, BiomesParam& biomeParams, int max_lod = 0);
+    void genTotallyFlat(VoxelBrush* pVoxelTool, int max_lod = 0);
+    void generateTerrainByBiomes(VoxelBrush* pVoxelTool, BiomesParam& biomeParams, int max_lod = 0);
 
     struct PointDistNoiseInfo {
         float fdist_, fbiome_noise_;

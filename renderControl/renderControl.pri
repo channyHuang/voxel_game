@@ -1,4 +1,4 @@
-QT       += core
+QT       += core openglwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,6 +11,7 @@ CONFIG += c++11
 DEFINES += QT_DEPRECATED_WARNINGS
 
 include($$PWD/../renderCommon/renderCommon.pri)
+include($$PWD/../uvUnwrap/uvUnwrap.pri)
 INCLUDEPATH += $$PWD/../renderCommon
 
 
@@ -25,7 +26,7 @@ HEADERS += $${HEADER_FILES}
 
 DEFINES += PRO_PATH=$${PWD}
 
-RESOURCES += $${RESOURCE_FILES} \
+RESOURCES += $${RESOURCE_FILES}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -5,6 +5,9 @@
 #include <QLabel>
 #include <QTimer>
 #include <QThread>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QGroupBox>
 
 #include "renderControl/glwidget.h"
 #include "terraingenerator_roblox.h"
@@ -26,6 +29,10 @@ private:
     QTimer timer;
     QThread *terrain_thread = nullptr;
     TerrainGenerator_Roblox::BiomesParam m_stBiomeParams;
+
+    QSpinBox *m_pSizeBox[3];
+    Vector3i m_size = Vector3i(100);
+    QCheckBox *m_pBiomeBox[9];
 };
 
 #endif // MAINWIDGET_H

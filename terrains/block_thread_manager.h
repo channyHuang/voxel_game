@@ -8,7 +8,8 @@
 #include <vector>
 #include <mutex>
 #include <thread>
-#include <semaphore>
+//#include <semaphore>
+#include <unordered_map>
 
 #include "boxi.h"
 #include "vector3i.h"
@@ -104,7 +105,7 @@ public:
 
             //job.input_mutex.unlock();
             //job.output_mutex.unlock();
-            job.sema.release();
+            //job.sema.release();
             job.thread = std::thread(_thread_func, &job);
             job.needs_sort = true;
             job.processor = processors[i];
@@ -115,7 +116,7 @@ public:
         for (unsigned int i = 0; i < _job_count; ++i) {
             JobData &job = _jobs[i];
             job.thread_exit = true;
-            job.sema.release();
+            //job.sema.release();
         }
 
         for (unsigned int i = 0; i < _job_count; ++i) {
@@ -123,7 +124,7 @@ public:
 
             job.thread.join();
 
-            job.sema.release();
+            //job.sema.release();
             //job.input_mutex.unlock();
             //job.output_mutex.unlock();
         }
@@ -201,7 +202,7 @@ public:
             job.input_mutex.unlock();
 
             if (should_run) {
-                 job.sema.release();
+                 //job.sema.release();
             }
         }
 
@@ -246,7 +247,7 @@ private:
         Input input;
         Output output;
 
-        std::binary_semaphore sema = std::binary_semaphore(1);
+        //std::binary_semaphore sema = std::binary_semaphore(1);
         std::thread thread;
         uint32_t sync_interval_ms = 100;
         uint32_t job_index = -1;
@@ -393,7 +394,7 @@ private:
             }
 
             // Wait for future wake-up
-            data.sema.acquire();
+            //data.sema.acquire();
         }
 
         qDebug() << "exit";

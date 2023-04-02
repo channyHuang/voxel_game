@@ -316,12 +316,16 @@ namespace SURFACE_NETS {
         const Vector3i &start_position,
 		float const isovalue)
 	{
-		auto &&pmesh = get_from_pool<VertexMesh>();
+        std::shared_ptr<VertexMesh> newmesh = std::make_shared<VertexMesh>();
+        //auto &&pmesh = get_from_pool<VertexMesh>();
+        auto &&pmesh = newmesh;
 		VertexMesh &mesh = *pmesh;
 		mesh.reserve(1680);
 		mesh.clear();
 
-		auto &&pVoxelIndex2MeshIndex = get_from_pool<std::unordered_map<std::size_t, std::uint64_t>>();
+        std::shared_ptr<std::unordered_map<std::size_t, std::uint64_t>> newIndex = std::make_shared<std::unordered_map<std::size_t, std::uint64_t>>();
+        //auto &&pVoxelIndex2MeshIndex = get_from_pool<std::unordered_map<std::size_t, std::uint64_t>>();
+        auto &&pVoxelIndex2MeshIndex = newIndex;
 		std::unordered_map<std::size_t, std::uint64_t> &voxelIndex2MeshIndex = *pVoxelIndex2MeshIndex;
 		voxelIndex2MeshIndex.reserve(1680);
 		voxelIndex2MeshIndex.clear();

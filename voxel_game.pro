@@ -1,4 +1,4 @@
-QT += core gui widgets
+FQT += core gui widgets
 
 CONFIG += c++2a
 CONFIG -= app_bundle
@@ -6,7 +6,7 @@ CONFIG += sdk_no_version_check
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
+# depend on your compiler). Please consult the documentatFion of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
@@ -31,14 +31,13 @@ include($$PWD/biomes/biomes.pri)
 
 include($$PWD/renderControl/renderControl.pri)
 
-
 INCLUDEPATH += $$PWD/voxels
 INCLUDEPATH += $$PWD/voxelGenerator
 INCLUDEPATH += $$PWD/render_control
 
 HEADER_FILES = $$files($$PWD/*.h, false)
 SOURCE_FILES = $$files($$PWD/*.cpp, false)
-RESOURCE_FILES = $$files($$PWD/*qrc, false)
+RESOURCE_FILES = $$files($$PWD/*.qrc, false)
 
 HEADERS += $${HEADER_FILES}
 SOURCES += $${SOURCE_FILES}

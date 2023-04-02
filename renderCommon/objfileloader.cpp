@@ -16,6 +16,7 @@ bool ObjFileLoader::loadObjFile(std::string sObjFile) {
 bool ObjFileLoader::loadObjFile(std::string sObjFile, FileObject &stFileObject) {
     std::ifstream ifs(sObjFile);
     if (!ifs.is_open()) {
+        qDebug() << __FUNCTION__ << " file open failed: " << sObjFile.c_str();
         return false;
     }
     uint32_t count = stFileObject.positions.size();
@@ -48,6 +49,7 @@ bool ObjFileLoader::loadObjFile(std::string sObjFile, FileObject &stFileObject) 
         }
     }
     ifs.close();
+    qDebug() << __FUNCTION__ << " " << stFileObject.positions.size();
     return (stFileObject.positions.size() == stFileObject.normals.size());
 }
 

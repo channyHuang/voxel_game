@@ -2,10 +2,9 @@
 #define VOXEL_MESH_UPDATER_H
 
 #include "../voxels/voxel_buffer.h"
-#include "../meshGenerator/voxel_mesher.h"
 
 #include "terrains/block_thread_manager.h"
-#include "meshGenerator/voxel_mesher.h"
+#include "voxel_mesher.h"
 #include "meshGenerator/naiveSurfaceNets/voxel_mesher_surfacenet.h"
 
 class VoxelMeshUpdater {

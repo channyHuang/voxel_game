@@ -23,7 +23,8 @@ enum MaterialType {
     SOIL,
     STONE,
     WATER,
-    WOOD
+    WOOD,
+    ROAD
 };
 
 #endif // COMMON_ENUM_H

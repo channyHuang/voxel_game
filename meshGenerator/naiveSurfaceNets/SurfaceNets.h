@@ -19,11 +19,12 @@
 #include "../voxels/voxel_buffer.h"
 #include "triangle.h"
 #include "geometrymath.h"
+#include "common_enum.h"
 
 using namespace std;
 
 namespace SURFACE_NETS {
-
+/*
     enum MaterialType {
         AIR = 0,
         ROAD,
@@ -36,7 +37,7 @@ namespace SURFACE_NETS {
         BRICK,
         WOOD
     };
-
+*/
 	enum MeshType {
 		MESH_UNKNOWN = -1,
 		MESH_SMOOTH = 0,

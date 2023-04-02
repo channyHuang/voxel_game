@@ -10,6 +10,10 @@
 #include "terrains/voxelterrain.h"
 #include "commonSdf/sdf3.h"
 
+#include "terrains/voxelBrush.h"
+#include "terrains/terrainManager.h"
+#include "voxelGenerator/terraingenerator_roblox.h"
+
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
     init();
 
@@ -30,38 +34,58 @@ void MainWidget::initWidgets() {
     QPushButton *createBtn = new QPushButton(this);
     createBtn->setText("create");
     connect(createBtn, &QPushButton::clicked, [&](){
-        VoxelToolTerrain *tool = static_cast<VoxelToolTerrain*>(VoxelTerrain::getInstance()->get_voxel_tool());
+        VoxelBrush *brush = new VoxelBrush(TerrainManager::getInstance(), VoxelMap::getInstance());
         // generate terrain
-        TerrainGenerator_Roblox::getInstance()->setRange(Vector3(0), Vector3(30, 30, 30));
-        m_stBiomeParams.use_biomes = false;
-        //TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(tool, m_stBiomeParams);
+        TerrainGenerator_Roblox::getInstance()->setRange(Vector3(0), m_size.to_vec3());
+        m_stBiomeParams.use_biomes = true;
+        TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(brush, m_stBiomeParams);
     });
 
-    QPushButton *testBtn = new QPushButton(this);
-    testBtn->setText("only for test sub functions");
-    connect(testBtn, &QPushButton::clicked, [&](){
-        Sdf3 sdf3;
-        sdf3.Sphere(10, Vector3(0, 0, 0));
+    connect(TerrainManager::getInstance(), &TerrainManager::generateMeshSuc, m_pGlWidget, &GlWidget::updateMesh);
 
-        VoxelToolTerrain *tool = static_cast<VoxelToolTerrain*>(VoxelTerrain::getInstance()->get_voxel_tool());
-        for (int i = -15; i <= 15; ++i) {
-            for (int  j = -15; j <= 15; ++j) {
-                for (int k = -15; k <= 15; ++k) {
-                    tool->set_voxel_f(Vector3i(i, j, k), sdf3.getFun()(Vector3(i, j, k)));
-                }
-            }
-        }
+    // size
+    QGroupBox *sizeBox = new QGroupBox("terrain size");
+    QVBoxLayout *sizeLayout = new QVBoxLayout;
+    for (int i = 0; i < 3; ++i) {
+        m_pSizeBox[i] = new QSpinBox();
+        m_pSizeBox[i]->setRange(0, 1024);
+        m_pSizeBox[i]->setValue(100);
 
-        VoxelMesherSurfaceNets surfaceNet;
-        VoxelMesher::Output output;
+        connect(m_pSizeBox[i], &QSpinBox::valueChanged, [&, i](int value){
+            m_size[i] = value;
+        });
+        sizeLayout->addWidget(m_pSizeBox[i]);
+    }
+    sizeBox->setLayout(sizeLayout);
 
-        qDebug() << "testBtn end";
-        //VoxelMesher::Input input({, 0, Vector3i(0, 0, 0)});
-        //inpput.voxels;
-        //surfaceNet.build(output, input);
-    });
+    // biomes
+    QGroupBox *biomeBox = new QGroupBox("terrain biomes");
+    QVBoxLayout *biomeLayout = new QVBoxLayout;
+    std::vector<std::string> biomeNames = {        "Water",
+                                                   "Marsh",
+                                                   "Plains",
+                                                   "Hills",
+                                                   "Dunes",
+                                                   "Canyons",
+                                                   "Mountains",
+                                                   "Lavaflow",
+                                                   "Arctic"};
+    for (int i = 0; i < biomeNames.size(); ++i) {
+        m_pBiomeBox[i] = new QCheckBox(biomeNames[i].data());
+
+        connect(m_pBiomeBox[i], &QCheckBox::stateChanged, [&, i](int state){
+            if (state == Qt::Checked)
+                m_stBiomeParams.biomes_be_checked |= (1 << i);
+            else
+                m_stBiomeParams.biomes_be_checked ^= (1 << i);
+        });
+        biomeLayout->addWidget(m_pBiomeBox[i]);
+    }
+    biomeBox->setLayout(biomeLayout);
 
     QVBoxLayout *buttonLayout = new QVBoxLayout;
+    buttonLayout->addWidget(sizeBox);
+    buttonLayout->addWidget(biomeBox);
     buttonLayout->addWidget(createBtn);
 
     QHBoxLayout *mainlayout = new QHBoxLayout;
@@ -72,18 +96,21 @@ void MainWidget::initWidgets() {
 }
 
 bool MainWidget::init() {
-    auto terrain = VoxelTerrain::getInstance();
-    connect(this, &MainWidget::notice, terrain, &VoxelTerrain::_notification);
-    terrain_thread = new QThread(this);
-    terrain->moveToThread(terrain_thread);
-    terrain_thread->start(QThread::LowPriority);
+    TerrainManager *terrainManager = TerrainManager::getInstance();
+    connect(this, &MainWidget::notice, TerrainManager::getInstance(), &TerrainManager::_notification);
+    //terrain_thread = new QThread(this);
+    //terrain->moveToThread(terrain_thread);
+    //terrainManager->moveToThread(terrain_thread);
+    //terrain_thread->start(QThread::LowPriority);
 
     emit notice(Notification_Enter);
-    timer.setInterval(5000);
-    connect(&timer, &QTimer::timeout, terrain, [&](){
-        terrain->_notification(Notification_Process);
+    timer.stop();
+    timer.setInterval(10000);
+    connect(&timer, &QTimer::timeout, [](){
+        TerrainManager::getInstance()->_notification(Notification_Process);
     });
-    timer.start();
+
+    timer.start(10000);
     return true;
 }
 

@@ -7,10 +7,9 @@ VoxelMeshUpdater::VoxelMeshUpdater(unsigned int thread_count, MeshingParams para
 	_minimum_padding = 0;
 	_maximum_padding = 0;
 
-
-        _minimum_padding = max(_minimum_padding,
+    _minimum_padding = max(_minimum_padding,
 mesher->get_minimum_padding());
-        _maximum_padding = max(_maximum_padding, mesher->get_maximum_padding());
+    _maximum_padding = max(_maximum_padding, mesher->get_maximum_padding());
 
 	FixedArray<Mgr::BlockProcessingFunc, VoxelConstants::MAX_LOD> processors;
 
@@ -38,7 +37,7 @@ void VoxelMeshUpdater::process_blocks_thread_func(
 		const ArraySlice<InputBlock> inputs,
 		ArraySlice<OutputBlock> outputs,
         VoxelMesher* mesher) {
-
+    qDebug() << __FILE__ << " " << __FUNCTION__;
 	for (unsigned int i = 0; i < inputs.size(); ++i) {
 		const InputBlock &ib = inputs[i];
 		const InputBlockData &block = ib.data;
