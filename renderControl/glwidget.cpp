@@ -12,6 +12,8 @@ GlWidget::GlWidget(QWidget* parent):
     m_core = QSurfaceFormat::defaultFormat().profile() == QSurfaceFormat::CoreProfile;
     sProPath = CONFIG2QSTR(PRO_PATH);
     setFocusPolicy(Qt::ClickFocus);
+
+    textures.reserve(MaterialType::Material_MAX);
 }
 
 GlWidget::~GlWidget(){
@@ -61,7 +63,7 @@ void GlWidget::mouseReleaseEvent(QMouseEvent *e) {
     QOpenGLWidget::mouseReleaseEvent(e);
 }
 
-void GlWidget::keyReleaseEvent(QKeyEvent *e) {
+void GlWidget::keyPressEvent(QKeyEvent *e) {
     switch(e->key()) {
     case Qt::Key_W:
         m_vCameraPos += m_vCameraDir;
@@ -90,6 +92,38 @@ void GlWidget::keyReleaseEvent(QKeyEvent *e) {
     update();
 
     QOpenGLWidget::keyReleaseEvent(e);
+}
+
+
+void GlWidget::keyReleaseEvent(QKeyEvent *e) {
+    QOpenGLWidget::keyReleaseEvent(e);
+    return;
+    switch(e->key()) {
+    case Qt::Key_W:
+        m_vCameraPos += m_vCameraDir;
+        break;
+    case Qt::Key_S:
+        m_vCameraPos -= m_vCameraDir;
+        break;
+    case Qt::Key_A:
+        m_vCameraPos += m_vCameraUp.cross(m_vCameraDir);
+        break;
+    case Qt::Key_D:
+        m_vCameraPos -= m_vCameraUp.cross(m_vCameraDir);
+        break;
+    case Qt::Key_Q:
+        m_vCameraPos += m_vCameraUp;
+        break;
+    case Qt::Key_E:
+        m_vCameraPos -= m_vCameraUp;
+        break;
+    default:
+        break;
+    }
+
+    m_camera.setToIdentity();
+    m_camera.translate(m_vCameraPos.x, m_vCameraPos.y, m_vCameraPos.z);
+    update();
 }
 
 void GlWidget::wheelEvent(QWheelEvent *e) {
@@ -133,6 +167,8 @@ void GlWidget::initializeGL()
     f = this->context()->functions();
     f->initializeOpenGLFunctions();
     f->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    f->glEnable(GL_LIGHTING);
+    f->glEnable(GL_DEPTH_TEST);
 
     initShader();
     initTexture();
@@ -164,12 +200,13 @@ void GlWidget::initializeGL()
 }
 
 void GlWidget::initTexture() {
-    texture = new QOpenGLTexture(QImage(":/cork.jpg").mirrored());
-    texture->setMinificationFilter(QOpenGLTexture::Nearest);
-    texture->setMagnificationFilter(QOpenGLTexture::Linear);
-    texture->setWrapMode(QOpenGLTexture::Repeat);
-
-
+    textures[MaterialType::WOOD] = new QOpenGLTexture(QImage(":/textures/wood.png").mirrored());
+    textures[MaterialType::GRASS] = new QOpenGLTexture(QImage(":/textures/sky.png").mirrored());
+    for (auto itr = textures.begin(); itr != textures.end(); itr++) {
+        itr->second->setMinificationFilter(QOpenGLTexture::Nearest);
+        itr->second->setMagnificationFilter(QOpenGLTexture::Linear);
+        itr->second->setWrapMode(QOpenGLTexture::Repeat);
+    }
 }
 
 void GlWidget::paintGL()
@@ -179,6 +216,9 @@ void GlWidget::paintGL()
     f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     f->glEnable(GL_DEPTH_TEST);
     f->glEnable(GL_CULL_FACE);
+
+    GLfloat sunPos[] = {0.f, 0.f, 0.f, 1.f};
+
 
     m_world.setToIdentity();
     m_world.rotate(180.0f - (m_Rot[0] / 16.0f), 1, 0, 0);
@@ -208,8 +248,10 @@ void GlWidget::paintGL()
     lock.unlock();
     m_vbo->allocate(data.constData(), m_nNumOfTris * 8 * sizeof(GLfloat));
 
-    texture->bind();
+    textures[MaterialType::WOOD]->bind();
     m_shader->setUniformValue("texture", 0);
+    m_shader->setUniformValue("texture1", 1);
+    textures[MaterialType::GRASS]->bind(1);
 
     m_shader->setUniformValue(m_projMatrixLoc, projection);
     m_shader->setUniformValue(m_mvMatrixLoc, m_camera * m_world);

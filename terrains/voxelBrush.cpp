@@ -43,8 +43,8 @@ void VoxelBrush::set_voxel_f(const Vector3i& pos, float v, int channel) {
 }
 
 void VoxelBrush::set_voxel_info(const Vector3i& pos, float v, int material) {
-    _map->set_voxel(v, pos, VoxelBuffer::CHANNEL_SDF);
-    _map->set_voxel(v, pos, VoxelBuffer::CHANNEL_TYPE);
+    _map->set_voxel_f(v, pos, VoxelBuffer::CHANNEL_SDF);
+    _map->set_voxel(material, pos, VoxelBuffer::CHANNEL_TYPE);
     _post_edit(pos);
 }
 

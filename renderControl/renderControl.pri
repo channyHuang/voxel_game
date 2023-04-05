@@ -19,7 +19,6 @@ SOURCE_FILES = $$files($${PWD}/*.cpp, false)
 HEADER_FILES = $$files($${PWD}/*.h, false)
 RESOURCE_FILES = $$files($${PWD}/*.qrc, false)
 
-
 SOURCES += $${SOURCE_FILES}
 
 HEADERS += $${HEADER_FILES}

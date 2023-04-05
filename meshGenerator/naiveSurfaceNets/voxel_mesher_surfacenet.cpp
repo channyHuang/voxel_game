@@ -2,6 +2,7 @@
 
 //#define DEBUG_SINGLE_BUILD_MESH
 //#define DEBUG_SINGLE_BUILD_TIME
+//#define DEBUG_SINGLE_BUILD_MESHS
 
     namespace {
         static const float TRANSITION_CELL_SCALE = 0.25;
@@ -85,21 +86,13 @@
         const VoxelBuffer &voxels = input.voxels;
 
         if (voxels.get_channel_depth(channel) != VoxelBuffer::DEPTH_16_BIT) return;
-#ifdef DEBUG_SINGLE_BUILD_MESH
+
         if (BMESH_SUPPORT_WATER) {
             build_internal_with_water(output, voxels, channel, input.lod, input.position);
         }
         else {
             build_internal(output, voxels, channel, input.lod, input.position);
         }
-#else
-        if (BMESH_SUPPORT_WATER) {
-            build_internal_with_water(output, voxels, channel, input.lod);
-        }
-        else {
-            build_internal(output, voxels, channel, input.lod);
-        }
-#endif
 
 #ifdef DEBUG_SINGLE_BUILD_TIME
         ui32 time_end = Root::Instance()->getCurrentTime();
@@ -193,6 +186,7 @@
         Vector3i vVoxelSize(block_size_with_padding.x, block_size_with_padding.y, block_size_with_padding.z);
 
         std::shared_ptr<VertexMesh> &&pmesh = surface_nets_with_water(funVoxelSdf, funVoxelMaterial, funVoxelOccupancyAndTag, funVoxelTag, vVoxelSize, 0);
+
         separateSolidAndWaterFaces(pmesh, lod_index);
 #ifdef DEBUG_SINGLE_BUILD_MESH
         VertexMesh &meshWithWater = *pmesh;
@@ -320,7 +314,7 @@
             ofs << c;
         }
         for (unsigned int yy = 2; yy < _output_indices.size(); yy += 3) {
-            sprintf(c, "f %d %d %d\n\0", _output_indices[yy - 2] + 1, _output_indices[yy] + 1, _output_indices[yy - 1] + 1);
+            sprintf(c, "f %d %d %d\n\0", _output_indices[yy - 2] + 1, _output_indices[yy - 1] + 1, _output_indices[yy] + 1);
             ofs << c;
         }
         total_vertices = _output_vertices.size();
@@ -355,12 +349,11 @@
             _is_water = false;
             for (size_t i = 0; i < nsolid_faces_count; ++i) {
                 for (int j = 0; j < 3; ++j) {
-                    int idxj = (3 - j) % 3; //CCW, but render in blockman is CW
-                    int vertex_index = mesh.solid_faces_[i][idxj];
+                    int vertex_index = mesh.solid_faces_[i][j];
                     int possible_index = cell_vertex_indices[vertex_index];
                     //did not push to _output_vertices yeah
                     if (possible_index < 0) {
-                        primary = mesh.vertices_[vertex_index];
+                        primary = mesh.vertices_[vertex_index] - Vector3(2.f) + position.to_vec3() * 16.f;
                         normal = mesh.normals_[vertex_index];
                         secondary = get_secondary_position(primary, normal, 0, block_size_scaled);
                         cell_vertex_indices[vertex_index] = emit_vertex(primary, normal, cell_border_mask, secondary);
@@ -370,7 +363,7 @@
                     if (_output_normals[index] == Vector3(0) || !mesh.share_point_[vertex_index]) {
                         normal = (mesh.vertices_[mesh.solid_faces_[i].y] - mesh.vertices_[mesh.solid_faces_[i].x]).cross(mesh.vertices_[mesh.solid_faces_[i].z] - mesh.vertices_[mesh.solid_faces_[i].x]);
 
-                        primary = mesh.vertices_[vertex_index];
+                        primary = mesh.vertices_[vertex_index] - Vector3(2.f) + position.to_vec3() * 16.f;
                         secondary = get_secondary_position(primary, normal, 0, block_size_scaled);
                         index = emit_vertex(primary, normal, cell_border_mask, secondary);
                     }
@@ -421,7 +414,7 @@
         }
 
 #ifdef DEBUG_SINGLE_BUILD_MESHS
-        Vector3 offset = vector3i2Vector3(position) * 16.f;
+        Vector3 offset = Vector3(0);//vector3i2Vector3(position) * 16.f;
         if (output.surfaces.size() == 1) {
             outputToObjFile(output.surfaces[0], position, output.surfaces[0].isWater);
         }
@@ -455,19 +448,44 @@
 #endif
     }
 
-    void VoxelMesherSurfaceNets::outputToObjFile(Arrays &singleArray, const Vector3i &position, bool bIsWater) {
+    void VoxelMesherSurfaceNets::outputToObjFile(const Arrays &singleArray, const Vector3i &position, bool bIsWater) {
         if (singleArray.indices.size() <= 0 || singleArray.positions.size() <= 0) {
             return;
         }
         std::string sFileName = (bIsWater ? "water_mesh_" : "solid_mesh_") + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj";
-        Vector3 offset = Vector3(static_cast<Real>(position.x), static_cast<Real>(position.y), static_cast<Real>(position.z)) * 16.f;
+        outputToObj(singleArray.positions, singleArray.normals, singleArray.indices, Vector3(0), sFileName);
+    }
+
+    void VoxelMesherSurfaceNets::outputToObj(const std::vector<Vector3>& vertices,
+                                             const std::vector<Vector3>& normals,
+                                             const std::vector<uint32_t>& indices,
+                                             const Vector3& offset,
+                                             const std::string& sFileName) {
+        if (sFileName.length() <= 0) return;
         std::ofstream ofs(sFileName);
-        for (size_t i = 0; i < singleArray.positions.size(); i++) {
-            ofs << "v " << singleArray.positions[i][0] + offset.x << " " << singleArray.positions[i][1] + offset.y << " " << singleArray.positions[i][2] + offset.z << std::endl;
-            ofs << "vn " << singleArray.normals[i].x << " " << singleArray.normals[i].y << " " << singleArray.normals[i].z << std::endl;
+        for (size_t i = 0; i < vertices.size(); i++) {
+            ofs << "v " << vertices[i][0] + offset.x << " " << vertices[i][1] + offset.y << " " << vertices[i][2] + offset.z << std::endl;
+            ofs << "vn " << normals[i].x << " " << normals[i].y << " " << normals[i].z << std::endl;
         }
-        for (size_t i = 0; i < singleArray.indices.size(); i += 3) {
-            ofs << "f " << singleArray.indices[i] + 1 << " " << singleArray.indices[i + 2] + 1 << " " << singleArray.indices[i + 1] + 1 << std::endl;
+        for (size_t i = 0; i < indices.size(); i += 3) {
+            ofs << "f " << indices[i] + 1 << " " << indices[i + 1] + 1 << " " << indices[i + 2] + 1 << std::endl;
+        }
+        ofs.close();
+    }
+
+    void VoxelMesherSurfaceNets::outputToObj(const std::vector<Vector3>& vertices,
+                     const std::vector<Vector3>& normals,
+                     const std::vector<Vector3i>& faces,
+                     const Vector3& offset,
+                     const std::string& sFileName) {
+        if (sFileName.length() <= 0) return;
+        std::ofstream ofs(sFileName);
+        for (size_t i = 0; i < vertices.size(); i++) {
+            ofs << "v " << vertices[i][0] + offset.x << " " << vertices[i][1] + offset.y << " " << vertices[i][2] + offset.z << std::endl;
+            ofs << "vn " << normals[i].x << " " << normals[i].y << " " << normals[i].z << std::endl;
+        }
+        for (size_t i = 0; i < faces.size(); ++i) {
+            ofs << "f " << faces[i][0] + 1 << " " << faces[i][1] + 1 << " " << faces[i][2] + 1 << std::endl;
         }
         ofs.close();
     }

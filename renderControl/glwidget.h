@@ -16,6 +16,7 @@
 #include "meshGenerator/voxel_mesher.h"
 #include "objfileloader.h"
 #include "vector2.h"
+#include "common_enum.h"
 
 class GlWidget : public QOpenGLWidget
 {
@@ -43,6 +44,7 @@ protected:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
+    void keyPressEvent(QKeyEvent *e) override;
     void keyReleaseEvent(QKeyEvent *e) override;
     void wheelEvent(QWheelEvent *e) override;
 private:
@@ -57,6 +59,7 @@ private:
     QOpenGLVertexArrayObject *m_vao;
     QOpenGLFunctions *f = nullptr;
     QOpenGLTexture *texture;
+    std::unordered_map<MaterialType, QOpenGLTexture *> textures;
 
     int m_projMatrixLoc;
     int m_mvMatrixLoc;
@@ -66,7 +69,7 @@ private:
     QMatrix4x4 projection;
     QVector2D mousePressPosition;
 
-    qreal zNear = 0.01f, zFar = 100.f, fov = 45.f, aspect;
+    qreal zNear = 0.001f, zFar = 1000.f, fov = 60.f, aspect;
     bool m_core = false;
 
     ObjFileLoader m_dataLoader;

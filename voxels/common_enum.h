@@ -24,7 +24,8 @@ enum MaterialType {
     STONE,
     WATER,
     WOOD,
-    ROAD
+    ROAD,
+    Material_MAX
 };
 
 #endif // COMMON_ENUM_H

@@ -1006,8 +1006,8 @@ namespace SURFACE_NETS {
 			if (meshWithWater.vertexValid_[face_index.x] && meshWithWater.vertexValid_[face_index.y] && meshWithWater.vertexValid_[face_index.z]) {
 				if (isRepeatFace(vector3FloorOrCeil(meshWithWater.vertices_[face_index.x], true),
 					vector3FloorOrCeil(meshWithWater.vertices_[face_index.y], true),
-					vector3FloorOrCeil(meshWithWater.vertices_[face_index.z], true), 1)) {
-					continue;
+                    vector3FloorOrCeil(meshWithWater.vertices_[face_index.z], true), 1)) {
+                    continue;
 				}
 
 				if (bIsWater[i]) {

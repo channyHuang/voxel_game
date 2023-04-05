@@ -4,8 +4,8 @@ VoxelMeshUpdater::VoxelMeshUpdater(unsigned int thread_count, MeshingParams para
 
     VoxelMesherSurfaceNets *mesher = new VoxelMesherSurfaceNets;
 
-	_minimum_padding = 0;
-	_maximum_padding = 0;
+    _minimum_padding = 2;
+    _maximum_padding = 2;
 
     _minimum_padding = max(_minimum_padding,
 mesher->get_minimum_padding());

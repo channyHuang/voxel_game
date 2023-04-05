@@ -31,7 +31,7 @@ private:
     TerrainGenerator_Roblox::BiomesParam m_stBiomeParams;
 
     QSpinBox *m_pSizeBox[3];
-    Vector3i m_size = Vector3i(100);
+    Vector3i m_size = Vector3i(10);
     QCheckBox *m_pBiomeBox[9];
 };
 

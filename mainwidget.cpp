@@ -37,7 +37,7 @@ void MainWidget::initWidgets() {
         VoxelBrush *brush = new VoxelBrush(TerrainManager::getInstance(), VoxelMap::getInstance());
         // generate terrain
         TerrainGenerator_Roblox::getInstance()->setRange(Vector3(0), m_size.to_vec3());
-        m_stBiomeParams.use_biomes = true;
+        m_stBiomeParams.use_biomes = false;
         TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(brush, m_stBiomeParams);
     });
 
@@ -49,7 +49,7 @@ void MainWidget::initWidgets() {
     for (int i = 0; i < 3; ++i) {
         m_pSizeBox[i] = new QSpinBox();
         m_pSizeBox[i]->setRange(0, 1024);
-        m_pSizeBox[i]->setValue(100);
+        m_pSizeBox[i]->setValue(10);
 
         connect(m_pSizeBox[i], &QSpinBox::valueChanged, [&, i](int value){
             m_size[i] = value;

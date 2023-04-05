@@ -53,8 +53,8 @@ void TerrainGenerator_Roblox::genTotallyFlat(VoxelBrush* pVoxelTool, int max_lod
                brushOccupancy = vOutSize.x * vOutSize.y * vOutSize.z;
 
                fnew_sdf = translateSdfAndOccupancy(brushOccupancy, false);
-               pVoxelTool->set_voxel_f(pos, fnew_sdf, VoxelBuffer::CHANNEL_SDF);
-               if (fnew_sdf <= 0) pVoxelTool->set_voxel(pos, 1, VoxelBuffer::CHANNEL_TYPE);
+               if (fnew_sdf > 0) pVoxelTool->set_voxel_f(pos, fnew_sdf, VoxelBuffer::CHANNEL_SDF);
+               else pVoxelTool->set_voxel_info(pos, fnew_sdf, MaterialType::GRASS);
            }
        }
    }

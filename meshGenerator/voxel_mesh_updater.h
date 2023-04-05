@@ -47,8 +47,8 @@ private:
             VoxelMesher *mesher);
 
     Mgr *_mgr = nullptr;
-    int _minimum_padding = 0;
-    int _maximum_padding = 0;
+    int _minimum_padding = 2;
+    int _maximum_padding = 2;
 };
 
 #endif // VOXEL_MESH_UPDATER_H

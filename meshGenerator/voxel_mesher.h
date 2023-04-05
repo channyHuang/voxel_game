@@ -13,7 +13,7 @@ struct Arrays {
     std::vector<std::vector<uint8_t>> materials;
     std::array<std::vector<uint32_t>, /*Cube::SIDE_COUNT*/6> transition_surfaces;
     std::vector<uint32_t> indices_water;
-    bool isWater;
+    bool isWater = false;
 
     bool empty() {
         return (positions.size() <= 0 || indices.size() <= 0);

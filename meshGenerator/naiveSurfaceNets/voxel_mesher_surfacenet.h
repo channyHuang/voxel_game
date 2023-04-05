@@ -52,7 +52,17 @@ using namespace SURFACE_NETS;
             const Vector3i &block_size_scaled,
             uint8_t cell_border_mask = 0,
             const Vector3i &position = Vector3i(0));
-        void outputToObjFile(Arrays &singleArray, const Vector3i &position, bool bIsWater = false);
+        void outputToObjFile(const Arrays &singleArray, const Vector3i &position, bool bIsWater = false);
+        void outputToObj(const std::vector<Vector3>& vertices,
+                         const std::vector<Vector3>& normals,
+                         const std::vector<uint32_t>& indices,
+                         const Vector3& offset = Vector3(0),
+                         const std::string& sFileName = "");
+        void outputToObj(const std::vector<Vector3>& vertices,
+                         const std::vector<Vector3>& normals,
+                         const std::vector<Vector3i>& faces,
+                         const Vector3& offset = Vector3(0),
+                         const std::string& sFileName = "");
     private:
         std::array<std::vector<ReuseCell>, 2> _cache;
         std::array<std::vector<ReuseTransitionCell>, 2> _cache_2d;

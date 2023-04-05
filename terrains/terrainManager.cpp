@@ -92,7 +92,6 @@ void TerrainManager::_process() {
             WorkThread::InputBlock iblock;
             iblock.data.voxels = nbuffer;
             iblock.position = block_pos;
-            //qDebug() << __FUNCTION__ << " " << block_pos.toString().c_str();
             input.blocks.push_back(iblock);
 
             block->set_mesh_state(VoxelBlock::MESH_UPDATE_SENT);
