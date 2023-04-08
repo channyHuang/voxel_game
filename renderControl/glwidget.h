@@ -26,16 +26,17 @@ public:
         Vector3 positions;
         Vector3 normals;
         Vector2 uvs;
+        uint32_t materials = 1;
 
-        MeshData(const Vector3& pos, const Vector3& n, const Vector2& uv)
-            : positions(pos), normals(n), uvs(uv) {}
+        MeshData(const Vector3& pos, const Vector3& n, const Vector2& uv, uint32_t mat = 0)
+            : positions(pos), normals(n), uvs(uv), materials(mat) {}
     };
 
     GlWidget(QWidget *partent = nullptr);
     ~GlWidget();
 
 public slots:
-    void updateMesh(Arrays surface, Vector3i pos);
+    void updateMesh(const Arrays& surface, const Vector3i& pos);
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -52,6 +53,7 @@ private:
     void drawCubeGeometry();
     void initShader();
     void setRotation(int angle, int axis);
+    void bindTexture();
 
 private:
     QString sProPath;
@@ -80,7 +82,7 @@ private:
     QMatrix4x4 m_world;
     Vector3 m_vCameraDir = Vector3(0, 0, 1);
     Vector3 m_vCameraUp = Vector3(0, 1, 0);
-    Vector3 m_vCameraPos = Vector3(0, 0, -1);
+    Vector3 m_vCameraPos = Vector3(0, 50, -50);
 
     QTimer timer;
     int m_nNumOfTris = 0;

@@ -1,13 +1,13 @@
 #ifndef SURFACENETS_H
 #define SURFACENETS_H
 
+#include <QDebug>
+
 #include <vector>
 #include <functional>
 #include <unordered_map>
 #include <memory>
 #include <fstream>
-
-#include <QDebug>
 #include <array>
 
 #ifndef Real
@@ -24,20 +24,6 @@
 using namespace std;
 
 namespace SURFACE_NETS {
-/*
-    enum MaterialType {
-        AIR = 0,
-        ROAD,
-        STONE,
-        GRASSLAND,
-        GRASS,
-        SAND,
-        LAVA,
-        WATER,
-        BRICK,
-        WOOD
-    };
-*/
 	enum MeshType {
 		MESH_UNKNOWN = -1,
 		MESH_SMOOTH = 0,
@@ -58,8 +44,9 @@ namespace SURFACE_NETS {
     };
 	struct VertexMesh {
 		vector<Vector3> vertices_;
-        vector<Vector3i> faces_[_lod_count]; //vertices index
-		vector<Vector3> normals_;
+        vector<Vector3> normals_;
+        vector<Vector3i> faces_[_lod_count]; //vertices index	
+        vector<uint32_t> materials_;
 		vector<uint8_t> vertexValid_; //vertices in border are not valid
 		vector<Vector3> face_normals_;
 		vector<uint8_t> share_point_;
@@ -73,9 +60,10 @@ namespace SURFACE_NETS {
 
         void clear() {
             vertices_.clear();
+            normals_.clear();
             for (int i = 0; i < 4; ++i)
                 faces_[i].clear();
-            normals_.clear();
+            materials_.clear();
             vertexValid_.clear();
             face_normals_.clear();
             share_point_.clear();
@@ -116,6 +104,7 @@ namespace SURFACE_NETS {
             vertices_.reserve(capacity);
             for (int i = 0; i < 4; ++i)
                 faces_[i].reserve(capacity);
+            materials_.reserve(capacity);
             normals_.reserve(capacity);
             vertexValid_.reserve(capacity);
             face_normals_.reserve(capacity);

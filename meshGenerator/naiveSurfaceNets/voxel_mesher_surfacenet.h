@@ -34,7 +34,9 @@ using namespace SURFACE_NETS;
 
         void build_internal(VoxelMesher::Output &output, const VoxelBuffer &voxels, unsigned int channel, int lod_index,
             const Vector3i &position = Vector3i(0));
-        int emit_vertex(const Vector3& primary, const Vector3& normal, uint16_t border_mask, const Vector3& secondary);
+        int emit_vertex(const Vector3& primary, const Vector3& normal,
+                        uint16_t border_mask, const Vector3& secondary,
+                        uint32_t material = 0);
         void clear_output();
         void fill_surface_arrays(Arrays &arrays);
         void vertexMesh2outputArrays(
@@ -71,5 +73,6 @@ using namespace SURFACE_NETS;
         std::vector<Vector3> _output_vertices;
         std::vector<Vector3> _output_normals;
         std::vector<uint32_t> _output_indices;
+        std::vector<uint32_t> _output_materials;
         bool _is_water = false;
     };

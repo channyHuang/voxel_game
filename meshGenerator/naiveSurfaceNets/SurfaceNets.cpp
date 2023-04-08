@@ -962,6 +962,17 @@ namespace SURFACE_NETS {
 						voxelIndex2MeshIndex[position2Index(vposi, vVoxelSize)] = mesh.vertices_.size();
 
 						mesh.vertices_.push_back(info.first);
+
+                        uint32_t material = 0;
+                        Vector3i corner = vector3FloorOrCeil(info.first);
+                        for (int i = 0; i < vCubeVer.size(); ++i) {
+                            MaterialType type = materialFunction(vposi.to_vec3() + vCubeVer[i]);
+                            if (type != MaterialType::AIR) {
+                                material |= (1 << type);
+                            }
+                        }
+
+                        mesh.materials_.push_back(material);
 						mesh.mesh_type_.push_back(info.second);
 						//mark border (invalid vertex)
 						mesh.vertexValid_.push_back(!isVoxelLowerBoundary(vposi) && !isVoxelUpperBoundary(vposi, vVoxelSize.y - 2));

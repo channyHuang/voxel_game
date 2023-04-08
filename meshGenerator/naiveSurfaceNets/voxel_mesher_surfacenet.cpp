@@ -219,13 +219,14 @@
 #endif
     }
 
-    int VoxelMesherSurfaceNets::emit_vertex(const Vector3& primary, const Vector3& normal, uint16_t border_mask, const Vector3& secondary)
+    int VoxelMesherSurfaceNets::emit_vertex(const Vector3& primary, const Vector3& normal, uint16_t border_mask, const Vector3& secondary, uint32_t material)
     {
 
         int vi = _output_vertices.size();
 
         _output_vertices.push_back(primary);
         _output_normals.push_back(normal);
+        _output_materials.push_back(material);
 
         return vi;
     }
@@ -243,6 +244,7 @@
         arrays.positions.swap(_output_vertices);
         arrays.normals.swap(_output_normals);
         arrays.indices.swap(_output_indices);
+        arrays.materials.swap(_output_materials);
         arrays.isWater = _is_water;
     }
 
@@ -356,7 +358,7 @@
                         primary = mesh.vertices_[vertex_index] - Vector3(2.f) + position.to_vec3() * 16.f;
                         normal = mesh.normals_[vertex_index];
                         secondary = get_secondary_position(primary, normal, 0, block_size_scaled);
-                        cell_vertex_indices[vertex_index] = emit_vertex(primary, normal, cell_border_mask, secondary);
+                        cell_vertex_indices[vertex_index] = emit_vertex(primary, normal, cell_border_mask, secondary, mesh.materials_[vertex_index]);
                     }
 
                     uint32_t index = (uint32_t)(cell_vertex_indices[vertex_index]);
@@ -365,7 +367,7 @@
 
                         primary = mesh.vertices_[vertex_index] - Vector3(2.f) + position.to_vec3() * 16.f;
                         secondary = get_secondary_position(primary, normal, 0, block_size_scaled);
-                        index = emit_vertex(primary, normal, cell_border_mask, secondary);
+                        index = emit_vertex(primary, normal, cell_border_mask, secondary, mesh.materials_[vertex_index]);
                     }
 
                     _output_indices.emplace_back(index);

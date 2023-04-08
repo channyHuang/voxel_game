@@ -1,18 +1,25 @@
-attribute vec4 vertex;
-attribute vec3 normal;
-attribute vec2 a_texcoord;
+// origin data
+attribute vec4 o_vertex;
+attribute vec3 o_normal;
+attribute vec2 o_texcoord;
+attribute float o_material;
 
-varying vec3 vert;
-varying vec3 vertNormal;
+// vshader data
+varying vec3 v_vertex;
+varying vec3 v_normal;
 varying vec2 v_texcoord;
+varying float v_material;
 
+// uniform data
 uniform mat4 projMatrix;
 uniform mat4 mvMatrix;
 uniform mat3 normalMatrix;
 
 void main() {
-   vert = vertex.xyz;
-   vertNormal = normalMatrix * normal;
-   gl_Position = projMatrix * mvMatrix * vertex;
-   v_texcoord = a_texcoord;
+   v_vertex = o_vertex.xyz;
+   v_normal = normalMatrix * o_normal;
+   v_texcoord = o_texcoord;
+   v_material = o_material;
+
+   gl_Position = projMatrix * mvMatrix * o_vertex;
 }
