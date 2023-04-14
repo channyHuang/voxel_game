@@ -71,7 +71,7 @@ private:
     QMatrix4x4 projection;
     QVector2D mousePressPosition;
 
-    qreal zNear = 0.001f, zFar = 1000.f, fov = 60.f, aspect;
+    qreal zNear = 0.1f, zFar = 300.f, fov = 60.f, aspect;
     bool m_core = false;
 
     ObjFileLoader m_dataLoader;

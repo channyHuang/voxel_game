@@ -158,8 +158,7 @@ void GlWidget::paintGL()
 
     m_shader->setUniformValue(m_projMatrixLoc, projection);
     m_shader->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
-    QMatrix3x3 normalMatrix = m_world.normalMatrix();
-    m_shader->setUniformValue(m_normalMatrixLoc, normalMatrix);
+    m_shader->setUniformValue(m_normalMatrixLoc, m_world.normalMatrix());
 
     f->glEnableVertexAttribArray(0);
     f->glEnableVertexAttribArray(1);
