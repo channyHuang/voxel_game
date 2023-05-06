@@ -2,9 +2,9 @@
 #define TREEVOXEL_H
 
 #include "terrains/voxeltoolterrain.h"
-#include "math_funcs.h"
-#include "cone.h"
-#include "vector2.h"
+#include "commonMath/math_funcs.h"
+#include "commonMath/cone.h"
+#include "commonMath/vector2.h"
 
 struct RoundCone {
     Vector3 m_vOrigin;

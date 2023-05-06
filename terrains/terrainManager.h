@@ -5,8 +5,8 @@
 
 #include <unordered_set>
 
-#include "vector3i.h"
-#include "boxi.h"
+#include "commonMath/vector3i.h"
+#include "commonMath/boxi.h"
 #include "voxelmap.h"
 #include "meshgeneratormanager.h"
 

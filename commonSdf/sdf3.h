@@ -5,9 +5,9 @@
 #include <vector>
 using namespace std;
 
-#include "vector2.h"
-#include "vector3.h"
-#include "math_funcs.h"
+#include "commonMath/vector2.h"
+#include "commonMath/vector3.h"
+#include "commonMath/math_funcs.h"
 #include "typeheader.h"
 
 class Sdf3

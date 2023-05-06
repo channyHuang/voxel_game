@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <QDebug>
 
-#include "boxi.h"
+#include "commonMath/boxi.h"
 #include "voxelblock.h"
 
 typedef Boxi Rect3i;

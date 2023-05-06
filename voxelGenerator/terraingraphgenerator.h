@@ -9,14 +9,14 @@
 #include <string>
 #include <chrono>
 
-#include "vector2.h"
-#include "vector2i.h"
-#include "vector3i.h"
-#include "math_funcs.h"
+#include "commonMath/vector2.h"
+#include "commonMath/vector2i.h"
+#include "commonMath/vector3i.h"
+#include "commonMath/math_funcs.h"
 
-#include "voronoi.h"
-#include "nodemap.h"
-#include "poissonsampler.h"
+#include "commonGeometry/voronoi.h"
+#include "commonGeometry/nodemap.h"
+#include "commonGeometry/poissonsampler.h"
 
 using namespace Graph_Geometry;
 

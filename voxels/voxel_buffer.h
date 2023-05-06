@@ -1,7 +1,7 @@
 #pragma once
 
-#include "vector3i.h"
-#include "boxi.h"
+#include "commonMath/vector3i.h"
+#include "commonMath/boxi.h"
 
 #include "voxel_constants.h"
 #include "array_slice.h"

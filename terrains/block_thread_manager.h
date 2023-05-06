@@ -11,8 +11,8 @@
 //#include <semaphore>
 #include <unordered_map>
 
-#include "boxi.h"
-#include "vector3i.h"
+#include "commonMath/boxi.h"
+#include "commonMath/vector3i.h"
 #include "utility.h"
 #include "array_slice.h"
 #include "fixed_array.h"

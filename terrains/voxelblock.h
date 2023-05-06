@@ -2,8 +2,8 @@
 #define VOXELBLOCK_H
 
 
-#include "vector3i.h"
-#include "vector3.h"
+#include "commonMath/vector3i.h"
+#include "commonMath/vector3.h"
 #include "voxels/voxel_buffer.h"
 
 //#define VOXEL_DEBUG_LOD_MATERIALS

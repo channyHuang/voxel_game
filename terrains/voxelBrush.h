@@ -1,7 +1,7 @@
 #ifndef VOXELBRUSH_H
 #define VOXELBRUSH_H
 
-#include "boxi.h"
+#include "commonMath/boxi.h"
 #include "voxelmap.h"
 #include "terrainManager.h"
 

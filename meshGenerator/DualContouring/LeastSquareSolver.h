@@ -1,7 +1,7 @@
 #ifndef LEAST_SQUARE_SOLVER_H
 #define LEAST_SQUARE_SOLVER_H
 
-#include "vector3.h"
+#include "commonMath/vector3.h"
 
 namespace LeastSquareSolver
 {
