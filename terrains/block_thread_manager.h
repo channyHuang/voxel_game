@@ -13,10 +13,10 @@
 
 #include "commonMath/boxi.h"
 #include "commonMath/vector3i.h"
-#include "utility.h"
-#include "array_slice.h"
-#include "fixed_array.h"
-#include "counting_time.h"
+#include "voxels/utility.h"
+#include "voxels/array_slice.h"
+#include "voxels/fixed_array.h"
+#include "voxels/counting_time.h"
 
 typedef Boxi Rect3i;
 

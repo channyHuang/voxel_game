@@ -9,10 +9,10 @@
 
 #include "commonMath/vector3.h"
 #include "commonMath/vector3i.h"
-#include "terrains/voxeltoolterrain.h"
-#include "common_enum.h"
 
+#include "terrains/voxeltoolterrain.h"
 #include "terrains/voxelBrush.h"
+#include "voxels/common_enum.h"
 
 namespace TerrainMath {
     static Vector3i vector3FloorOrCeil(const Vector3 &pos, bool bfloor = true) {

@@ -10,7 +10,7 @@
 #include <QGroupBox>
 
 #include "renderControl/glwidget.h"
-#include "terraingenerator_roblox.h"
+#include "voxelGenerator/terraingenerator_roblox.h"
 
 class MainWidget : public QWidget {
     Q_OBJECT

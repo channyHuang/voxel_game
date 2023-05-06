@@ -1,7 +1,7 @@
 #include "voxelterrain.h"
 
-#include "common_enum.h"
-#include "utility.h"
+#include "voxels/common_enum.h"
+#include "voxels/utility.h"
 const uint32_t MAIN_THREAD_MESHING_BUDGET_MS = 8;
 
 VoxelTerrain *VoxelTerrain::instance = nullptr;

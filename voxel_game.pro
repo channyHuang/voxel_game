@@ -21,18 +21,16 @@ include($$PWD/../commonClass/commonGeometry/commonGeometry.pri)
 include($$PWD/../commonClass/commonFunc/commonFunc.pri)
 
 include($$PWD/commonSdf/commonSdf.pri)
+include($$PWD/biomes/biomes.pri)
 
 include($$PWD/voxels/voxels.pri)
 include($$PWD/meshGenerator/meshGenerator.pri)
 include($$PWD/voxelGenerator/voxelGenerator.pri)
 include($$PWD/terrains/terrains.pri)
-include($$PWD/biomes/biomes.pri)
 
 include($$PWD/renderControl/renderControl.pri)
 
-INCLUDEPATH += $$PWD/voxels
-INCLUDEPATH += $$PWD/voxelGenerator
-INCLUDEPATH += $$PWD/render_control
+INCLUDEPATH += $$PWD
 
 HEADER_FILES = $$files($$PWD/*.h, false)
 SOURCE_FILES = $$files($$PWD/*.cpp, false)

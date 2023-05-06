@@ -15,7 +15,7 @@
 #include "voxeltool.h"
 #include "voxeltoolterrain.h"
 #include "voxelmap.h"
-#include "counting_time.h"
+#include "voxels/counting_time.h"
 #include "meshGenerator/voxel_mesh_updater.h"
 
 typedef Boxi Rect3i;

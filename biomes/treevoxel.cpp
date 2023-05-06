@@ -1,5 +1,5 @@
 #include "treevoxel.h"
-#include "common_enum.h"
+#include "voxels/common_enum.h"
 
 TreeVoxel::TreeVoxel()
 {

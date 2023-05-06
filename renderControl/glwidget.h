@@ -16,7 +16,7 @@
 #include "meshGenerator/voxel_mesher.h"
 #include "objfileloader.h"
 #include "commonMath/vector2.h"
-#include "common_enum.h"
+#include "voxels/common_enum.h"
 
 class GlWidget : public QOpenGLWidget
 {

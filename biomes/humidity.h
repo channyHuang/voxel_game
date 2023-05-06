@@ -2,7 +2,7 @@
 #define HUMIDITY_H
 
 #include "terrains/voxeltoolterrain.h"
-#include "common_enum.h"
+#include "voxels/common_enum.h"
 
 class Humidity
 {

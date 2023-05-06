@@ -3,7 +3,7 @@
 
 #include "block_thread_manager.h"
 #include "voxels/voxel_buffer.h"
-#include "counting_time.h"
+#include "voxels/counting_time.h"
 
 struct VoxelBlockRequest {
     VoxelBuffer* voxel_buffer;
