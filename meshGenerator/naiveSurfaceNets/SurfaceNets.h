@@ -10,16 +10,13 @@
 #include <fstream>
 #include <array>
 
-#ifndef Real
-#define Real float
-#endif
-
 #include "commonMath/vector3.h"
 #include "commonMath/vector3i.h"
-#include "../voxels/voxel_buffer.h"
 #include "commonMath/triangle.h"
 #include "commonGeometry/geometrymath.h"
-#include "common_enum.h"
+
+#include "voxels/common_enum.h"
+#include "voxels/voxel_buffer.h"
 
 using namespace std;
 
@@ -217,7 +214,7 @@ namespace SURFACE_NETS {
 	}
 
 	bool gen_vertex_by_voxel(
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vpos,
         Vector3 &mesh_vertex,
@@ -226,7 +223,7 @@ namespace SURFACE_NETS {
 		float const isovalue = 0.f);
 
 	bool gen_avg_vertex_by_voxel(
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vpos,
         Vector3 &mesh_vertex,
@@ -235,7 +232,7 @@ namespace SURFACE_NETS {
 		float const isovalue = 0.f);
 
     std::shared_ptr<VertexMesh> surface_nets(
-        std::function<Real(const Vector3i&)> const& sdfFunction,
+        std::function<float(const Vector3i&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vVoxelSize,
 		const int nMinPadding, const int nMaxPadding,
@@ -244,7 +241,7 @@ namespace SURFACE_NETS {
 		float const isovalue = 0.f);
 
 	std::shared_ptr<VertexMesh> surface_nets_reduce_surface(
-        std::function<Real(const Vector3i&)> const& sdfFunction,
+        std::function<float(const Vector3i&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vVoxelSize,
 		const int nMinPadding, const int nMaxPadding,
@@ -254,25 +251,25 @@ namespace SURFACE_NETS {
 
 	std::shared_ptr<VertexMesh> surface_nets_lod_from_upper_lod(
 		std::shared_ptr<VertexMesh> pmesh,
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vVoxelSize,
 		const int nMinPadding, const int nMaxPadding,
 		int downscale_lod);
 	//position of vertex in voxels when material type is regular material
-    static Real fcube_position = 0.8f;
+    static float fcube_position = 0.8f;
 
 
 	//with water
 	void prepareTables();
 
     inline static Vector3 vector3i2Vector3(const Vector3i &vposi) {
-        return Vector3(static_cast<Real>(vposi.x), static_cast<Real>(vposi.y), static_cast<Real>(vposi.z));
+        return Vector3(static_cast<float>(vposi.x), static_cast<float>(vposi.y), static_cast<float>(vposi.z));
 	}
 	inline static Vector3 round(const Vector3& v) {
-		Real x = static_cast<Real>(v.x < 0 ? std::ceil(v.x - 0.5) : std::floor(v.x + 0.5));
-		Real y = static_cast<Real>(v.y < 0 ? std::ceil(v.y - 0.5) : std::floor(v.y + 0.5));
-		Real z = static_cast<Real>(v.z < 0 ? std::ceil(v.z - 0.5) : std::floor(v.z + 0.5));
+        float x = static_cast<float>(v.x < 0 ? std::ceil(v.x - 0.5) : std::floor(v.x + 0.5));
+        float y = static_cast<float>(v.y < 0 ? std::ceil(v.y - 0.5) : std::floor(v.y + 0.5));
+        float z = static_cast<float>(v.z < 0 ? std::ceil(v.z - 0.5) : std::floor(v.z + 0.5));
 		return Vector3(x, y, z);
 	}
 	
@@ -366,7 +363,7 @@ namespace SURFACE_NETS {
 
     void separateSolidAndWaterFaces(std::shared_ptr<VertexMesh> pmesh, const int lod_index);
     std::shared_ptr<VertexMesh> surface_nets_with_water(
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         std::function<std::pair<int, int>(const Vector3i&)> const& funVoxelOccupancyAndTag,
 		std::function<int(const Vector3i&)> const& funVoxelTag,
@@ -374,7 +371,7 @@ namespace SURFACE_NETS {
 		const int lod);
 
 	static std::pair<Vector3, MeshType> gen_avg_vertex_by_voxel(
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         std::function<std::pair<int, int>(const Vector3i&)> const& funVoxelOccupancyAndTag,
         const Vector3i &vVoxelSize,

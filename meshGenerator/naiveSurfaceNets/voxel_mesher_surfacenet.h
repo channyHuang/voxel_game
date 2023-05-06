@@ -4,9 +4,10 @@
 #include <vector>
 #include <fstream>
 
-#include "../voxel_mesher.h"
+#include "meshGenerator/voxel_mesher.h"
 #include "voxels/voxel_buffer.h"
 #include "SurfaceNets.h"
+
 using namespace SURFACE_NETS;
     class VoxelMesherSurfaceNets : public VoxelMesher
     {

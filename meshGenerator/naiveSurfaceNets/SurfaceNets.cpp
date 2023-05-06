@@ -192,7 +192,7 @@ namespace SURFACE_NETS {
 	}
 
 	bool gen_vertex_by_voxel(
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vpos,
         Vector3 &mesh_vertex,
@@ -200,7 +200,7 @@ namespace SURFACE_NETS {
 		const int lod,
 		float const isovalue) {
 		Vector3 vVoxelCorner[8];
-		Real vVoxelSdfValue[8];
+        float vVoxelSdfValue[8];
 		bool vEdgeActive[12];
 		std::vector<Vector3> vMCPoints;
 
@@ -230,10 +230,10 @@ namespace SURFACE_NETS {
             const Vector3 p1 = vVoxelCorner[edges[e][0]];
             const Vector3 p2 = vVoxelCorner[edges[e][1]];
 
-            const Real s1 = vVoxelSdfValue[edges[e][0]];
-            const Real s2 = vVoxelSdfValue[edges[e][1]];
+            const float s1 = vVoxelSdfValue[edges[e][0]];
+            const float s2 = vVoxelSdfValue[edges[e][1]];
 
-            const Real t = (isovalue - s1) / (s2 - s1);
+            const float t = (isovalue - s1) / (s2 - s1);
 
 			Vector3 vMCPoint = p1 + t * (p2 - p1);
 			vMCPoints.emplace_back(vMCPoint);
@@ -277,7 +277,7 @@ namespace SURFACE_NETS {
 	}
 
 	bool gen_avg_vertex_by_voxel(
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vpos,
         Vector3 &mesh_vertex,
@@ -308,7 +308,7 @@ namespace SURFACE_NETS {
 	}
 
     std::shared_ptr<VertexMesh> surface_nets(
-        std::function<Real(const Vector3i&)> const& sdfFunction,
+        std::function<float(const Vector3i&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vVoxelSize,
 		const int nMinPadding, const int nMaxPadding,
@@ -333,7 +333,7 @@ namespace SURFACE_NETS {
 		float nMCPointCount = 0;
 		// coordinates of voxel corners in the mesh's coordinate frame
 		Vector3 vVoxelCorner[8];
-		Real vVoxelSdfValue[8];
+        float vVoxelSdfValue[8];
 		bool vEdgeActive[12];
 
         Vector3 pos = Vector3(0);
@@ -406,7 +406,7 @@ namespace SURFACE_NETS {
                     if (std::floor(mesh_vertex.x) != pos.x) mesh_vertex.x -= Math::LOWEPSILON;
                     if (std::floor(mesh_vertex.y) != pos.y) mesh_vertex.y -= Math::LOWEPSILON;
                     if (std::floor(mesh_vertex.z) != pos.z) mesh_vertex.z -= Math::LOWEPSILON;
-					// mesh_vertex -= Vector3((Real)nMinPadding, (Real)nMinPadding, (Real)nMinPadding);
+                    // mesh_vertex -= Vector3((float)nMinPadding, (float)nMinPadding, (float)nMinPadding);
 
 					mesh.vertices_.emplace_back(mesh_vertex);
 					mesh.vertexValid_.emplace_back(!isVoxelLowerBoundary(posi) && !isVoxelUpperBoundary(posi, vVoxelSize.y - 2));
@@ -544,7 +544,7 @@ namespace SURFACE_NETS {
     }
 
 	std::shared_ptr<VertexMesh> surface_nets_reduce_surface(
-        std::function<Real(const Vector3i&)> const& sdfFunction,
+        std::function<float(const Vector3i&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vVoxelSize,
 		const int nMinPadding, const int nMaxPadding,
@@ -575,7 +575,7 @@ namespace SURFACE_NETS {
 
 	std::shared_ptr<VertexMesh> surface_nets_lod_from_upper_lod(
 		std::shared_ptr<VertexMesh> pmesh, 
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         const Vector3i &vVoxelSize,
 		const int nMinPadding, const int nMaxPadding,
@@ -734,18 +734,18 @@ namespace SURFACE_NETS {
 	}
 
 	static std::pair<Vector3, MeshType> gen_avg_vertex_by_voxel(
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         std::function<std::pair<int, int>(const Vector3i&)> const& funVoxelOccupancyAndTag,
         const Vector3i &vVoxelSize,
 		const int lod,
         const Vector3i &vposi,
 		const int edgemask) {
-        Real cellSize = /*(1 << lod) **/ 1.0f;
+        float cellSize = /*(1 << lod) **/ 1.0f;
 		Vector3 &&corner = Vector3(vposi.x * cellSize, vposi.y * cellSize, vposi.z * cellSize);
-        Real nMCPointCount = 0;
+        float nMCPointCount = 0;
         Vector3 vMCPointSum = Vector3(0);
-		Real occScale = 1.f / (1 << 8);
+        float occScale = 1.f / (1 << 8);
 		// calculate vertices
         Vector3i p0i, p1i;
         Vector3 p0, p1;
@@ -760,7 +760,7 @@ namespace SURFACE_NETS {
 				const std::pair<int, int> &g0 = funVoxelOccupancyAndTag(vposi + p0i);
 				const std::pair<int, int> &g1 = funVoxelOccupancyAndTag(vposi + p1i);
 				
-				Real t = g0.second > g1.second ? (g0.first + 1) * occScale : 1 - (g1.first + 1) * occScale;
+                float t = g0.second > g1.second ? (g0.first + 1) * occScale : 1 - (g1.first + 1) * occScale;
                 vMCPointSum += Math::Lerp(p0 * cellSize, p1 * cellSize, t);
 				nMCPointCount += 1.0f;
 			}
@@ -860,10 +860,10 @@ namespace SURFACE_NETS {
         for (posi.y = 1; posi.y + 1 < vvoxel_size.y; ++posi.y) {
             for (posi.z = 1; posi.z + 1 < vvoxel_size.z; ++posi.z) {
                 for (posi.x = 1; posi.x + 1 < vvoxel_size.x; ++posi.x) {
-                    const std::pair<Real, int> &v000 = funVoxelOccupancyAndTag(posi);
-                    const std::pair<Real, int> &v100 = funVoxelOccupancyAndTag(posi + Vector3i(1, 0, 0));
-                    const std::pair<Real, int> &v010 = funVoxelOccupancyAndTag(posi + Vector3i(0, 1, 0));
-                    const std::pair<Real, int> &v001 = funVoxelOccupancyAndTag(posi + Vector3i(0, 0, 1));
+                    const std::pair<float, int> &v000 = funVoxelOccupancyAndTag(posi);
+                    const std::pair<float, int> &v100 = funVoxelOccupancyAndTag(posi + Vector3i(1, 0, 0));
+                    const std::pair<float, int> &v010 = funVoxelOccupancyAndTag(posi + Vector3i(0, 1, 0));
+                    const std::pair<float, int> &v001 = funVoxelOccupancyAndTag(posi + Vector3i(0, 0, 1));
 
                     for (int i = 0; i < 8; ++i) {
                         vposi = posi - vCubeVer[i];
@@ -922,7 +922,7 @@ namespace SURFACE_NETS {
     }
 
     std::shared_ptr<VertexMesh> surface_nets_with_water(
-		std::function<Real(const Vector3&)> const& sdfFunction,
+        std::function<float(const Vector3&)> const& sdfFunction,
         std::function<MaterialType(const Vector3&)> const& materialFunction,
         std::function<std::pair<int, int>(const Vector3i&)> const& funVoxelOccupancyAndTag,
 		std::function<int(const Vector3i&)> const& funVoxelTag,

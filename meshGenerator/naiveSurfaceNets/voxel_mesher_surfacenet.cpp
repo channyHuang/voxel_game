@@ -54,9 +54,9 @@
             return primary + delta;
         }
 
-        inline Real get_normal_angle(const Vector3 &normal1, const Vector3 &normal2) {
+        inline float get_normal_angle(const Vector3 &normal1, const Vector3 &normal2) {
             if (normal1 == Vector3(0) || normal2 == Vector3(0)) return 0.f;
-            Real cos_theta = normal1.dot(normal2); // / (normal1.len() * normal2.len());
+            float cos_theta = normal1.dot(normal2); // / (normal1.len() * normal2.len());
             return acos(cos_theta); //[0,pi]
         }
     }
@@ -114,7 +114,7 @@
         const Vector3i block_size = block_size_with_padding - Vector3i(MIN_PADDING + MAX_PADDING);
         const Vector3i block_size_scaled = block_size << lod_index;
 
-        auto const funVoxelSdf = [&](const Vector3i &pos) -> Real const {
+        auto const funVoxelSdf = [&](const Vector3i &pos) -> float const {
             return voxels.get_voxel_f(pos, VoxelBuffer::CHANNEL_SDF);
         };
         auto const funVoxelMaterial = [&](const Vector3 &pos)->MaterialType const {
@@ -159,14 +159,14 @@
         const Vector3i block_size_scaled = block_size << lod_index;
         uint8_t cell_border_mask = 0;
 
-        auto const funVoxelSdf = [&](const Vector3 &pos) -> Real {
+        auto const funVoxelSdf = [&](const Vector3 &pos) -> float {
             return voxels.get_voxel_f(pos, VoxelBuffer::CHANNEL_SDF);
         };
         auto const funVoxelMaterial = [&](const Vector3 &pos)->MaterialType {
             return (MaterialType)voxels.get_voxel(pos, VoxelBuffer::CHANNEL_TYPE);
         };
-        auto const funVoxelOccupancy = [&](const Vector3i &posi) -> Real {
-            Real sdf = voxels.get_voxel_f(posi, VoxelBuffer::CHANNEL_SDF);
+        auto const funVoxelOccupancy = [&](const Vector3i &posi) -> float {
+            float sdf = voxels.get_voxel_f(posi, VoxelBuffer::CHANNEL_SDF);
             return (sdf > 0 ? 0 : -sdf * 0xfffe);
         };
         //get voxel tag, 0: air; 1: water; 2: others
@@ -176,7 +176,7 @@
         };
 
         auto const funVoxelOccupancyAndTag = [&](const Vector3i &posi) -> std::pair<int, int> {
-            Real sdf = voxels.get_voxel_f(posi, VoxelBuffer::CHANNEL_SDF);
+            float sdf = voxels.get_voxel_f(posi, VoxelBuffer::CHANNEL_SDF);
             MaterialType material = (MaterialType)voxels.get_voxel(Vector3i(posi), VoxelBuffer::CHANNEL_TYPE);
             int occupancy = static_cast<int>(sdf > 0 ? 0 : -sdf * 0xfffe);
             int tag = (sdf > 0 ? 0 : (material == MaterialType::WATER ? 1 : 2));
@@ -288,7 +288,7 @@
                 }
                 else {
                     //if the angle of vertex normal and face normal > threshold, do not share face vertex
-                    Real normal_angle = get_normal_angle(_output_normals[index], mesh.face_normals_[t]);
+                    float normal_angle = get_normal_angle(_output_normals[index], mesh.face_normals_[t]);
                     if (_output_normals[index] == Vector3(0) || !mesh.share_point_[(int)mesh.faces_[0][t][i]]
                         || normal_angle > Math::PI / 4.f) {
                         Vector3 primary = mesh.vertices_[(int)mesh.faces_[0][t][i]];

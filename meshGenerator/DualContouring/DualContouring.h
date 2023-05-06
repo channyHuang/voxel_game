@@ -1,13 +1,14 @@
 #pragma once
 
-#include "commonMath/vector2i.h"
-#include "commonMath/vector3i.h"
-#include "commonMath/triangle.h"
 #include <iostream>
 #include <vector>
 #include <array>
+
+#include "commonMath/vector2i.h"
+#include "commonMath/vector3i.h"
+#include "commonMath/triangle.h"
+#include "voxels/voxel_buffer.h"
 #include "LeastSquareSolver.h"
-#include "voxel_buffer.h"
 //using MC Tables to calculate normals quickly
 #include "TransvoxelTables.hpp"
 

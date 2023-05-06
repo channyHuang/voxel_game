@@ -1,6 +1,5 @@
 #include "DualContouring.h"
 
-
 namespace DualContouring {
     namespace {
         static const float TRANSITION_CELL_SCALE = 0.25;
