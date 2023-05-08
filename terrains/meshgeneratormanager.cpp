@@ -21,17 +21,19 @@ void MeshGeneratorManager::sltMeshGenSuc(OutputBlock output) {
 
 void MeshGeneratorManager::push(const Input& input) {
     for (int i = 0; i < input.blocks.size(); ++i) {
-        OutputBlock output;
+        pool.enqueue([this, &input, i]{
+            OutputBlock output;
 
-        const InputBlock &block = input.blocks[i];
-        OutputBlock &outputData = output;
+            const InputBlock &block = input.blocks[i];
+            OutputBlock &outputData = output;
 
-        MeshInput in = {*block.voxels, 0, block.position};
-        output.position = block.position;
-        VoxelMesherSurfaceNets* mesher = new VoxelMesherSurfaceNets;
-        mesher->build(outputData.smooth_surfaces, in);
+            MeshInput in = {*block.voxels, 0, block.position};
+            output.position = block.position;
+            VoxelMesherSurfaceNets* mesher = new VoxelMesherSurfaceNets;
+            mesher->build(outputData.smooth_surfaces, in);
 
-        sigMeshGenSuc(output);
+            this->sigMeshGenSuc(output);
+        });
     }
 }
 

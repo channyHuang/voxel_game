@@ -119,7 +119,7 @@ float TreeVoxel::slab() {
     return 0;
 }
 
-float TreeVoxel::image(const Vector3i &posi, QString qsImageName) {
+float TreeVoxel::image(const Vector3i &posi, std::string qsImageName) {
     return 0;
 }
 

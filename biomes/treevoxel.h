@@ -50,7 +50,7 @@ public:
     static Vector3 bend_linear(const Vector3& pos, Vector3 vposa, Vector3 vposb, Vector3 vpos);
     static float slab();
     static float torus(const Vector3& pos, float fradiusa, float fradiusb);
-    static float image(const Vector3i &posi, QString qsImageName);
+    static float image(const Vector3i &posi, std::string qsImageName);
 
     static float ease(float v, Ease_Type eType = Ease_linear);
 };

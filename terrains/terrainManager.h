@@ -1,8 +1,6 @@
 #ifndef TERRAINMANAGER_H
 #define TERRAINMANAGER_H
 
-#include <QObject>
-
 #include <unordered_set>
 
 #include "commonMath/vector3i.h"
@@ -11,8 +9,8 @@
 #include "voxelmap.h"
 #include "meshgeneratormanager.h"
 
-class TerrainManager : public QObject {
-    Q_OBJECT
+class TerrainManager
+{
 public:
 
     ~TerrainManager();
@@ -28,10 +26,12 @@ public:
     void make_voxel_dirty(const Vector3i& pos);
     void make_area_dirty(const Boxi& box);
 
-signals:
-    void generateMeshSuc(Arrays surface, Vector3i pos);
+//signals:
+    //void generateMeshSuc(Arrays surface, Vector3i pos);
 
-public slots:
+    SignalSlots::Signal<void(Arrays, Vector3i)> generateMeshSuc;
+
+//public slots:
     void _notification(int p_what);
 
 private:

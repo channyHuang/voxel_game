@@ -116,7 +116,7 @@ void TerrainManager::_process() {
                     continue;
                 }
 
-                emit generateMeshSuc(surface, output.blocks[i].position);
+                generateMeshSuc(surface, output.blocks[i].position);
             }
         }
     }

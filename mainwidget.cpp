@@ -41,7 +41,7 @@ void MainWidget::initWidgets() {
         TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(brush, m_stBiomeParams);
     });
 
-    connect(TerrainManager::getInstance(), &TerrainManager::generateMeshSuc, m_pGlWidget, &GlWidget::updateMesh);
+    //connect(TerrainManager::getInstance(), &TerrainManager::generateMeshSuc, m_pGlWidget, &GlWidget::updateMesh);
 
     // size
     QGroupBox *sizeBox = new QGroupBox("terrain size");
@@ -97,7 +97,7 @@ void MainWidget::initWidgets() {
 
 bool MainWidget::init() {
     TerrainManager *terrainManager = TerrainManager::getInstance();
-    connect(this, &MainWidget::notice, TerrainManager::getInstance(), &TerrainManager::_notification);
+    //connect(this, &MainWidget::notice, TerrainManager::getInstance(), &TerrainManager::_notification);
     //terrain_thread = new QThread(this);
     //terrain->moveToThread(terrain_thread);
     //terrainManager->moveToThread(terrain_thread);
