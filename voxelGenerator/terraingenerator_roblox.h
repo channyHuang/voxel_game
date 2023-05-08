@@ -10,7 +10,7 @@
 #include "commonMath/vector3.h"
 #include "commonMath/vector3i.h"
 
-#include "terrains/voxeltoolterrain.h"
+//#include "terrains/voxeltoolterrain.h"
 #include "terrains/voxelBrush.h"
 #include "voxels/common_enum.h"
 
@@ -177,8 +177,8 @@ public:
     //seed setting
     void setTerrainGeneratorSeed(std::string seedNumberStr);
     //generate terrain with biomes
-    void genTotallyFlat(VoxelToolTerrain* pVoxelTool, int max_lod = 0);
-    void generateTerrainByBiomes(VoxelToolTerrain* pVoxelTool, BiomesParam& biomeParams, int max_lod = 0);
+    //void genTotallyFlat(VoxelToolTerrain* pVoxelTool, int max_lod = 0);
+    //void generateTerrainByBiomes(VoxelToolTerrain* pVoxelTool, BiomesParam& biomeParams, int max_lod = 0);
     void genTotallyFlat(VoxelBrush* pVoxelTool, int max_lod = 0);
     void generateTerrainByBiomes(VoxelBrush* pVoxelTool, BiomesParam& biomeParams, int max_lod = 0);
 
@@ -223,7 +223,7 @@ private:
         return totalValue / totalScale;
     }
     //unit test, read voxel data from file, data format (for each line): x y z sdf material
-    void readDataFromFiles(std::string sDataFileName, VoxelToolTerrain* pVoxelTool);
+    //void readDataFromFiles(std::string sDataFileName, VoxelToolTerrain* pVoxelTool);
 
     void initData();
     float getNoise(int x, int y, int z, int seed1 = 7);
@@ -236,7 +236,7 @@ private:
         return (bSdf2Occupancy ? (value > 0 ? 0 : -value) : (value <= 0 ? 1 : -value));
     }
 
-    void generateTrees(VoxelToolTerrain* pVoxelTool);
+    //void generateTrees(VoxelToolTerrain* pVoxelTool);
 private:
     struct {
         Vector3 vSize;
