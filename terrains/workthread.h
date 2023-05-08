@@ -10,17 +10,8 @@ class WorkThread : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
-    struct InputBlockData {
-        VoxelBuffer* voxels;
-    };
-
-    struct OutputBlockData {
-        VoxelMesher::Output blocky_surfaces;
-        VoxelMesher::Output smooth_surfaces;
-    };
-
     struct InputBlock {
-        InputBlockData data;
+        std::shared_ptr<VoxelBuffer> voxels;
         Vector3i position;
         uint8_t lod = 0;
         bool can_be_discarded = true;
@@ -28,7 +19,8 @@ public:
     };
 
     struct OutputBlock {
-        OutputBlockData data;
+        VoxelMesher::Output blocky_surfaces;
+        VoxelMesher::Output smooth_surfaces;
         Vector3i position;
         uint8_t lod = 0;
         bool drop_hint = false;
@@ -36,12 +28,6 @@ public:
 
     struct Input {
         std::vector<InputBlock> blocks;
-        Vector3i priority_position;
-        Vector3 priority_direction;
-        int exclusive_region_extent = 0;
-        int exclusive_region_max_lod = Math::MAX_LOD;
-        bool use_exclusive_region = false;
-        int max_lod_index = 0;
 
         bool is_empty() const {
             return blocks.empty();
@@ -50,14 +36,11 @@ public:
 
     struct Output {
         std::vector<OutputBlock> blocks;
-        // Stats stats;
     };
 
-
-
     void run() override {
-        const InputBlockData &block = input.data;
-        OutputBlockData &outputData = output.data;
+        const InputBlock &block = input;
+        OutputBlock &outputData = output;
 
         VoxelMesher::Input in = {*block.voxels, 0, input.position};
         output.position = input.position;

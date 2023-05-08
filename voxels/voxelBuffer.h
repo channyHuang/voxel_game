@@ -25,7 +25,7 @@ public:
 	enum ChannelId {
 		CHANNEL_TYPE = 0,
 		CHANNEL_SDF,
-		CHANNEL_COLOR,
+        CHANNEL_DATA3,
 		MAX_CHANNELS
 	};
 

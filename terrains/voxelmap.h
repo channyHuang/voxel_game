@@ -134,7 +134,7 @@ private:
 
 private:
     // Voxel values that will be returned if access is out of map bounds
-    FixedArray<uint64_t, VoxelBuffer::MAX_CHANNELS> _default_voxel;
+    FixedArray<int, VoxelBuffer::MAX_CHANNELS> _default_voxel;
 
     // TODO Consider using OAHashMap
     // Blocks stored with a spatial hash in all 3D directions

@@ -4,7 +4,7 @@
 #include <string.h>
 
 inline IntOrFloat *allocate_channel_data(uint32_t size) {
-    return (IntOrFloat *)malloc(size * sizeof(IntOrFloat));
+    return (IntOrFloat *)malloc(size);
 }
 
 inline void free_channel_data(IntOrFloat *data, uint32_t size) {
@@ -16,7 +16,7 @@ VoxelBuffer::VoxelBuffer() {
     _channels[CHANNEL_TYPE].defval.i = 0;
 
     _channels[CHANNEL_SDF].bIsInt = false;
-    _channels[CHANNEL_SDF].defval.i = 1;
+    _channels[CHANNEL_SDF].defval.f = 1.f;
 }
 
 VoxelBuffer::~VoxelBuffer() {
@@ -26,14 +26,14 @@ VoxelBuffer::~VoxelBuffer() {
 void VoxelBuffer::create(unsigned int sx, unsigned int sy, unsigned int sz) {
 	Vector3i new_size(sx, sy, sz);
 	if (new_size != _size) {
+        _size = new_size;
 		for (unsigned int i = 0; i < MAX_CHANNELS; ++i) {
 			Channel &channel = _channels[i];
             if (channel.data) {
 				delete_channel(i);
-				create_channel(i, new_size, channel.defval);
 			}
+            create_channel(i, new_size, channel.defval);
 		}
-		_size = new_size;
 	}
 }
 
@@ -56,7 +56,8 @@ void VoxelBuffer::clear_channel(unsigned int channel_index, int clear_value) {
 	if (channel.data != nullptr) {
 		delete_channel(channel_index);
 	}
-    channel.defval.i = clear_value;
+    if (channel_index == CHANNEL_SDF) channel.defval.f = 1.f;
+    else channel.defval.i = 0;
 }
 
 void VoxelBuffer::clear_channel_f(unsigned int channel_index, float clear_value) {
@@ -67,12 +68,12 @@ void VoxelBuffer::clear_channel_f(unsigned int channel_index, float clear_value)
 }
 
 void VoxelBuffer::set_default_values(FixedArray<int, VoxelBuffer::MAX_CHANNELS> values) {
-	for (unsigned int i = 0; i < MAX_CHANNELS; ++i) {
-        IntOrFloat value;
-        value.i = values[i];
+//	for (unsigned int i = 0; i < MAX_CHANNELS; ++i) {
+//        IntOrFloat value;
+//        value.i = values[i];
 
-        _channels[i].defval = value;
-	}
+//        _channels[i].defval = value;
+//	}
 }
 
 void VoxelBuffer::set_voxel(int value, int x, int y, int z, unsigned int channel_index) {
@@ -120,7 +121,13 @@ IntOrFloat VoxelBuffer::get_voxel_raw(int x, int y, int z, unsigned int channel_
         const uint32_t i = get_index(x, y, z);
         return channel.data[i];
     }
-    return channel.defval;
+    IntOrFloat res;
+    if (channel_index == CHANNEL_SDF) {
+        res.f = 1.f;
+    } else {
+        res.i = 0;
+    }
+    return res;//channel.defval;
 }
 
 void VoxelBuffer::fill(int defval, unsigned int channel_index) {
@@ -140,8 +147,13 @@ void VoxelBuffer::fill(IntOrFloat defval, unsigned int channel_index) {
 			return;
 		}
 	}
-
-    memset(channel.data, defval.i, channel.size_in_bytes);
+    if (channel_index == VoxelBuffer::CHANNEL_SDF) {
+        for (int i = 0; i < get_volume(); ++i) {
+            channel.data[i].f = 1.f;
+        }
+    } else {
+        memset(channel.data, defval.i, channel.size_in_bytes);
+    }
 }
 
 void VoxelBuffer::fill_f(float defval, unsigned int channel) {
@@ -176,7 +188,13 @@ void VoxelBuffer::fill_area(IntOrFloat defval, Vector3i min, Vector3i max, unsig
         for (pos.x = min.x; pos.x < max.x; ++pos.x) {
             const unsigned int dst_ri = get_index(pos.x, pos.y + min.y, pos.z);
 
-            memset(&channel.data[dst_ri], defval.i, area_size.y * sizeof(IntOrFloat));
+            if (channel_index == VoxelBuffer::CHANNEL_SDF) {
+                for (int i = 0; i < area_size.y; ++i) {
+                    channel.data[dst_ri + i].f = 1.f;
+                }
+            } else {
+                memset(&channel.data[dst_ri], defval.i, area_size.y * sizeof(IntOrFloat));
+            }
         }
     }
 }
@@ -217,7 +235,7 @@ void VoxelBuffer::copy_from(const VoxelBuffer &other, unsigned int channel_index
     channel.bIsInt = other_channel.bIsInt;
 }
 
-inline void clip_copy_region_coord(int &src_min, int &src_max, const int src_size, int &dst_min, const int dst_size) {
+inline void clip_copy_region_coord(int64_t &src_min, int64_t &src_max, const int64_t src_size, int64_t &dst_min, const int64_t dst_size) {
 	// Clamp source and shrink destination for moved borders
 	if (src_min < 0) {
 		dst_min += -src_min;
@@ -294,7 +312,7 @@ void VoxelBuffer::copy_from(const VoxelBuffer &other, Vector3i &src_min, Vector3
 uint32_t VoxelBuffer::get_size_in_bytes_for_volume(const Vector3i& size) {
     const unsigned int volume = size.x * size.y * size.z;
     const unsigned int bits = volume * sizeof(IntOrFloat);
-    const unsigned int size_in_bytes = (bits >> 3);
+    const unsigned int size_in_bytes = bits;//(bits >> 3);
     return size_in_bytes;
 }
 

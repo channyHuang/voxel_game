@@ -2,7 +2,7 @@
 
 //#define DEBUG_SINGLE_BUILD_MESH
 //#define DEBUG_SINGLE_BUILD_TIME
-//#define DEBUG_SINGLE_BUILD_MESHS
+#define DEBUG_SINGLE_BUILD_MESHS
 
     namespace {
         static const float TRANSITION_CELL_SCALE = 0.25;
@@ -85,7 +85,7 @@
 
         const VoxelBuffer &voxels = input.voxels;
 
-        if (voxels.get_channel_depth(channel) != VoxelBuffer::DEPTH_16_BIT) return;
+        //if (voxels.get_channel_depth(channel) != VoxelBuffer::DEPTH_16_BIT) return;
 
         if (BMESH_SUPPORT_WATER) {
             build_internal_with_water(output, voxels, channel, input.lod, input.position);
@@ -167,7 +167,7 @@
         };
         auto const funVoxelOccupancy = [&](const Vector3i &posi) -> float {
             float sdf = voxels.get_voxel_f(posi, VoxelBuffer::CHANNEL_SDF);
-            return (sdf > 0 ? 0 : -sdf * 0xfffe);
+            return (sdf > 0 ? 0 : -sdf /** 0xfffe*/);
         };
         //get voxel tag, 0: air; 1: water; 2: others
         auto const funVoxelTag = [&](const Vector3i &posi) -> int {
@@ -178,7 +178,7 @@
         auto const funVoxelOccupancyAndTag = [&](const Vector3i &posi) -> std::pair<int, int> {
             float sdf = voxels.get_voxel_f(posi, VoxelBuffer::CHANNEL_SDF);
             MaterialType material = (MaterialType)voxels.get_voxel(Vector3i(posi), VoxelBuffer::CHANNEL_TYPE);
-            int occupancy = static_cast<int>(sdf > 0 ? 0 : -sdf * 0xfffe);
+            int occupancy = static_cast<int>(sdf > 0 ? 0 : -sdf /** 0xfffe*/);
             int tag = (sdf > 0 ? 0 : (material == MaterialType::WATER ? 1 : 2));
             return std::pair<int, int>(occupancy, tag);
         };

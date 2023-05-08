@@ -7,7 +7,7 @@
 #include "commonMath/vector2i.h"
 #include "commonMath/vector3i.h"
 #include "commonMath/triangle.h"
-#include "voxels/voxel_buffer.h"
+#include "voxels/voxelBuffer.h"
 #include "LeastSquareSolver.h"
 //using MC Tables to calculate normals quickly
 #include "TransvoxelTables.hpp"

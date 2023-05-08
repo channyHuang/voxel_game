@@ -11,7 +11,7 @@ VoxelMap::VoxelMap() :
     set_block_size_pow2(4);
 
     _default_voxel.fill(0);
-    _default_voxel[VoxelBuffer::CHANNEL_SDF] = 0xfffe;
+    _default_voxel[VoxelBuffer::CHANNEL_SDF] = 0;
 }
 
 VoxelMap::~VoxelMap() {
@@ -74,7 +74,8 @@ float VoxelMap::get_voxel_f(Vector3i pos, unsigned int c) const {
     Vector3i bpos = voxel_to_block(pos);
     const VoxelBlock *block = get_block(bpos);
     if (block == nullptr) {
-        return _default_voxel[c];
+        //return _default_voxel[c];
+        return 1.f;
     }
     Vector3i lpos = to_local(pos);
     return block->voxels->get_voxel_f(lpos.x, lpos.y, lpos.z, c);
@@ -165,27 +166,34 @@ void VoxelMap::get_buffer_copy(Vector3i min_pos, VoxelBuffer &dst_buffer, unsign
                     if (block) {
                         VoxelBuffer &src_buffer = *block->voxels;
 
-                        dst_buffer.set_channel_depth(channel, src_buffer.get_channel_depth(channel));
+                        //dst_buffer.set_channel_depth(channel, src_buffer.get_channel_depth(channel));
 
                         Vector3i offset = block_to_voxel(bpos);
                         // Note: copy_from takes care of clamping the area if it's on an edge
+                        Vector3i src_min = min_pos - offset;
+                        Vector3i src_max = src_buffer.get_size();
+                        Vector3i dst_min = Vector3i(0);
                         dst_buffer.copy_from(src_buffer,
-                                min_pos - offset,
-                                //max_pos - offset,
-                                src_buffer.get_size(),
-                                //offset - min_pos,
-                                Vector3i(),
+                                src_min, src_max, dst_min,
                                 channel);
 
                     } else {
                         // For now, inexistent blocks default to hardcoded defaults, corresponding to "empty space".
                         // If we want to change this, we may have to add an API for that it in `VoxelStream`.
                         Vector3i offset = block_to_voxel(bpos);
-                        dst_buffer.fill_area(
-                                _default_voxel[channel],
-                                offset - min_pos,
-                                offset - min_pos + block_size_v,
-                                channel);
+                        if (channel == VoxelBuffer::CHANNEL_SDF) {
+                            dst_buffer.fill_area_f(
+                                    1.f,
+                                    offset - min_pos,
+                                    offset - min_pos + block_size_v,
+                                    channel);
+                        } else {
+                            dst_buffer.fill_area(
+                                    0,
+                                    offset - min_pos,
+                                    offset - min_pos + block_size_v,
+                                    channel);
+                        }
                     }
                 }
             }

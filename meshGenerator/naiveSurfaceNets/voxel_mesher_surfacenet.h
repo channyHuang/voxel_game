@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include "meshGenerator/voxel_mesher.h"
-#include "voxels/voxel_buffer.h"
+#include "voxels/voxelBuffer.h"
 #include "SurfaceNets.h"
 
 using namespace SURFACE_NETS;

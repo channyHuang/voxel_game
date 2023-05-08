@@ -1,6 +1,6 @@
 #include "terrainManager.h"
 
-#include "common_enum.h"
+#include "voxels/common_enum.h"
 #include "meshGenerator/voxel_mesher.h"
 
 TerrainManager *TerrainManager::instance = nullptr;
@@ -25,10 +25,9 @@ TerrainManager::~TerrainManager() {
 void TerrainManager::make_block_dirty(const Vector3i& bpos) {
     VoxelBlock *block = _map->get_block(bpos);
     if (block == nullptr) {
-        qDebug() << __FILE__ << " " << __FUNCTION__;
+        std::cout << __FILE__ << " " << __FUNCTION__ << std::endl;
     } else if (block->get_mesh_state() != VoxelBlock::MESH_NEED_UPDATE) {
         block->set_mesh_state(VoxelBlock::MESH_NEED_UPDATE);
-        //qDebug() << __FUNCTION__ << " " << bpos.toString().c_str();
         _blocks_pending_update.insert(bpos);
     }
 }
@@ -70,7 +69,7 @@ void TerrainManager::_notification(int p_what) {
 }
 
 void TerrainManager::_process() {
-    qDebug() << __FILE__ << " " << __FUNCTION__;
+    std::cout << __FILE__ << " " << __FUNCTION__ << std::endl;
     // send update request
     {
         WorkThread::Input input;
@@ -79,7 +78,7 @@ void TerrainManager::_process() {
             Vector3i block_pos = (*itr);
             VoxelBlock *block = _map->get_block(block_pos);
 
-            VoxelBuffer* nbuffer = new VoxelBuffer;
+            std::shared_ptr<VoxelBuffer> nbuffer = std::make_shared<VoxelBuffer>();
 
             unsigned int block_size = _map->get_block_size();
             unsigned int min_padding = _block_updater->get_minimum_padding();
@@ -90,7 +89,7 @@ void TerrainManager::_process() {
             _map->get_buffer_copy(_map->block_to_voxel(block_pos) - Vector3i(min_padding), *nbuffer, channels_mask);
 
             WorkThread::InputBlock iblock;
-            iblock.data.voxels = nbuffer;
+            iblock.voxels = nbuffer;
             iblock.position = block_pos;
             input.blocks.push_back(iblock);
 
@@ -106,10 +105,10 @@ void TerrainManager::_process() {
 
         WorkThread::Output output;
         _block_updater->pop(output);
-        qDebug() << __FILE__ << " " << __FUNCTION__ << " output " << output.blocks.size();
+        std::cout << __FILE__ << " " << __FUNCTION__ << " output " << output.blocks.size() << std::endl;
 
         for (int i = 0; i < output.blocks.size(); ++i) {
-            const WorkThread::OutputBlockData &data = output.blocks[i].data;
+            const WorkThread::OutputBlock &data = output.blocks[i];
             for (int j = 0; j < data.smooth_surfaces.surfaces.size(); ++j) {
 
                 Arrays surface = data.smooth_surfaces.surfaces[j];
@@ -124,8 +123,6 @@ void TerrainManager::_process() {
 }
 
 void TerrainManager::start_updater() {
-    //VoxelMeshUpdater::MeshingParams params;
-    //_block_updater = new VoxelMeshUpdater(1, params);
     _block_updater = new MeshGeneratorManager();
 }
 

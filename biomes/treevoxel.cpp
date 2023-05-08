@@ -6,97 +6,97 @@ TreeVoxel::TreeVoxel()
 
 }
 
-void TreeVoxel::setTree(VoxelToolTerrain* pVoxelTool, const Vector3& vroot, float fradius, float fheight) {
-        float sdf = -std::max(0.5f, rand() / (float)RAND_MAX), fold_sdf;
-        Vector3 vpos;
-        Boxi box;
+//void TreeVoxel::setTree(VoxelToolTerrain* pVoxelTool, const Vector3& vroot, float fradius, float fheight) {
+//        float sdf = -std::max(0.5f, rand() / (float)RAND_MAX), fold_sdf;
+//        Vector3 vpos;
+//        Boxi box;
 
-        OBJECT_TYPES eobject_type = (OBJECT_TYPES)(OBJECT_TYPES::Herb);
-        switch (eobject_type) {
-        case OBJECT_TYPES::Shrub:
-        {
-            // brench
-            for (int i = 0; i <= 3; ++i) {
-                pVoxelTool->set_voxel_info(vroot + Vector3(0, i, 0), sdf, MaterialType::MUD);
-            }
-            Vector3 vorigin = vroot + Vector3(0, 2, 0) + Vector3(0, 2, 0);
-            RoundCone cone(vorigin, 2, 0, 2);
-            box = cone.getBox();
-            for (vpos.x = box.vMin.x; vpos.x <= box.vMax.x; vpos.x++) {
-                for (vpos.y = box.vMin.y; vpos.y <= box.vMax.y; vpos.y++) {
-                    for (vpos.z = box.vMin.z; vpos.z <= box.vMax.z; vpos.z++) {
-                        sdf = rounded_cone(vpos, vorigin, cone.m_fRadiusDown, cone.m_fRadiusUp, cone.m_fHeight);
-                        fold_sdf = pVoxelTool->get_voxel_f(vpos);
-                        if (sdf <= 0 && sdf < fold_sdf) {
-                            pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
-                        }
-                    }
-                }
-            }
-            break;
-        }
-        case OBJECT_TYPES::Arbor:
-        {
-            // brench
-            for (int i = 0; i <= 3; ++i) {
-                pVoxelTool->set_voxel_info(vroot + Vector3(0, i, 0), sdf, MaterialType::MUD);
-            }
-            Vector3 vorigin = vroot + Vector3(0, 3, 0) + Vector3(0, 3, 0);
-            RoundCone cone(vorigin, 3, 0, 6);
-            box = cone.getBox();
-            for (vpos.x = box.vMin.x; vpos.x <= box.vMax.x; vpos.x++) {
-                for (vpos.y = box.vMin.y; vpos.y <= box.vMax.y; vpos.y++) {
-                    for (vpos.z = box.vMin.z; vpos.z <= box.vMax.z; vpos.z++) {
-                        sdf = rounded_cone(vpos, vorigin, cone.m_fRadiusDown, cone.m_fRadiusUp, cone.m_fHeight);
-                        fold_sdf = pVoxelTool->get_voxel_f(vpos);
-                        if (sdf <= 0 && sdf < fold_sdf) {
-                            pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
-                        }
-                    }
-                }
-            }
-            break;
-        }
-        case OBJECT_TYPES::Herb:
-        {
+//        OBJECT_TYPES eobject_type = (OBJECT_TYPES)(OBJECT_TYPES::Herb);
+//        switch (eobject_type) {
+//        case OBJECT_TYPES::Shrub:
+//        {
+//            // brench
+//            for (int i = 0; i <= 3; ++i) {
+//                pVoxelTool->set_voxel_info(vroot + Vector3(0, i, 0), sdf, MaterialType::MUD);
+//            }
+//            Vector3 vorigin = vroot + Vector3(0, 2, 0) + Vector3(0, 2, 0);
+//            RoundCone cone(vorigin, 2, 0, 2);
+//            box = cone.getBox();
+//            for (vpos.x = box.vMin.x; vpos.x <= box.vMax.x; vpos.x++) {
+//                for (vpos.y = box.vMin.y; vpos.y <= box.vMax.y; vpos.y++) {
+//                    for (vpos.z = box.vMin.z; vpos.z <= box.vMax.z; vpos.z++) {
+//                        sdf = rounded_cone(vpos, vorigin, cone.m_fRadiusDown, cone.m_fRadiusUp, cone.m_fHeight);
+//                        fold_sdf = pVoxelTool->get_voxel_f(vpos);
+//                        if (sdf <= 0 && sdf < fold_sdf) {
+//                            pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
+//                        }
+//                    }
+//                }
+//            }
+//            break;
+//        }
+//        case OBJECT_TYPES::Arbor:
+//        {
+//            // brench
+//            for (int i = 0; i <= 3; ++i) {
+//                pVoxelTool->set_voxel_info(vroot + Vector3(0, i, 0), sdf, MaterialType::MUD);
+//            }
+//            Vector3 vorigin = vroot + Vector3(0, 3, 0) + Vector3(0, 3, 0);
+//            RoundCone cone(vorigin, 3, 0, 6);
+//            box = cone.getBox();
+//            for (vpos.x = box.vMin.x; vpos.x <= box.vMax.x; vpos.x++) {
+//                for (vpos.y = box.vMin.y; vpos.y <= box.vMax.y; vpos.y++) {
+//                    for (vpos.z = box.vMin.z; vpos.z <= box.vMax.z; vpos.z++) {
+//                        sdf = rounded_cone(vpos, vorigin, cone.m_fRadiusDown, cone.m_fRadiusUp, cone.m_fHeight);
+//                        fold_sdf = pVoxelTool->get_voxel_f(vpos);
+//                        if (sdf <= 0 && sdf < fold_sdf) {
+//                            pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
+//                        }
+//                    }
+//                }
+//            }
+//            break;
+//        }
+//        case OBJECT_TYPES::Herb:
+//        {
 
-            box = Boxi(vroot - Vector3(100), vroot + Vector3(100));
-            for (vpos.x = box.vMin.x; vpos.x <= box.vMax.x; vpos.x++) {
-                for (vpos.y = box.vMin.y; vpos.y <= box.vMax.y; vpos.y++) {
-                    for (vpos.z = box.vMin.z; vpos.z <= box.vMax.z; vpos.z++) {
-                        sdf = torus(vpos - vroot, 80, 10);
-                        //sdf = capsule(bend_linear(vpos - vroot, Vector3::NEG_UNIT_Y, Vector3::UNIT_Y, Vector3::UNIT_X), Vector3::NEG_UNIT_Y * 2.f, Vector3::UNIT_Y * 2.f, 3);
-                        pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
-                    }
-                }
-            }
-        }
-            break;
-        case OBJECT_TYPES::Tree4:
-        {
-            // brench
-            for (int i = 0; i <= fradius + 1; ++i) {
-                pVoxelTool->set_voxel_info(vroot + Vector3(0, i, 0), sdf, MaterialType::GRASS);
-            }
-            Cone cone(vroot + Vector3(0, fradius - 1, 0), fradius, fheight);
-            box = cone.getBox();
+//            box = Boxi(vroot - Vector3(100), vroot + Vector3(100));
+//            for (vpos.x = box.vMin.x; vpos.x <= box.vMax.x; vpos.x++) {
+//                for (vpos.y = box.vMin.y; vpos.y <= box.vMax.y; vpos.y++) {
+//                    for (vpos.z = box.vMin.z; vpos.z <= box.vMax.z; vpos.z++) {
+//                        sdf = torus(vpos - vroot, 80, 10);
+//                        //sdf = capsule(bend_linear(vpos - vroot, Vector3::NEG_UNIT_Y, Vector3::UNIT_Y, Vector3::UNIT_X), Vector3::NEG_UNIT_Y * 2.f, Vector3::UNIT_Y * 2.f, 3);
+//                        pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
+//                    }
+//                }
+//            }
+//        }
+//            break;
+//        case OBJECT_TYPES::Tree4:
+//        {
+//            // brench
+//            for (int i = 0; i <= fradius + 1; ++i) {
+//                pVoxelTool->set_voxel_info(vroot + Vector3(0, i, 0), sdf, MaterialType::GRASS);
+//            }
+//            Cone cone(vroot + Vector3(0, fradius - 1, 0), fradius, fheight);
+//            box = cone.getBox();
 
-            for (vpos.x = box.vMin.x; vpos.x <= box.vMax.x; vpos.x++) {
-                for (vpos.y = box.vMin.y; vpos.y <= box.vMax.y; vpos.y++) {
-                    for (vpos.z = box.vMin.z; vpos.z <= box.vMax.z; vpos.z++) {
-                        sdf = capped_cone(vpos, cone, 0, 5);
-                        if (sdf <= 0) {
-                            pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
-                        }
-                    }
-                }
-            }
-        }
-            break;
-        default:
-            break;
-        }
-    }
+//            for (vpos.x = box.vMin.x; vpos.x <= box.vMax.x; vpos.x++) {
+//                for (vpos.y = box.vMin.y; vpos.y <= box.vMax.y; vpos.y++) {
+//                    for (vpos.z = box.vMin.z; vpos.z <= box.vMax.z; vpos.z++) {
+//                        sdf = capped_cone(vpos, cone, 0, 5);
+//                        if (sdf <= 0) {
+//                            pVoxelTool->set_voxel_info(vpos, sdf, MaterialType::GRASS);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//            break;
+//        default:
+//            break;
+//        }
+//    }
 
 float TreeVoxel::capped_cone(const Vector3i &posi, Cone cone, float ra, float rb) {
     Vector3i a = cone.getCenter(), b = cone.getTop();

@@ -19,13 +19,11 @@ void MeshGeneratorManager::process() {
 
 void MeshGeneratorManager::sltFinish(WorkThread::OutputBlock output) {
     std::unique_lock<std::mutex> lock(mutex);
-    //qDebug() << __FILE__ << " " << __FUNCTION__ << " " << output.position.toString().c_str();
     blocks.push_back(output);
     lock.unlock();
 }
 
 void MeshGeneratorManager::push(const WorkThread::Input& input) {
-    //qDebug() << __FILE__ << " " << __FUNCTION__;
     std::vector<WorkThread> tmpThread(input.blocks.size());
     threads.swap(tmpThread);
     for (int i = 0; i < input.blocks.size(); ++i) {

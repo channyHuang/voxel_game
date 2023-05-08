@@ -199,61 +199,61 @@ void output(const Arrays& surface, const Vector3i& position) {
 
 void GlWidget::updateMesh(const Arrays& surface, const Vector3i& pos) {
     //qDebug() << __FUNCTION__ << " " << pos.toString().c_str();
-    xatlas::Atlas *atlas = xatlas::Create();
-    xatlas::MeshDecl meshDecl;
-    meshDecl.vertexCount = surface.positions.size();
-    meshDecl.vertexPositionData = surface.positions.data();
-    meshDecl.vertexPositionStride = sizeof(float) * 3;
-    meshDecl.vertexNormalData = surface.normals.data();
-    meshDecl.vertexNormalStride = sizeof(float) * 3;
-    meshDecl.indexCount = surface.indices.size();
-    meshDecl.indexData = surface.indices.data();
-    meshDecl.indexFormat = xatlas::IndexFormat::UInt32;
-    xatlas::AddMeshError error = xatlas::AddMesh(atlas, meshDecl, (uint32_t)1);
-    if (error != xatlas::AddMeshError::Success) {
-        qDebug() << __FUNCTION__ << " uvUnwrap failed";
-        xatlas::Destroy(atlas);
-        return;
-    }
-    xatlas::Generate(atlas);
+//    xatlas::Atlas *atlas = xatlas::Create();
+//    xatlas::MeshDecl meshDecl;
+//    meshDecl.vertexCount = surface.positions.size();
+//    meshDecl.vertexPositionData = surface.positions.data();
+//    meshDecl.vertexPositionStride = sizeof(float) * 3;
+//    meshDecl.vertexNormalData = surface.normals.data();
+//    meshDecl.vertexNormalStride = sizeof(float) * 3;
+//    meshDecl.indexCount = surface.indices.size();
+//    meshDecl.indexData = surface.indices.data();
+//    meshDecl.indexFormat = xatlas::IndexFormat::UInt32;
+//    xatlas::AddMeshError error = xatlas::AddMesh(atlas, meshDecl, (uint32_t)1);
+//    if (error != xatlas::AddMeshError::Success) {
+//        qDebug() << __FUNCTION__ << " uvUnwrap failed";
+//        xatlas::Destroy(atlas);
+//        return;
+//    }
+//    xatlas::Generate(atlas);
 
-    std::unique_lock<std::mutex> lock(mutex);
-    auto itr = mapMeshs.find(pos);
-    if (itr == mapMeshs.end()) {
-        mapMeshs[pos] = std::vector<MeshData>();
-    } else {
-        m_nNumOfTris -= mapMeshs[pos].size();
-        mapMeshs[pos].clear();
-    }
+//    std::unique_lock<std::mutex> lock(mutex);
+//    auto itr = mapMeshs.find(pos);
+//    if (itr == mapMeshs.end()) {
+//        mapMeshs[pos] = std::vector<MeshData>();
+//    } else {
+//        m_nNumOfTris -= mapMeshs[pos].size();
+//        mapMeshs[pos].clear();
+//    }
 
-    if (atlas->meshCount <= 0) return;
-    const xatlas::Mesh &mesh = atlas->meshes[0];
-    for (int i = 0; i < surface.indices.size(); i += 3) {
-        int vertexIndex = surface.indices[i];
+//    if (atlas->meshCount <= 0) return;
+//    const xatlas::Mesh &mesh = atlas->meshes[0];
+//    for (int i = 0; i < surface.indices.size(); i += 3) {
+//        int vertexIndex = surface.indices[i];
 
-        xatlas::Vertex &vertex = mesh.vertexArray[vertexIndex];
-        mapMeshs[pos].push_back(MeshData(surface.positions[vertexIndex],
-                                surface.normals[vertexIndex],
-                                Vector2(vertex.uv[0], vertex.uv[1]),
-                                surface.materials[vertexIndex]));
+//        xatlas::Vertex &vertex = mesh.vertexArray[vertexIndex];
+//        mapMeshs[pos].push_back(MeshData(surface.positions[vertexIndex],
+//                                surface.normals[vertexIndex],
+//                                Vector2(vertex.uv[0], vertex.uv[1]),
+//                                surface.materials[vertexIndex]));
 
-        vertex = mesh.vertexArray[surface.indices[i + 2]];
-        mapMeshs[pos].push_back(MeshData(surface.positions[surface.indices[i + 2]],
-                                surface.normals[surface.indices[i + 2]],
-                                Vector2(vertex.uv[0], vertex.uv[1]),
-                                surface.materials[surface.indices[i + 2]]));
+//        vertex = mesh.vertexArray[surface.indices[i + 2]];
+//        mapMeshs[pos].push_back(MeshData(surface.positions[surface.indices[i + 2]],
+//                                surface.normals[surface.indices[i + 2]],
+//                                Vector2(vertex.uv[0], vertex.uv[1]),
+//                                surface.materials[surface.indices[i + 2]]));
 
-        vertex = mesh.vertexArray[surface.indices[i + 1]];
-        mapMeshs[pos].push_back(MeshData(surface.positions[surface.indices[i + 1]],
-                                surface.normals[surface.indices[i + 1]],
-                                Vector2(vertex.uv[0], vertex.uv[1]),
-                                surface.indices[i + 1]));
-    }
-    m_nNumOfTris += surface.indices.size();
-    lock.unlock();
-    //output(surface, pos);
+//        vertex = mesh.vertexArray[surface.indices[i + 1]];
+//        mapMeshs[pos].push_back(MeshData(surface.positions[surface.indices[i + 1]],
+//                                surface.normals[surface.indices[i + 1]],
+//                                Vector2(vertex.uv[0], vertex.uv[1]),
+//                                surface.indices[i + 1]));
+//    }
+//    m_nNumOfTris += surface.indices.size();
+//    lock.unlock();
+//    //output(surface, pos);
 
-    xatlas::Destroy(atlas);
+//    xatlas::Destroy(atlas);
 }
 
 void GlWidget::mousePressEvent(QMouseEvent *e) {

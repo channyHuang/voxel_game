@@ -20,8 +20,8 @@ include($$PWD/../commonClass/commonMath/commonMath.pri)
 include($$PWD/../commonClass/commonGeometry/commonGeometry.pri)
 include($$PWD/../commonClass/commonFunc/commonFunc.pri)
 
-include($$PWD/commonSdf/commonSdf.pri)
-include($$PWD/biomes/biomes.pri)
+#include($$PWD/commonSdf/commonSdf.pri)
+#include($$PWD/biomes/biomes.pri)
 
 include($$PWD/voxels/voxels.pri)
 include($$PWD/meshGenerator/meshGenerator.pri)

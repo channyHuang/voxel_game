@@ -2,7 +2,7 @@
 #define VOXELDATALOADER_H
 
 #include "block_thread_manager.h"
-#include "voxels/voxel_buffer.h"
+#include "voxels/voxelBuffer.h"
 #include "voxels/counting_time.h"
 
 struct VoxelBlockRequest {

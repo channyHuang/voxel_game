@@ -43,7 +43,7 @@ public:
 
     TreeVoxel();
 
-    static void setTree(VoxelToolTerrain* pVoxelTool, const Vector3& vroot, float fradius, float fheight);
+    //static void setTree(VoxelToolTerrain* pVoxelTool, const Vector3& vroot, float fradius, float fheight);
 
     static float capped_cone(const Vector3i &posi, Cone cone, float ra, float rb);
     static float rounded_cone(const Vector3& pos, const Vector3& origin, float fradius_min, float fradius_max, float fheight);

@@ -65,10 +65,6 @@ namespace DualContouring {
     std::vector<Vector3> DualContouring::getNormal(const VoxelBuffer &voxels, Vector3i pos) {
         std::vector<Vector3> vNormals(8, Vector3(0, 0, 0));
 
-        if (voxels.is_uniform(VoxelBuffer::CHANNEL_SDF)) {
-            return vNormals;
-        }
-
         const Vector3i min_pos = Vector3i(0);
 
         std::array<int8_t, 8> cell_samples;
@@ -371,7 +367,7 @@ namespace DualContouring {
             //minutes min_padding
             vertex -= Vector3(min_padding, min_padding, min_padding);
 
-            vertIdx.set_voxel(mesh.vecs.size(), p.x, p.y, p.z, VoxelBuffer::CHANNEL_DATA3);
+            //vertIdx.set_voxel(mesh.vecs.size(), p.x, p.y, p.z, VoxelBuffer::CHANNEL_DATA3);
             mesh.vecs.push_back(vertex);
             mesh.normals.push_back(Vector3(0));
             if (p.x == 0 || p.y == 0 || p.z == 0) {
@@ -462,14 +458,14 @@ namespace DualContouring {
                                            const int min_padding, const int max_padding,
                                            const int blocksize_with_padding) {
         TriMesh mesh;
-        VoxelBuffer vertIdx;
-        vertIdx.create(buffer.get_size());
+//        VoxelBuffer vertIdx;
+//        vertIdx.create(buffer.get_size());
 
-        vertIdx.set_channel_depth(VoxelBuffer::CHANNEL_DATA3, VoxelBuffer::DEPTH_64_BIT);
-        vertIdx.fill(MAX_UNSIGNED_LONG, VoxelBuffer::CHANNEL_DATA3);
+//        vertIdx.set_channel_depth(VoxelBuffer::CHANNEL_DATA3, VoxelBuffer::DEPTH_64_BIT);
+//        vertIdx.fill(MAX_UNSIGNED_LONG, VoxelBuffer::CHANNEL_DATA3);
 
-        constructVertices(buffer, mesh, vertIdx, min_padding, blocksize_with_padding);
-        constructFaces(buffer, mesh, vertIdx, blocksize_with_padding);
+//        constructVertices(buffer, mesh, vertIdx, min_padding, blocksize_with_padding);
+//        constructFaces(buffer, mesh, vertIdx, blocksize_with_padding);
 
         return mesh;
     }

@@ -1,7 +1,7 @@
 #ifndef VOXEL_MESH_UPDATER_H
 #define VOXEL_MESH_UPDATER_H
 
-#include "../voxels/voxel_buffer.h"
+#include "../voxels/voxelBuffer.h"
 
 #include "terrains/block_thread_manager.h"
 #include "voxel_mesher.h"

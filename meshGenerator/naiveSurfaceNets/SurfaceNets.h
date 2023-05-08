@@ -16,7 +16,7 @@
 #include "commonGeometry/geometrymath.h"
 
 #include "voxels/common_enum.h"
-#include "voxels/voxel_buffer.h"
+#include "voxels/voxelBuffer.h"
 
 using namespace std;
 
