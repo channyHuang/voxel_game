@@ -1,7 +1,7 @@
 #ifndef TERRAINGENERATOR_H
 #define TERRAINGENERATOR_H
 
-#include "FastNoiseLite.h"
+#include "commonFunc/FastNoiseLite.h"
 #include "voxels/voxelBuffer.h"
 #include "commonMath/box.h"
 

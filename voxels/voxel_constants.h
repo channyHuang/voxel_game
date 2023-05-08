@@ -1,7 +1,7 @@
 #ifndef VOXEL_CONSTANTS_H
 #define VOXEL_CONSTANTS_H
 
-#include "math_defs.h"
+#include "commonMath/math_defs.h"
 
 namespace VoxelConstants {
 

@@ -16,7 +16,7 @@
 #include "voxels/utility.h"
 #include "voxels/array_slice.h"
 #include "voxels/fixed_array.h"
-#include "voxels/counting_time.h"
+#include "commonFunc/counting_time.h"
 
 typedef Boxi Rect3i;
 

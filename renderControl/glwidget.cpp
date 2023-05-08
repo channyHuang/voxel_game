@@ -3,14 +3,13 @@
 #define CONFIG2STR(R) #R
 #define CONFIG2QSTR(R) CONFIG2STR(R)
 
-#include "uvUnwrap/xatlas.h"
+#include "commonFunc/uvUnwrap/xatlas.h"
 
 GlWidget::GlWidget(QWidget* parent):
     QOpenGLWidget (parent),
     m_shader(nullptr), m_vao(nullptr), m_vbo(nullptr)
 {
     m_core = QSurfaceFormat::defaultFormat().profile() == QSurfaceFormat::CoreProfile;
-    qDebug() << __FUNCTION__ << " core ? " << m_core;
     sProPath = CONFIG2QSTR(PRO_PATH);
     setFocusPolicy(Qt::ClickFocus);
 

@@ -1,7 +1,6 @@
 #ifndef TREEVOXEL_H
 #define TREEVOXEL_H
 
-#include "terrains/voxeltoolterrain.h"
 #include "commonMath/math_funcs.h"
 #include "commonMath/cone.h"
 #include "commonMath/vector2.h"

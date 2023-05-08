@@ -11,7 +11,6 @@ CONFIG += c++11
 DEFINES += QT_DEPRECATED_WARNINGS
 
 include($$PWD/../renderCommon/renderCommon.pri)
-include($$PWD/../uvUnwrap/uvUnwrap.pri)
 INCLUDEPATH += $$PWD/../renderCommon
 
 
