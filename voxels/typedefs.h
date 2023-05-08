@@ -105,10 +105,6 @@ T *_nullptr() {
 #undef CONNECT_DEFERRED // override from Windows SDK, clashes with Object enum
 #endif
 
-//#include "core/int_types.h"
-
-#include "voxelBrush.h"
-
 /** Generic ABS function, for math uses please use Math::abs */
 
 #ifndef ABS

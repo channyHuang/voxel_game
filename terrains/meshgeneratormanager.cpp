@@ -1,5 +1,7 @@
 #include "meshgeneratormanager.h"
 
+#include "meshGenerator/naiveSurfaceNets/voxel_mesher_surfacenet.h"
+
 MeshGeneratorManager::MeshGeneratorManager()
 {
     pool.setMaxThreadCount(3);

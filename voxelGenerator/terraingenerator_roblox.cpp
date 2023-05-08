@@ -28,7 +28,6 @@ void TerrainGenerator_Roblox::initData() {
 }
 
 void TerrainGenerator_Roblox::genTotallyFlat(VoxelBrush* pVoxelTool, int max_lod) {
-    qDebug() << __FILE__ << " " << __FUNCTION__;
    float h = std::max(1.0f, _range.vSize.y * 0.5f);
    Box cBox(_range.vStart, _range.vStart + Vector3(_range.vSize.x, h, _range.vSize.z));
 
@@ -339,7 +338,6 @@ float TerrainGenerator_Roblox::findBiomeTransitionValue(TerrainBiomes biome, flo
 }
 
 void TerrainGenerator_Roblox::generateTerrainByBiomes(VoxelBrush* pBrush, BiomesParam& biomeParams, int max_lod) {
-    qDebug() << __FILE__ << " " << __FUNCTION__;
     if (!biomeParams.use_biomes) {
         //terrain version 1.0
         genTotallyFlat(pBrush);

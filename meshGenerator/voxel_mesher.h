@@ -5,7 +5,6 @@
 
 #include "commonMath/vector3.h"
 
-#include "voxels/voxelBuffer.h"
 #include "terrains/terrainCommonStruct.h"
 
 class VoxelMesher {

@@ -7,6 +7,7 @@
 
 #include "commonMath/vector3i.h"
 #include "commonMath/boxi.h"
+
 #include "voxelmap.h"
 #include "meshgeneratormanager.h"
 

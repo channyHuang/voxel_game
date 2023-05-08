@@ -4,10 +4,10 @@
 #include <vector>
 #include <fstream>
 
+//#include "voxels/voxelBuffer.h"
+//#include "terrains/terrainCommonStruct.h"
 #include "meshGenerator/voxel_mesher.h"
-#include "voxels/voxelBuffer.h"
 #include "SurfaceNets.h"
-#include "terrains/terrainCommonStruct.h"
 
 using namespace SURFACE_NETS;
     class VoxelMesherSurfaceNets : public VoxelMesher

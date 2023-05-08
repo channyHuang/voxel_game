@@ -10,7 +10,6 @@
 #include "commonFunc/signalSlots.h"
 
 #include "terrainCommonStruct.h"
-#include "meshGenerator/naiveSurfaceNets/voxel_mesher_surfacenet.h"
 
 class MeshGeneratorManager
 {

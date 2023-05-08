@@ -1,7 +1,5 @@
 #include "voxelmap.h"
 
-#include "voxelblock.h"
-
 VoxelMap *VoxelMap::instance = nullptr;
 
 VoxelMap::VoxelMap() :
