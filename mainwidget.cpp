@@ -7,7 +7,7 @@
 #include <fstream>
 
 #include "renderControl/glwidget.h"
-#include "terrains/voxelterrain.h"
+#include "terrains/terrainCommonStruct.h"
 #include "commonSdf/sdf3.h"
 
 #include "terrains/voxelBrush.h"

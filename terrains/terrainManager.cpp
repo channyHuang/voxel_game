@@ -72,7 +72,7 @@ void TerrainManager::_process() {
     std::cout << __FILE__ << " " << __FUNCTION__ << std::endl;
     // send update request
     {
-        WorkThread::Input input;
+        Input input;
 
         for (auto itr = _blocks_pending_update.begin(); itr != _blocks_pending_update.end(); itr++) {
             Vector3i block_pos = (*itr);
@@ -88,7 +88,7 @@ void TerrainManager::_process() {
             unsigned int channels_mask = (1 << VoxelBuffer::CHANNEL_TYPE) | (1 << VoxelBuffer::CHANNEL_SDF);
             _map->get_buffer_copy(_map->block_to_voxel(block_pos) - Vector3i(min_padding), *nbuffer, channels_mask);
 
-            WorkThread::InputBlock iblock;
+            InputBlock iblock;
             iblock.voxels = nbuffer;
             iblock.position = block_pos;
             input.blocks.push_back(iblock);
@@ -103,12 +103,12 @@ void TerrainManager::_process() {
     // receive updated mesh
     {
 
-        WorkThread::Output output;
+        Output output;
         _block_updater->pop(output);
         std::cout << __FILE__ << " " << __FUNCTION__ << " output " << output.blocks.size() << std::endl;
 
         for (int i = 0; i < output.blocks.size(); ++i) {
-            const WorkThread::OutputBlock &data = output.blocks[i];
+            const OutputBlock &data = output.blocks[i];
             for (int j = 0; j < data.smooth_surfaces.surfaces.size(); ++j) {
 
                 Arrays surface = data.smooth_surfaces.surfaces[j];

@@ -1,45 +1,39 @@
 #include "meshgeneratormanager.h"
 
-MeshGeneratorManager::MeshGeneratorManager(QObject *parent)
-    : QObject{parent}
+MeshGeneratorManager::MeshGeneratorManager()
 {
-    QThreadPool::globalInstance()->setMaxThreadCount(3);
-    qRegisterMetaType<WorkThread::OutputBlock>("OutputBlock");
-    qRegisterMetaType<Arrays>("Arrays");
-    qRegisterMetaType<Vector3i>("Vector3i");
+    pool.setMaxThreadCount(3);
+
+    //sigMeshGenSuc.connect(this, &MeshGeneratorManager::sltFinish);
 }
 
 MeshGeneratorManager::~MeshGeneratorManager() {
-    QThreadPool::globalInstance()->waitForDone();
-}
-
-void MeshGeneratorManager::process() {
 
 }
 
-void MeshGeneratorManager::sltFinish(WorkThread::OutputBlock output) {
+void MeshGeneratorManager::sltMeshGenSuc(OutputBlock output) {
     std::unique_lock<std::mutex> lock(mutex);
     blocks.push_back(output);
     lock.unlock();
 }
 
-void MeshGeneratorManager::push(const WorkThread::Input& input) {
-    std::vector<WorkThread> tmpThread(input.blocks.size());
-    threads.swap(tmpThread);
+void MeshGeneratorManager::push(const Input& input) {
     for (int i = 0; i < input.blocks.size(); ++i) {
+        OutputBlock output;
 
-        threads[i].index = index++;
-        if (index >= maxIndex) {
-            index = 0;
-        }
-        threads[i].setAutoDelete(false);
-        threads[i].input = input.blocks[i];
-        connect(&threads[i], &WorkThread::sigFinish, this, &MeshGeneratorManager::sltFinish);
-        QThreadPool::globalInstance()->start(&threads[i]);
+        const InputBlock &block = input.blocks[i];
+        OutputBlock &outputData = output;
+
+        MeshInput in = {*block.voxels, 0, block.position};
+        output.position = block.position;
+        VoxelMesherSurfaceNets* mesher = new VoxelMesherSurfaceNets;
+        mesher->build(outputData.smooth_surfaces, in);
+
+        sigMeshGenSuc(output);
     }
 }
 
-void MeshGeneratorManager::pop(WorkThread::Output &output) {
+void MeshGeneratorManager::pop(Output &output) {
     output.blocks.swap(blocks);
     blocks.clear();
 }

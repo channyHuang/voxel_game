@@ -1,6 +1,6 @@
 #include "voxeltoolterrain.h"
 
-#include "voxelterrain.h"
+#include "terrainCommonStruct.h"
 
 VoxelToolTerrain::VoxelToolTerrain() {
 }
@@ -53,7 +53,7 @@ void VoxelToolTerrain::_set_voxel_f(Vector3i pos, float v, int channel) {
 }
 
 void VoxelToolTerrain::_post_edit(const Rect3i &box) {
-    _terrain->make_area_dirty(box);
+    //_terrain->make_area_dirty(box);
 }
 
 

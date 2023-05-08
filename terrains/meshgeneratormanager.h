@@ -1,45 +1,44 @@
 #ifndef MESHGENERATORMANAGER_H
 #define MESHGENERATORMANAGER_H
 
-#include <QObject>
-#include <QThreadPool>
-#include <QTimer>
-
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
 #include <utility>
 
-#include "workthread.h"
+#include "commonFunc/threadPool.h"
+#include "commonFunc/signalSlots.h"
 
-class MeshGeneratorManager : public QObject
+#include "terrainCommonStruct.h"
+#include "meshGenerator/naiveSurfaceNets/voxel_mesher_surfacenet.h"
+
+class MeshGeneratorManager
 {
-    Q_OBJECT
 public:
-    explicit MeshGeneratorManager(QObject *parent = nullptr);
+    explicit MeshGeneratorManager();
     ~MeshGeneratorManager();
 
-    void push(const WorkThread::Input& input);
-    void pop(WorkThread::Output &output);
+    void push(const Input& input);
+    void pop(Output &output);
 
     int get_minimum_padding() const { return _minimum_padding; }
     int get_maximum_padding() const { return _maximum_padding; }
 
-signals:
+// signals:
+    SignalSlots::Signal<void(OutputBlock)> sigMeshGenSuc;
 
-public slots:
-    void process();
-    void sltFinish(WorkThread::OutputBlock output);
+// public slots:
+    void sltMeshGenSuc(OutputBlock output);
 
 private:
-    std::unordered_map<int, WorkThread> mapThreads;
-    std::vector<WorkThread::OutputBlock> blocks;
+    std::vector<OutputBlock> blocks;
     int index = 0;
     const int maxIndex = 10000;
     int _minimum_padding = 2;
     int _maximum_padding = 2;
-    std::vector<WorkThread> threads;
     std::mutex mutex;
+
+    ThreadPool pool;
 };
 
 #endif // MESHGENERATORMANAGER_H

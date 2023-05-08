@@ -1,38 +1,16 @@
 #ifndef VOXEL_MESHER_H
 #define VOXEL_MESHER_H
 
-#include "../voxels/voxelBuffer.h"
-#include "commonMath/vector3.h"
-
 #include <array>
 
-struct Arrays {
-    std::vector<Vector3> positions;
-    std::vector<Vector3> normals;
-    std::vector<uint32_t> indices;
-    std::vector<uint32_t> materials;
-    std::array<std::vector<uint32_t>, /*Cube::SIDE_COUNT*/6> transition_surfaces;
-    std::vector<uint32_t> indices_water;
-    bool isWater = false;
+#include "commonMath/vector3.h"
 
-    bool empty() {
-        return (positions.size() <= 0 || indices.size() <= 0);
-    }
-};
+#include "voxels/voxelBuffer.h"
+#include "terrains/terrainCommonStruct.h"
 
 class VoxelMesher {
 public:
-	struct Input {
-		const VoxelBuffer &voxels;
-        int lod;
-        Vector3i position;
-	};
-
-	struct Output {
-        std::vector<Arrays> surfaces;
-	};
-
-	virtual void build(Output &output, const Input &voxels);
+    virtual void build(MeshOutput &output, const MeshInput &voxels);
 
 	int get_minimum_padding() const;
 	int get_maximum_padding() const;

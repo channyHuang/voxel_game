@@ -1,6 +1,6 @@
 #include "voxel_mesher.h"
 
-void VoxelMesher::build(Output &output, const Input &input) {
+void VoxelMesher::build(MeshOutput &output, const MeshInput &input) {
 }
 
 int VoxelMesher::get_minimum_padding() const {

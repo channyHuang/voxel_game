@@ -66,7 +66,7 @@
         set_padding(MIN_PADDING, MAX_PADDING);
     }
 
-    void VoxelMesherSurfaceNets::build(VoxelMesher::Output &output, const VoxelMesher::Input &input)
+    void VoxelMesherSurfaceNets::build(MeshOutput &output, const MeshInput &input)
     {
         //corresponding to VoxelDataMap._block_size_pow2, which is 4 currently, if input.lod == 4, return all level
         if (input.lod > _lod_count || input.lod < 0) {
@@ -105,7 +105,7 @@
         return new VoxelMesherSurfaceNets;
     }
 
-    void VoxelMesherSurfaceNets::build_internal(VoxelMesher::Output &output, const VoxelBuffer &voxels,
+    void VoxelMesherSurfaceNets::build_internal(MeshOutput &output, const VoxelBuffer &voxels,
         unsigned int channel, int lod_index, const Vector3i &position)
     {
         uint8_t cell_border_mask = 0;
@@ -145,7 +145,7 @@
         }
     }
 
-    void VoxelMesherSurfaceNets::build_internal_with_water(VoxelMesher::Output &output,
+    void VoxelMesherSurfaceNets::build_internal_with_water(MeshOutput &output,
         const VoxelBuffer &voxels,
         unsigned int channel,
         int lod_index,
@@ -250,7 +250,7 @@
 
     void VoxelMesherSurfaceNets::vertexMesh2outputArrays(
         std::shared_ptr<VertexMesh> pmesh,
-        VoxelMesher::Output &output,
+        MeshOutput &output,
         const Vector3i &block_size_scaled,
         uint8_t cell_border_mask,
         const Vector3i &position) {
@@ -334,7 +334,7 @@
     // both non-water mesh and water mesh: output.arrays.size() == 2
     void VoxelMesherSurfaceNets::vertexMesh2OutputArrays_with_water(
         std::shared_ptr<VertexMesh> pmesh,
-        VoxelMesher::Output &output,
+        MeshOutput &output,
         const Vector3i &block_size_scaled,
         uint8_t cell_border_mask,
         const Vector3i &position) {

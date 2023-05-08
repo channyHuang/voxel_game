@@ -7,6 +7,7 @@
 #include "meshGenerator/voxel_mesher.h"
 #include "voxels/voxelBuffer.h"
 #include "SurfaceNets.h"
+#include "terrains/terrainCommonStruct.h"
 
 using namespace SURFACE_NETS;
     class VoxelMesherSurfaceNets : public VoxelMesher
@@ -19,7 +20,7 @@ using namespace SURFACE_NETS;
 
         VoxelMesherSurfaceNets();
 
-        void build(VoxelMesher::Output &output, const VoxelMesher::Input &input) override;
+        void build(MeshOutput &output, const MeshInput &input) override;
 
         VoxelMesher *clone() override;
     private:
@@ -33,7 +34,7 @@ using namespace SURFACE_NETS;
             std::array<int, 12> vertices;
         };
 
-        void build_internal(VoxelMesher::Output &output, const VoxelBuffer &voxels, unsigned int channel, int lod_index,
+        void build_internal(MeshOutput &output, const VoxelBuffer &voxels, unsigned int channel, int lod_index,
             const Vector3i &position = Vector3i(0));
         int emit_vertex(const Vector3& primary, const Vector3& normal,
                         uint16_t border_mask, const Vector3& secondary,
@@ -42,16 +43,16 @@ using namespace SURFACE_NETS;
         void fill_surface_arrays(Arrays &arrays);
         void vertexMesh2outputArrays(
             std::shared_ptr<VertexMesh> pmesh,
-            VoxelMesher::Output &output,
+            MeshOutput &output,
             const Vector3i &block_size_scaled,
             uint8_t cell_border_mask = 0,
             const Vector3i &position = Vector3i(0));
         //with water
-        void build_internal_with_water(VoxelMesher::Output &output, const VoxelBuffer &voxels, unsigned int channel, int lod_index,
+        void build_internal_with_water(MeshOutput &output, const VoxelBuffer &voxels, unsigned int channel, int lod_index,
             const Vector3i &position = Vector3i(0));
         void vertexMesh2OutputArrays_with_water(
             std::shared_ptr<VertexMesh> pmesh,
-            VoxelMesher::Output &output,
+            MeshOutput &output,
             const Vector3i &block_size_scaled,
             uint8_t cell_border_mask = 0,
             const Vector3i &position = Vector3i(0));

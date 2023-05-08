@@ -9,15 +9,6 @@
 
 class VoxelMeshUpdater {
 public:
-    struct InputBlockData {
-        VoxelBuffer* voxels;
-    };
-
-    struct OutputBlockData {
-        VoxelMesher::Output blocky_surfaces;
-        VoxelMesher::Output smooth_surfaces;
-    };
-
     struct MeshingParams {
         //Ref<VoxelLibrary> library;
         bool baked_ao = true;

@@ -44,7 +44,7 @@ private:
     VoxelMap *_map = nullptr;
     MeshGeneratorManager *_block_updater = nullptr;
     std::unordered_set<Vector3i, Vector3iHash> _blocks_pending_update;
-    std::vector<WorkThread::OutputBlock> _blocks_pending_main_thread_update;
+    std::vector<OutputBlock> _blocks_pending_main_thread_update;
     Vector3 viewer_pos;
     Vector3 viewer_direction;
 };
