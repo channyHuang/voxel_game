@@ -1,6 +1,7 @@
 #pragma once
 
 #include "commonMath/vector3i.h"
+#include "commonMath/vector3.h"
 #include "commonMath/boxi.h"
 
 #include "voxel_constants.h"

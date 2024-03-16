@@ -9,31 +9,11 @@
 
 #include "commonMath/vector3.h"
 #include "commonMath/vector3i.h"
-
-//#include "terrains/voxeltoolterrain.h"
+#include "commonMath/box.h"
 #include "terrains/voxelBrush.h"
 #include "voxels/common_enum.h"
 
-namespace TerrainMath {
-    static Vector3i vector3FloorOrCeil(const Vector3 &pos, bool bfloor = true) {
-        if (bfloor) {
-            Vector3 &&pos2floor = pos.getFloor();
-            Vector3i &&vposi = Vector3i(static_cast<int>(pos2floor.x), static_cast<int>(pos2floor.y), static_cast<int>(pos2floor.z));
-            return vposi;
-        }
-        //bceil
-        Vector3 &&pos2ceil = Vector3(pos);
-        pos2ceil.ceil();
-        Vector3i &&vposi = Vector3i(static_cast<int>(pos2ceil.x), static_cast<int>(pos2ceil.y), static_cast<int>(pos2ceil.z));
-        return vposi;
-    }
-
-    static float get_vector3_angle(const Vector3 &v1, const Vector3 &v2) {
-        if (v1 == Vector3(0) || v2 == Vector3(0)) return 0.f;
-        float cos_theta = v1.dot(v2) / (v1.len() * v2.len());
-        return acos(cos_theta); //[0,pi]
-    }
-}
+using namespace TerrainEnum;
 
 class TerrainSimplePerlin {
 public:
@@ -132,7 +112,7 @@ public:
         int biome_size = 50; // area of each biome
         bool generate_caves = false;
         std::string seed = "618033988"; // biome seed
-    };
+    } m_stBiomeParams;
 
     enum TerrainBiomes {
         Water = 0,
@@ -194,6 +174,8 @@ public:
     };
 
 private:
+    static TerrainGenerator_Roblox* instance;
+
     //wrap data
     float ridgedFilter(float value) {
         return (value < .5f ? value * 2.f : 2.f - value * 2.f);

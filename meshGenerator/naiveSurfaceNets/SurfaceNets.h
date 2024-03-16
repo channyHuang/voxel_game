@@ -1,8 +1,6 @@
 #ifndef SURFACENETS_H
 #define SURFACENETS_H
 
-#include <QDebug>
-
 #include <vector>
 #include <functional>
 #include <unordered_map>
@@ -19,6 +17,7 @@
 #include "voxels/voxelBuffer.h"
 
 using namespace std;
+using namespace TerrainEnum;
 
 namespace SURFACE_NETS {
 	enum MeshType {
@@ -263,9 +262,6 @@ namespace SURFACE_NETS {
 	//with water
 	void prepareTables();
 
-    inline static Vector3 vector3i2Vector3(const Vector3i &vposi) {
-        return Vector3(static_cast<float>(vposi.x), static_cast<float>(vposi.y), static_cast<float>(vposi.z));
-	}
 	inline static Vector3 round(const Vector3& v) {
         float x = static_cast<float>(v.x < 0 ? std::ceil(v.x - 0.5) : std::floor(v.x + 0.5));
         float y = static_cast<float>(v.y < 0 ? std::ceil(v.y - 0.5) : std::floor(v.y + 0.5));
@@ -295,19 +291,6 @@ namespace SURFACE_NETS {
 		size_t result = 0;
 		hash_combine(result, vposi);
 		return avalanche(result);
-	}
-
-    static Vector3i vector3FloorOrCeil(const Vector3 &pos, bool bfloor = true) {
-		if (bfloor) {
-            Vector3 &&pos2floor = pos.getFloor();
-            Vector3i &&vposi = Vector3i(static_cast<int>(pos2floor.x), static_cast<int>(pos2floor.y), static_cast<int>(pos2floor.z));
-			return vposi;
-		}
-		//bceil
-        Vector3 &&pos2ceil = Vector3(pos);
-		pos2ceil.ceil();
-        Vector3i &&vposi = Vector3i(static_cast<int>(pos2ceil.x), static_cast<int>(pos2ceil.y), static_cast<int>(pos2ceil.z));
-		return vposi;
 	}
 
 	static Vector3 computePoint(const Vector3 &vsmooth, float cellSize, MeshType material, size_t seed);

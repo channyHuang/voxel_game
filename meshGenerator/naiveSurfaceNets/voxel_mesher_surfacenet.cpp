@@ -70,7 +70,7 @@
     {
         //corresponding to VoxelDataMap._block_size_pow2, which is 4 currently, if input.lod == 4, return all level
         if (input.lod > _lod_count || input.lod < 0) {
-            qDebug() << "VoxelMesherSurfaceNets::build input.lod (= " << input.lod << ") not support";
+            std::cout << "VoxelMesherSurfaceNets::build input.lod (= " << input.lod << ") not support" << std::endl;
             return;
         }
 #ifdef DEBUG_SINGLE_BUILD_TIME
@@ -152,7 +152,7 @@
         const Vector3i &position) {
         const Vector3i block_size_with_padding = voxels.get_size();
         if (block_size_with_padding.x <= 2 || block_size_with_padding.y <= 2 || block_size_with_padding.z <= 2) {
-            qDebug() << "VoxelMesherSurfaceNets::build_internal_with_water block_size (= " <<  block_size_with_padding.to_vec3().toString().c_str() <<  ") too small, not support.";
+            std::cout << "VoxelMesherSurfaceNets::build_internal_with_water block_size (= " <<  block_size_with_padding.to_vec3().toString().c_str() <<  ") too small, not support." << std::endl;
             return;
         }
         const Vector3i block_size = block_size_with_padding - Vector3i(MIN_PADDING + MAX_PADDING);
@@ -302,7 +302,7 @@
         }
 
 #ifdef DEBUG_SINGLE_BUILD_MESHS
-        Vector3 offset = vector3i2Vector3(position) * 16.f;
+        Vector3 offset = Math::vector3i2Vector3(position) * 16.f;
         std::ofstream ofs("mesh_" + std::to_string(output.surfaces.size()) + " " + std::to_string(position.x) + "_" + std::to_string(position.y) + "_" + std::to_string(position.z) + ".obj");
         int total_vertices = 0;
         char c[256];
@@ -416,7 +416,7 @@
         }
 
 #ifdef DEBUG_SINGLE_BUILD_MESHS
-        Vector3 offset = Vector3(0);//vector3i2Vector3(position) * 16.f;
+        Vector3 offset = Vector3(0);//Math::vector3i2Vector3(position) * 16.f;
         if (output.surfaces.size() == 1) {
             outputToObjFile(output.surfaces[0], position, output.surfaces[0].isWater);
         }

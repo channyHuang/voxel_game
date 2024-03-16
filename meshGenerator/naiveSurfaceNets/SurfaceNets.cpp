@@ -629,7 +629,7 @@ namespace SURFACE_NETS {
 						bool bSharePoint = false;
 						bool bPointValid = gen_avg_vertex_by_voxel(sdfFunction, materialFunction, vLodCorner, new_vertex, bSharePoint, downscale_lod);
 						if (!bPointValid) {
-                            qDebug() << "surface point in invalid pos = (" << vLodCorner.x << vLodCorner.y << vLodCorner.z << ")";
+                            std::cout << "surface point in invalid pos = (" << vLodCorner.x << vLodCorner.y << vLodCorner.z << ")" << std::endl;
 						}
 						uint32_t vertex_index = new_mesh.vertices_.size();
 						new_voxelIndex2MeshIndex[lodVoxelIndex] = vertex_index;
@@ -754,8 +754,8 @@ namespace SURFACE_NETS {
 				const unsigned char(&e)[2][3] = kEdgeVertexTable[i];
                 p0i = Vector3i(e[0][0], e[0][1], e[0][2]);
                 p1i = Vector3i(e[1][0], e[1][1], e[1][2]);
-				p0 = vector3i2Vector3(p0i);
-				p1 = vector3i2Vector3(p1i);
+				p0 = Math::vector3i2Vector3(p0i);
+				p1 = Math::vector3i2Vector3(p1i);
 
 				const std::pair<int, int> &g0 = funVoxelOccupancyAndTag(vposi + p0i);
 				const std::pair<int, int> &g1 = funVoxelOccupancyAndTag(vposi + p1i);
@@ -771,7 +771,7 @@ namespace SURFACE_NETS {
 		int nhalfsmooth_count = 0;
 		MeshType emeshType = MeshType::MESH_UNKNOWN;
 		for (int i = 0; i < 8; ++i) {
-            Vector3 pos = vector3i2Vector3(vposi + Vector3i(kVertexIndexTable[i][0], kVertexIndexTable[i][1], kVertexIndexTable[i][2]));
+            Vector3 pos = Math::vector3i2Vector3(vposi + Vector3i(kVertexIndexTable[i][0], kVertexIndexTable[i][1], kVertexIndexTable[i][2]));
             MaterialType eCurrentVoxelMaterial = materialFunction(pos);
 			auto mtr = getBlockMaterial(eCurrentVoxelMaterial);
 			if (mtr != MeshType::MESH_UNKNOWN) {
@@ -964,7 +964,7 @@ namespace SURFACE_NETS {
 						mesh.vertices_.push_back(info.first);
 
                         uint32_t material = 0;
-                        Vector3i corner = vector3FloorOrCeil(info.first);
+                        Vector3i corner = Math::vector3FloorOrCeil(info.first);
                         for (int i = 0; i < vCubeVer.size(); ++i) {
                             MaterialType type = materialFunction(vposi.to_vec3() + vCubeVer[i]);
                             if (type != MaterialType::AIR) {
@@ -1015,9 +1015,9 @@ namespace SURFACE_NETS {
 		for (size_t i = 0; i < nface_size; ++i) {
             face_index = meshWithWater.faces_[lod_index][i];
 			if (meshWithWater.vertexValid_[face_index.x] && meshWithWater.vertexValid_[face_index.y] && meshWithWater.vertexValid_[face_index.z]) {
-				if (isRepeatFace(vector3FloorOrCeil(meshWithWater.vertices_[face_index.x], true),
-					vector3FloorOrCeil(meshWithWater.vertices_[face_index.y], true),
-                    vector3FloorOrCeil(meshWithWater.vertices_[face_index.z], true), 1)) {
+                if (isRepeatFace(Math::vector3FloorOrCeil(meshWithWater.vertices_[face_index.x], true),
+                    Math::vector3FloorOrCeil(meshWithWater.vertices_[face_index.y], true),
+                    Math::vector3FloorOrCeil(meshWithWater.vertices_[face_index.z], true), 1)) {
                     continue;
 				}
 

@@ -1,9 +1,10 @@
 #ifndef VOXEL_CONSTANTS_H
 #define VOXEL_CONSTANTS_H
 
-#include "commonMath/math_defs.h"
+//#include "commonMath/math_defs.h"
 
 namespace VoxelConstants {
+#define Math_TAU 6.2831853071795864769252867666
 
 // These constants are chosen so you don't accidentally blow up resource usage
 static const float MINIMUM_LOD_DISTANCE = 16.f;

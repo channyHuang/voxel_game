@@ -6,8 +6,6 @@
 #include "commonMath/boxi.h"
 #include "voxelblock.h"
 
-typedef Boxi Rect3i;
-
 // Infinite voxel storage by means of octants like Gridmap, within a constant LOD
 class VoxelMap {
 public:
@@ -56,7 +54,7 @@ public:
     void set_voxel(int value, Vector3i pos, unsigned int c = 0);
 
     float get_voxel_f(Vector3i pos, unsigned int c = VoxelBuffer::CHANNEL_SDF) const;
-    void set_voxel_f(real_t value, Vector3i pos, unsigned int c = VoxelBuffer::CHANNEL_SDF);
+    void set_voxel_f(float value, Vector3i pos, unsigned int c = VoxelBuffer::CHANNEL_SDF);
 
     void set_default_voxel(int value, unsigned int channel = 0);
     int get_default_voxel(unsigned int channel = 0);
@@ -105,7 +103,7 @@ public:
         }
     }
 
-    bool is_area_fully_loaded(const Rect3i voxels_box) const;
+    bool is_area_fully_loaded(const Boxi voxels_box) const;
 
 private:
     static VoxelMap *instance;

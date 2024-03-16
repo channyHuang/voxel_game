@@ -6,6 +6,8 @@
 
 #include "voxels/voxelBuffer.h"
 
+namespace TerrainStruct {
+
 struct Arrays {
     std::vector<Vector3> positions;
     std::vector<Vector3> normals;
@@ -57,5 +59,7 @@ struct Input {
 struct Output {
     std::vector<OutputBlock> blocks;
 };
+
+}
 
 #endif // TERRAINCOMMONSTRUCT_H

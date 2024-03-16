@@ -6,6 +6,7 @@
 #include "commonMath/vector3.h"
 
 #include "terrains/terrainCommonStruct.h"
+using namespace TerrainStruct;
 
 class VoxelMesher {
 public:

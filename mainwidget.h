@@ -9,8 +9,8 @@
 #include <QCheckBox>
 #include <QGroupBox>
 
-#include "renderControl/glwidget.h"
-#include "voxelGenerator/terraingenerator_roblox.h"
+#include "commonMath/vector3i.h"
+#include "voxels/common_enum.h"
 
 class MainWidget : public QWidget {
     Q_OBJECT
@@ -25,10 +25,9 @@ signals:
     void notice(int event);
 
 private:
-    GlWidget *m_pGlWidget = nullptr;
+    //GlWidget *m_pGlWidget = nullptr;
     QTimer timer;
     QThread *terrain_thread = nullptr;
-    TerrainGenerator_Roblox::BiomesParam m_stBiomeParams;
 
     QSpinBox *m_pSizeBox[3];
     Vector3i m_size = Vector3i(10);

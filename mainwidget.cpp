@@ -6,10 +6,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "renderControl/glwidget.h"
-#include "terrains/terrainCommonStruct.h"
-#include "commonSdf/sdf3.h"
-
 #include "terrains/voxelBrush.h"
 #include "terrains/terrainManager.h"
 #include "voxelGenerator/terraingenerator_roblox.h"
@@ -21,15 +17,15 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent) {
 }
 
 MainWidget::~MainWidget() {
-    emit notice(Notification_Exit);
+    emit notice(TerrainEnum::Notification_Exit);
     if (terrain_thread != nullptr) {
         terrain_thread->exit();
     }
 }
 
 void MainWidget::initWidgets() {
-    m_pGlWidget = new GlWidget(this);
-    m_pGlWidget->setMinimumSize(QSize(640, 480));
+    //m_pGlWidget = new GlWidget(this);
+    //m_pGlWidget->setMinimumSize(QSize(640, 480));
 
     QPushButton *createBtn = new QPushButton(this);
     createBtn->setText("create");
@@ -37,8 +33,7 @@ void MainWidget::initWidgets() {
         VoxelBrush *brush = new VoxelBrush(TerrainManager::getInstance(), VoxelMap::getInstance());
         // generate terrain
         TerrainGenerator_Roblox::getInstance()->setRange(Vector3(0), m_size.to_vec3());
-        m_stBiomeParams.use_biomes = false;
-        TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(brush, m_stBiomeParams);
+        TerrainGenerator_Roblox::getInstance()->generateTerrainByBiomes(brush, TerrainGenerator_Roblox::getInstance()->m_stBiomeParams);
     });
 
     //connect(TerrainManager::getInstance(), &TerrainManager::generateMeshSuc, m_pGlWidget, &GlWidget::updateMesh);
@@ -74,10 +69,10 @@ void MainWidget::initWidgets() {
         m_pBiomeBox[i] = new QCheckBox(biomeNames[i].data());
 
         connect(m_pBiomeBox[i], &QCheckBox::stateChanged, [&, i](int state){
-            if (state == Qt::Checked)
-                m_stBiomeParams.biomes_be_checked |= (1 << i);
-            else
-                m_stBiomeParams.biomes_be_checked ^= (1 << i);
+            //if (state == Qt::Checked)
+                //m_stBiomeParams.biomes_be_checked |= (1 << i);
+            //else
+                //m_stBiomeParams.biomes_be_checked ^= (1 << i);
         });
         biomeLayout->addWidget(m_pBiomeBox[i]);
     }
@@ -90,7 +85,7 @@ void MainWidget::initWidgets() {
 
     QHBoxLayout *mainlayout = new QHBoxLayout;
     mainlayout->addLayout(buttonLayout);
-    mainlayout->addWidget(m_pGlWidget);
+    //mainlayout->addWidget(m_pGlWidget);
 
     setLayout(mainlayout);
 }
@@ -103,37 +98,13 @@ bool MainWidget::init() {
     //terrainManager->moveToThread(terrain_thread);
     //terrain_thread->start(QThread::LowPriority);
 
-    emit notice(Notification_Enter);
+    emit notice(TerrainEnum::Notification_Enter);
     timer.stop();
     timer.setInterval(10000);
     connect(&timer, &QTimer::timeout, [](){
-        TerrainManager::getInstance()->_notification(Notification_Process);
+        TerrainManager::getInstance()->_notification(TerrainEnum::Notification_Process);
     });
 
     timer.start(10000);
     return true;
 }
-
-/*
-void output2File(const TriMesh &mesh, std::string sOutputFile = "mesh.obj") {
-    std::ofstream ofs(sOutputFile.c_str());
-    char c[256];
-    for (unsigned int xx = 0; xx < mesh.vertices.size(); ++xx) {
-        sprintf(c, "v %f %f %f\n\0",
-            mesh.vertices[xx].x,
-            mesh.vertices[xx].y,
-            mesh.vertices[xx].z);
-        ofs << c;
-        if (mesh.normals.size() > xx) {
-            sprintf(c, "vn %f %f %f\n\0", mesh.normals[xx].x, mesh.normals[xx].y, mesh.normals[xx].z);
-            ofs << c;
-        }
-    }
-    for (unsigned int yy = 2; yy < mesh.indices.size(); yy += 3) {
-        sprintf(c, "f %d %d %d\n\0", mesh.indices[yy - 2] + 1, mesh.indices[yy - 1] + 1, mesh.indices[yy] + 1);
-        ofs << c;
-    }
-    ofs.close();
-}
-*/
-

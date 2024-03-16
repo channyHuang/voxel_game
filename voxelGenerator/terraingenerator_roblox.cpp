@@ -1,6 +1,7 @@
 #include "terraingenerator_roblox.h"
 
-#include "biomes/treevoxel.h"
+//#include "biomes/treevoxel.h"
+#include "commonMath/math_funcs.h"
 
 std::shared_ptr<TerrainGenerator_Roblox> TerrainGenerator_Roblox::pInstance_ = nullptr;
 
@@ -31,8 +32,8 @@ void TerrainGenerator_Roblox::genTotallyFlat(VoxelBrush* pVoxelTool, int max_lod
    float h = std::max(1.0f, _range.vSize.y * 0.5f);
    Box cBox(_range.vStart, _range.vStart + Vector3(_range.vSize.x, h, _range.vSize.z));
 
-   Vector3i &&vmin_pos = TerrainMath::vector3FloorOrCeil(_range.vBox.vMin, true);
-   Vector3i &&vmax_pos = TerrainMath::vector3FloorOrCeil(_range.vBox.vMax, false);
+   Vector3i &&vmin_pos = Math::vector3FloorOrCeil(_range.vBox.vMin, true);
+   Vector3i &&vmax_pos = Math::vector3FloorOrCeil(_range.vBox.vMax, false);
    //qDebug() << __FUNCTION__ << " " << vmin_pos.toString().c_str() << " " << vmax_pos.toString().c_str();
 
    float fnew_sdf = 0.f, brushOccupancy = 1.f;

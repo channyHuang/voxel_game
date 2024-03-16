@@ -79,7 +79,7 @@ float VoxelMap::get_voxel_f(Vector3i pos, unsigned int c) const {
     return block->voxels->get_voxel_f(lpos.x, lpos.y, lpos.z, c);
 }
 
-void VoxelMap::set_voxel_f(real_t value, Vector3i pos, unsigned int c) {
+void VoxelMap::set_voxel_f(float value, Vector3i pos, unsigned int c) {
     VoxelBlock *block = get_or_create_block_at_voxel_pos(pos);
     Vector3i lpos = to_local(pos);
     block->voxels->set_voxel_f(value, lpos.x, lpos.y, lpos.z, c);
@@ -219,7 +219,7 @@ int VoxelMap::get_block_count() const {
     return _blocks.size();
 }
 
-bool VoxelMap::is_area_fully_loaded(const Rect3i voxels_box) const {
+bool VoxelMap::is_area_fully_loaded(const Boxi voxels_box) const {
     //Rect3i block_box = voxels_box.downscaled(get_block_size());
     //return block_box.all_cells_match([this](Vector3i pos) {
     //    return has_block(pos);

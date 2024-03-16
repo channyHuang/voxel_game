@@ -10,6 +10,7 @@
 #include "commonFunc/signalSlots.h"
 
 #include "terrainCommonStruct.h"
+using namespace TerrainStruct;
 
 class MeshGeneratorManager
 {

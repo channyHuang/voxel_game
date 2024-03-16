@@ -1,5 +1,7 @@
 #include <QApplication>
 
+#include <QSurfaceFormat>
+
 #include "mainwidget.h"
 
 int main(int argc, char *argv[]) {

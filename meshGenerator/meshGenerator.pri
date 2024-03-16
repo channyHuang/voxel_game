@@ -1,4 +1,4 @@
-include($$PWD/dualContouring/dualContouring.pri)
+#include($$PWD/dualContouring/dualContouring.pri)
 include($$PWD/naiveSurfaceNets/naiveSurfaceNets.pri)
 
 HEADER_FILES = $$files($$PWD/*.h, false)
@@ -9,4 +9,5 @@ INCLUDEPATH += $$PWD/../
 
 HEADERS += $${HEADER_FILES} \
     $${HEADER_SOURCE_FILES}
+
 SOURCES += $${SOURCE_FILES}

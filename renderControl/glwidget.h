@@ -18,6 +18,8 @@
 #include "commonMath/vector2.h"
 #include "voxels/common_enum.h"
 
+using namespace TerrainEnum;
+
 class GlWidget : public QOpenGLWidget
 {
     Q_OBJECT

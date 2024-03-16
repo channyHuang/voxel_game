@@ -1,7 +1,7 @@
 #include "terrainManager.h"
 
 #include "voxels/common_enum.h"
-#include "meshGenerator/voxel_mesher.h"
+//#include "meshGenerator/voxel_mesher.h"
 
 TerrainManager *TerrainManager::instance = nullptr;
 
@@ -53,15 +53,15 @@ void TerrainManager::make_area_dirty(const Boxi& box) {
 
 void TerrainManager::_notification(int p_what) {
     switch (p_what) {
-    case Notification_Enter:
+    case TerrainEnum::Notification_Enter:
         if (_block_updater == nullptr) {
             start_updater();
         }
         break;
-    case Notification_Process:
+    case TerrainEnum::Notification_Process:
         _process();
         break;
-    case Notification_Exit:
+    case TerrainEnum::Notification_Exit:
         stop_updater();
         default:
             break;

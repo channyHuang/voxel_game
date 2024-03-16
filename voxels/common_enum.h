@@ -1,6 +1,8 @@
 #ifndef COMMON_ENUM_H
 #define COMMON_ENUM_H
 
+namespace TerrainEnum {
+
 enum Notification_Event {
     Notification_Enter = 1,
     Notification_Exit,
@@ -27,5 +29,7 @@ enum MaterialType {
     ROAD,
     Material_MAX
 };
+
+}
 
 #endif // COMMON_ENUM_H
